@@ -2,14 +2,16 @@ import os
 import sys
 import numpy as np
 import pandas as pd
+import re
 
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_validate
 from sklearn.pipeline import Pipeline
 
+import nltk
+from nltk.stem.wordnet import WordNetLemmatizer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.feature_extraction.text import TfidfVectorizer
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
@@ -159,10 +161,32 @@ def undersample_train(df, target, indices_train, y_train):
 #######################################################
 
 
-# TF-IDF ##################################################
+# NLP ##################################################
+
+# Use NLTK's WordNetLemmatizer
+def tokenizer(str_input):
+    lem = WordNetLemmatizer()
+    words = re.sub(r"[^A-Za-z0-9\-]", " ", str_input).lower().split()
+    words = [lem.lemmatize(word) for word in words]
+    return words
+
+def set_stopwords():
+    lem = WordNetLemmatizer()
+    nltk.download('stopwords', quiet=True, raise_on_error=True)
+    stop_words = set(nltk.corpus.stopwords.words('english'))
+    tokenized_stop_words = [lem.lemmatize(word) for word in stop_words]
+    return tokenized_stop_words
+
+def count_vectorize(texts):
+    tokenized_stop_words = set_stopwords()
+    count_vect = CountVectorizer(tokenizer=tokenizer, stop_words=tokenized_stop_words, max_features=10000)
+    matrix = count_vect.fit_transform(texts)
+    results = pd.DataFrame(matrix.toarray(), columns=count_vect.get_feature_names())
+    return results
 
 def tfidf_cv(X, y, model, cv=5, scoring=['accuracy']):
-    clf = Pipeline([('vect', TfidfVectorizer(max_features=5000)), ('model', model)])
+    clf = Pipeline([('tfidf', TfidfTransformer()), \
+                    ('model', model)])
     scores = cross_validate(clf, X, y, scoring=scoring, cv=cv, return_train_score=True)
     print('\t\tScores: {}'.format(scores))
     return scores
@@ -187,10 +211,13 @@ if __name__ == "__main__":
     target = 'sentiment'
     features = ['review_body']
     feature = 'review_body'
-    X_train, X_val, X_test, y_train, y_val, y_test, indices_train, indices_val, indices_test = train_test_val_split(df, target, features)
+    X_train, X_val, X_test, y_train, y_val, y_test, indices_train, indices_val, indices_test = \
+        train_test_val_split(df, target, features)
     train_df_us = undersample_train(df, target, indices_train, y_train)
     X_train_us = train_df_us[feature].to_list()
     y_train_us = train_df_us[target].to_numpy()
+    print('\nGetting bag of words for train data...')
+    X_train_us_vect = count_vectorize(X_train_us)
 
     # Modeling
     print('\nStarting modeling...')
@@ -209,7 +236,7 @@ if __name__ == "__main__":
 
     for key in models:
         print('\n\tFitting {}...'.format(key.__class__.__name__))
-        scores = tfidf_cv(X_train_us, y_train_us, key, cv=5)
+        scores = tfidf_cv(X_train_us_vect, y_train_us, key, cv=5)
         models[key] = scores
         print('\t\tAverage train accuracy:', np.mean(models[key]['train_accuracy']))
         print('\t\tAverage test accuracy:', np.mean(models[key]['test_accuracy']))
