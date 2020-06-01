@@ -12,14 +12,13 @@ _____
 ## Summary of Process
 ![Tripadvisor_Logo_horizontal-lockup_registered_RGB.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/Tripadvisor_Logo_horizontal-lockup_registered_RGB.png) ![bs.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/bs.png)
 1. Web-scraped TripAdvisor hotel reviews
-  * 2 EC2 instances ran in parallel over 2 days
-  * Set up data cleaning, EDA, and modeling pipeline while scraping
+  * 2 AWS EC2 instances ran in parallel over 2 days
 2. Split data into 80:20 train/test, then split train into 80:20 train/validation
-3. Balanced training data with undersampling
-4. Evaluated models on accuracy and confusion matrix
+3. Balanced training data by undersampling minority classes
+4. Evaluated models mainly on accuracy and confusion matrix
 
 ## EDA
-* Whole dataset consisted of ~500,000 hotel reviews in English, 
+* Whole dataset consisted of ______ hotel reviews in English, 
 each with a Tripadvisor “bubble” rating from 1 to 5
 * Added sentiment label based on hotel rating per review
 
