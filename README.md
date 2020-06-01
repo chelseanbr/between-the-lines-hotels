@@ -25,4 +25,4 @@ each with a Tripadvisor “bubble” rating from 1 to 5
 
 ![countplot_ratings_full.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/countplot_ratings_full.png)
 
-![pie_sentiments_initial.png](https://github.com/chelseanbr/between-the-lines/blob/master/imgs/images/pie_sentiments_initial.png)
+![pie_sentiments_initial.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/pie_sentiments_initial.png)
