@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+
 # Pandas df exploration ##############################
 
 def get_nulls(df):
@@ -26,6 +27,7 @@ def get_cols_of_type(df, type):
 
 #######################################################
 
+
 # Plotting #############################################
 
 def plot_pie(series, fig, ax):
@@ -41,6 +43,7 @@ def plot_counts(df, col, fig, ax):
 
 
 #######################################################
+
 
 def plot_hist(df, var, fig, ax):
     # histogram of var
