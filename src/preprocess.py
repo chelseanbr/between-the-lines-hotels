@@ -16,9 +16,6 @@ from sklearn.feature_extraction.text import TfidfTransformer
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 import xgboost as xgb
@@ -225,9 +222,6 @@ if __name__ == "__main__":
 
     lr = LogisticRegression(multi_class='multinomial', solver='newton-cg')
     mnb = MultinomialNB()
-    knn = KNeighborsClassifier()
-    svm = SVC(probability=True)
-    dt = DecisionTreeClassifier()
     rf = RandomForestClassifier()
     gb = GradientBoostingClassifier()
     xc = xgb.XGBClassifier()
