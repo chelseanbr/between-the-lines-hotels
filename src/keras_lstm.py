@@ -77,6 +77,7 @@ if __name__ == "__main__":
     
     start_time = timeit.default_timer()
     
+<<<<<<< HEAD
     model.fit(xtrain_tkns, dummy_y_train_us, epochs=4, batch_size=320)
     
     saved_model_path = \
@@ -88,6 +89,14 @@ if __name__ == "__main__":
     print("Training Accuracy: ", acc.round(2))
  
     loss, acc = model.evaluate(xval_tkns, dummy_y_val)
+=======
+    model.fit(xtrain_tkns, dummy_y_train_us, epochs=20, batch_size=16, verbose=2)
+    
+    loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us, verbose=2)
+    print("Training Accuracy: ", acc.round(2))
+ 
+    loss, acc = model.evaluate(xval_tkns, dummy_y_val, verbose=2)
+>>>>>>> 196ad5ea52e89fed9d9b4da159c3b3bb3c878d25
     print("Test Accuracy: ", acc.round(2))
     
     elapsed = timeit.default_timer() - start_time
