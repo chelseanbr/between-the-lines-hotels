@@ -9,6 +9,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import LabelEncoder
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 import sys
 from datetime import datetime
 import timeit
@@ -17,6 +18,44 @@ import preprocess as prep
 # Just disables annoying TF warning, doesn't enable AVX/FMA
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
+# Set plot sizes
+SMALL_SIZE = 22
+MEDIUM_SIZE = 24
+BIGGER_SIZE = 26
+BIGGEST_SIZE = 28
+
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGEST_SIZE)  # fontsize of the figure title
+
+def plot_graphs(history, string):
+    # Set plot sizes
+    SMALL_SIZE = 22
+    MEDIUM_SIZE = 24
+    BIGGER_SIZE = 26
+    BIGGEST_SIZE = 28
+
+    plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+    plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+    plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+    plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+    plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+    plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+    plt.rc('figure', titlesize=BIGGEST_SIZE)  # fontsize of the figure title
+    
+    plt.plot(history.history[string])
+    plt.plot(history.history['val_'+string])
+    plt.xlabel("Epochs")
+    plt.ylabel(string)
+    plt.legend([string, 'val_'+ string])
+#     plt.show()
+    plt.tight_layout()
+    plt.savefig('imgs/lstm_' + string)
 
 if __name__ == "__main__":
     try: 
@@ -83,21 +122,44 @@ if __name__ == "__main__":
         loss, acc = model.evaluate(xval_tkns, dummy_y_val)
         print("Test Accuracy: ", acc)
     
-    else: 
+    elif action == 'model': 
+        
+        try: 
+            num_epochs = int(sys.argv[3])
+        except IndexError:
+            print('Using default num_epochs = 5')
+            num_epochs = 5
+        
         saved_model_path = \
-            "saved_models/lstm_tokens5000_5epochs_{}.h5".format(datetime.now().strftime("%Y%m%d-%H:%M:%S")) 
+            "saved_models/lstm_tokens5000_{}epochs_{}.h5".format(num_epochs,
+                                                                 datetime.now()
+                                                                 .strftime("%Y%m%d-%H:%M:%S")) 
         print('\nWill save model to: {}\n'.format(saved_model_path))
         
         embedding_dim=64
-        model=Sequential()
-        model.add(layers.Embedding(input_dim=vocab_size,
-            output_dim=embedding_dim,
-            input_length=maxlen))
-        model.add(layers.LSTM(units=embedding_dim,return_sequences=True))
-        model.add(layers.LSTM(units=maxlen))
-        model.add(layers.Dropout(0.5))
-        model.add(layers.Dense(8))
-        model.add(layers.Dense(3, activation="softmax"))
+        
+#         model=Sequential()
+#         model.add(layers.Embedding(input_dim=vocab_size,
+#             output_dim=embedding_dim,
+#             input_length=maxlen))
+#         model.add(layers.LSTM(units=embedding_dim,return_sequences=True))
+#         model.add(layers.LSTM(units=maxlen))
+#         model.add(layers.Dropout(0.5))
+#         model.add(layers.Dense(8))
+#         model.add(layers.Dense(3, activation="softmax"))
+        
+        model = Sequential([
+        # Add an Embedding layer expecting input vocab of size 5000, and output embedding dimension of size 64 we set at the top
+        layers.Embedding(vocab_size, embedding_dim),
+        layers.Bidirectional(layers.LSTM(embedding_dim)),
+    #    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(32)),
+        # use ReLU in place of tanh function since they are very good alternatives of each other.
+        layers.Dense(embedding_dim, activation='relu'),
+        # Add a Dense layer with 6 units and softmax activation.
+        # When we have multiple outputs, softmax convert outputs layers into a probability distribution.
+        layers.Dense(3, activation='softmax')
+        ])
+        
         model.compile(optimizer="adam", loss="categorical_crossentropy", 
             metrics=['accuracy'])
         print('\n')
@@ -105,7 +167,7 @@ if __name__ == "__main__":
         
         start_time = timeit.default_timer()
         
-        model.fit(xtrain_tkns, dummy_y_train_us, epochs=5, batch_size=64, 
+        history = model.fit(xtrain_tkns, dummy_y_train_us, epochs=num_epochs, 
                   validation_data=(xval_tkns, dummy_y_val))
 
         # Save entire model to a HDF5 file
@@ -113,9 +175,16 @@ if __name__ == "__main__":
         
         elapsed = timeit.default_timer() - start_time
         print('\nTook {:.2f}s to train'.format(elapsed))
+        
+        plot_graphs(history, "accuracy")
+        plot_graphs(history, "loss")
 
         loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us)
         print("Training Accuracy: ", acc)
 
         loss, acc = model.evaluate(xval_tkns, dummy_y_val)
         print("Test Accuracy: ", acc)
+        
+    else:
+        print('Unknown action:', action)
+        
