@@ -72,10 +72,6 @@ if __name__ == "__main__":
     print('\nStarting modeling...')
 
     if action == 'load':
-        # Load saved model
-        prev_model_path = model_path
-        print('\nLoading model: {}\n'.format(prev_model_path))
-        model = load_model(prev_model_path)
         
         loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us)
         print("Training Accuracy: ", acc)
