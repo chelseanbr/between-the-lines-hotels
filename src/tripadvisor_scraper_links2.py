@@ -96,10 +96,10 @@ def get_reviews_ids(soup):
     items = soup.find_all('div', attrs={'data-reviewid': True})
 
     if items:
-        reviews_ids = [x.attrs['data-reviewid'] for x in items][::2] # mini test
+        # reviews_ids = [x.attrs['data-reviewid'] for x in items][::2] # mini test
         # reviews_ids = [x.attrs['data-reviewid'] for x in items][0:10000:1] # get 10,000 reviews
 
-        # reviews_ids = [x.attrs['data-reviewid'] for x in items][::1] # get all reviews
+        reviews_ids = [x.attrs['data-reviewid'] for x in items][::1] # get all reviews
         print('[get_reviews_ids] data-reviewid:', reviews_ids)
         return reviews_ids
     
@@ -322,6 +322,36 @@ if __name__ == "__main__":
                 'https://www.tripadvisor.com/Hotel_Review-g187147-d197946-Reviews-Hotel_Bradford_Elysees_Astotel-Paris_Ile_de_France.html',\
                 'https://www.tripadvisor.com/Hotel_Review-g187147-d194276-Reviews-Hotel_Dauphine_Saint_Germain-Paris_Ile_de_France.html',\
                 'https://www.tripadvisor.com/Hotel_Review-g187147-d219977-Reviews-Relais_Christine-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d229601-Reviews-Maison_FL-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d254597-Reviews-Best_Western_Plus_61_Paris_Nation_Hotel-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d250928-Reviews-Park_Hyatt_Paris_Vendome-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d194276-Reviews-Hotel_Dauphine_Saint_Germain-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d207854-Reviews-Villa_Beaumarchais-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d6675948-Reviews-Hotel_Da_Vinci_Spa-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d207566-Reviews-Hotel_Le_Friedland-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d228779-Reviews-Hotel_Marignan_Champs_Elysees-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d228835-Reviews-Hotel_Madeleine_Plaza-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d12829774-Reviews-Hotel_la_Nouvelle_Republique-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d197557-Reviews-Ducs_de_Bourgogne_Hotel-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d11869269-Reviews-Maison_Albar_Hotels_Le_Pont_Neuf-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d234633-Reviews-Hotel_Residence_Foch-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d231053-Reviews-Hotel_Marais_Bastille-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d7182695-Reviews-Maison_Souquet-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d197946-Reviews-Hotel_Bradford_Elysees_Astotel-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d6678144-Reviews-The_Peninsula_Paris-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d197576-Reviews-Hotel_Galileo-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d10159593-Reviews-Hotel_La_Comtesse-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d197551-Reviews-Hotel_Augustin_Astotel-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d233766-Reviews-Kyriad_Hotel_Paris_Bercy_Village-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d219994-Reviews-Hotel_de_Lutece-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d282185-Reviews-Hotel_France_Albion-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d10350792-Reviews-Hotel_Square_Louvois-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d188975-Reviews-Four_Seasons_Hotel_George_V-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d197528-Reviews-Le_Royal_Monceau_Raffles_Paris-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d10328342-Reviews-Hotel_Monge-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d266280-Reviews-Cler_Hotel-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d233725-Reviews-Hotel_Brighton_Esprit_de_France-Paris_Ile_de_France.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187147-d188729-Reviews-Le_Bristol_Paris-Paris_Ile_de_France.html',\
                 'https://www.tripadvisor.com/Hotel_Review-g187147-d194284-Reviews-Hotel_Sainte_Beuve-Paris_Ile_de_France.html']
     
     links_3 = ['',\
