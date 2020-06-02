@@ -28,11 +28,15 @@ if __name__ == "__main__":
         except IndexError:
             print('Please specify path to saved model.')
             sys.exit()
+        # Load saved model
+        prev_model_path = model_path
+        print('\nLoading model: {}\n'.format(prev_model_path))
+        model = load_model(prev_model_path)
 
     # Data preprocessing
     X_train, X_val, X_test, y_train, y_val, y_test, \
         indices_train, indices_val, indices_test, \
-            train_df_us, df, action = prep.preprocess_split_undersample(path)
+            train_df_us, df = prep.preprocess_split_undersample(path)
 
     target = 'sentiment'
     features = ['review_body']

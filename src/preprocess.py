@@ -177,7 +177,7 @@ def preprocess_split_undersample(path):
     train_df_us = undersample_train(df, target, indices_train, y_train)
     
     return X_train, X_val, X_test, y_train, y_val, y_test, \
-        indices_train, indices_val, indices_test, train_df_us, df, action
+        indices_train, indices_val, indices_test, train_df_us, df
 
 ############################################################
 
@@ -226,7 +226,7 @@ if __name__ == "__main__":
     # Data preprocessing
     X_train, X_val, X_test, y_train, y_val, y_test, \
         indices_train, indices_val, indices_test, \
-            train_df_us, df, action = preprocess_split_undersample(path)
+            train_df_us, df = preprocess_split_undersample(path)
     
     target = 'sentiment'
     features = ['review_body']
