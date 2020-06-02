@@ -227,7 +227,7 @@ if __name__ == "__main__":
     xc = xgb.XGBClassifier()
 
     # models = dict.fromkeys([lr]) # single model test
-    models = dict.fromkeys([lr, mnb, knn, svm, dt, rf, gb, xc])
+    models = dict.fromkeys([lr, mnb, rf, gb, xc])
 
     for key in models:
         print('\n\tFitting {}...'.format(key.__class__.__name__))
