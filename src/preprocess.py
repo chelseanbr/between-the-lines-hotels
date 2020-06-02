@@ -9,6 +9,7 @@ from sklearn.model_selection import cross_validate
 from sklearn.pipeline import Pipeline
 
 import nltk
+from nltk.tokenize import RegexpTokenizer
 nltk.download('wordnet')
 from nltk.stem.wordnet import WordNetLemmatizer
 from sklearn.feature_extraction.text import CountVectorizer
@@ -19,6 +20,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 import xgboost as xgb
+from sklearn.cluster import KMeans
 
 
 # Load data from multiple CSVs in multiple folders ##########
@@ -187,8 +189,14 @@ def preprocess_split_undersample(path):
 # Use NLTK's WordNetLemmatizer
 def tokenizer(str_input):
     lem = WordNetLemmatizer()
-    words = re.sub(r"[a-zA-Z]+", " ", str_input).lower().split()
-    words = [lem.lemmatize(word) for word in words]
+    nltk.download('stopwords', quiet=True, raise_on_error=True)
+    stop_words = set(nltk.corpus.stopwords.words('english'))
+    tokenized_stop_words = [lem.lemmatize(word) for word in stop_words]
+
+    tokenizer = RegexpTokenizer(r"[a-zA-Z]+")
+    tokens = tokenizer.tokenize(str_input)
+
+    words = [lem.lemmatize(word) for word in tokens if word not in tokenized_stop_words]
     return words
 
 def set_stopwords():
@@ -260,6 +268,19 @@ if __name__ == "__main__":
             print('\n')
 
     elif action == 'kmeans':
-        print('kmeans')
+        print('\nStarting kmeans clustering...')
+        vocab = X_train_us_vect.columns
+        kmeans = KMeans(n_clusters=5)
+
+        tfidf = TfidfTransformer()
+        X_train_us_vect = tfidf.fit_transform(X_train_us_vect)
+        print('\n\tFitting kmeans...')
+        kmeans.fit(X_train_us_vect)
+
+        top_centroids = kmeans.cluster_centers_.argsort()[:,-1:-11:-1]
+        print("\n3) top features (words) for each cluster:")
+        for num, centroid in enumerate(top_centroids):
+            print(f"{num}, {', '.join(vocab[i] for i in centroid)}")
+
     else:
         print('Unknown action:', action)
