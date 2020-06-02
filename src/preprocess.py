@@ -187,7 +187,7 @@ def preprocess_split_undersample(path):
 # Use NLTK's WordNetLemmatizer
 def tokenizer(str_input):
     lem = WordNetLemmatizer()
-    words = re.sub(r"[^A-Za-z0-9\-]", " ", str_input).lower().split()
+    words = re.sub(r"[a-zA-Z]+", " ", str_input).lower().split()
     words = [lem.lemmatize(word) for word in words]
     return words
 
@@ -200,7 +200,7 @@ def set_stopwords():
 
 def count_vectorize(texts):
     tokenized_stop_words = set_stopwords()
-    count_vect = CountVectorizer(tokenizer=tokenizer, stop_words=tokenized_stop_words, max_features=10000)
+    count_vect = CountVectorizer(tokenizer=tokenizer, stop_words=tokenized_stop_words, max_features=5000)
     matrix = count_vect.fit_transform(texts)
     results = pd.DataFrame(matrix.toarray(), columns=count_vect.get_feature_names())
     return results
