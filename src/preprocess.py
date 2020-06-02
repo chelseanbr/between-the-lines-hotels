@@ -240,6 +240,6 @@ if __name__ == "__main__":
             print('\n')
 
     elif action == 'kmeans':
-        
+        print('kmeans')
     else:
         print('Unknown action:', action)

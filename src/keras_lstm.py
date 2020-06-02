@@ -3,7 +3,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import Sequential
 from tensorflow.keras import layers
 from tensorflow.keras import utils
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import LabelEncoder
@@ -15,7 +15,6 @@ import timeit
 import preprocess as prep
 
 if __name__ == "__main__":
-    print('updated')
 
     # Data preprocessing
     try: 
@@ -63,51 +62,46 @@ if __name__ == "__main__":
     xtrain_tkns = pad_sequences(xtrain_tkns,padding='post', maxlen=maxlen)
     xval_tkns = pad_sequences(xval_tkns,padding='post', maxlen=maxlen)
         
-    saved_model_path = \
-        "saved_models/lstm_tokens5000_10epochs_{}.h5".format(datetime.now().strftime("%Y%m%d-%H:%M:%S"))
     print('\nStarting modeling...')
     
-    print('\nWill save model to ', saved_model_path) 
     
-    embedding_dim=50
-    model=Sequential()
-    model.add(layers.Embedding(input_dim=vocab_size,
-          output_dim=embedding_dim,
-          input_length=maxlen))
-    model.add(layers.LSTM(units=50,return_sequences=True))
-    model.add(layers.LSTM(units=10))
-    model.add(layers.Dropout(0.5))
-    model.add(layers.Dense(8))
-    model.add(layers.Dense(3, activation="sigmoid"))
-    model.compile(optimizer="adam", loss="categorical_crossentropy", 
-         metrics=['accuracy'])
-    model.summary()
+#     saved_model_path = \
+#         "saved_models/lstm_tokens5000_10epochs_{}.h5".format(datetime.now().strftime("%Y%m%d-%H:%M:%S")) 
+#     print('\nWill save model to: {}\n'.format(saved_model_path))
     
-    start_time = timeit.default_timer()
+#     embedding_dim=50
+#     model=Sequential()
+#     model.add(layers.Embedding(input_dim=vocab_size,
+#           output_dim=embedding_dim,
+#           input_length=maxlen))
+#     model.add(layers.LSTM(units=50,return_sequences=True))
+#     model.add(layers.LSTM(units=10))
+#     model.add(layers.Dropout(0.5))
+#     model.add(layers.Dense(8))
+#     model.add(layers.Dense(3, activation="sigmoid"))
+#     model.compile(optimizer="adam", loss="categorical_crossentropy", 
+#          metrics=['accuracy'])
+#     print('\n')
+#     model.summary()
     
-    model.fit(xtrain_tkns, dummy_y_train_us, epochs=10, batch_size=64)
+#     start_time = timeit.default_timer()
     
-<<<<<<< HEAD
-=======
-    saved_model_path = \
-        "saved_models/lstm_tokens5000_10epochs_{}.h5".format(datetime.now().strftime("%Y%m%d")) 
->>>>>>> 53e8dfac2f4e707128c804bd7ade0e7d34269a77
-    # Save entire model to a HDF5 file
-    model.save(saved_model_path)
+#     model.fit(xtrain_tkns, dummy_y_train_us, epochs=10, batch_size=64)
+
+#     # Save entire model to a HDF5 file
+#     model.save(saved_model_path)
     
-    model = load_model('saved_models/lstm_tokens5000_10epochs_20200602.h5')
+#     elapsed = timeit.default_timer() - start_time
+#     print('\nTook {:.2f}s to finish'.format(elapsed))
+    
+    
+    # Load saved model
+    prev_model_path = 'saved_models/lstm_tokens5000_10epochs_20200602.h5'
+    print('\nLoading model: {}\n'.format(prev_model_path))
+    model = load_model(prev_model_path)
     
     loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us)
     print("Training Accuracy: ", acc)
  
     loss, acc = model.evaluate(xval_tkns, dummy_y_val)
-    model.fit(xtrain_tkns, dummy_y_train_us, epochs=20, batch_size=16, verbose=2)
-    
-    loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us, verbose=2)
-    print("Training Accuracy: ", acc)
- 
-    loss, acc = model.evaluate(xval_tkns, dummy_y_val, verbose=2)
     print("Test Accuracy: ", acc)
-    
-    elapsed = timeit.default_timer() - start_time
-    print('\nTook {:.2f}s to finish'.format(elapsed))
