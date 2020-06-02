@@ -19,7 +19,7 @@ if __name__ == "__main__":
         path = sys.argv[1]
         action = sys.argv[2]
     except IndexError:
-        print('Please specify path to data files and action ("model"/"kmeans").')
+        print('Please specify path to data files and action ("model"/"load").')
         sys.exit()
     
     if action == 'load':
