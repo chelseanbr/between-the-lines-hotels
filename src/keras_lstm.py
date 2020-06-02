@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
     vocab_size=len(tokenizer.word_index)+1
     
-    maxlen = 250
+    maxlen = 280
     xtrain_tkns = pad_sequences(xtrain_tkns,padding='post', maxlen=maxlen)
     xval_tkns = pad_sequences(xval_tkns,padding='post', maxlen=maxlen)
         
@@ -85,19 +85,19 @@ if __name__ == "__main__":
     
     else: 
         saved_model_path = \
-            "saved_models/lstm_tokens5000_10epochs_{}.h5".format(datetime.now().strftime("%Y%m%d-%H:%M:%S")) 
+            "saved_models/lstm_tokens5000_5epochs_{}.h5".format(datetime.now().strftime("%Y%m%d-%H:%M:%S")) 
         print('\nWill save model to: {}\n'.format(saved_model_path))
         
-        embedding_dim=50
+        embedding_dim=64
         model=Sequential()
         model.add(layers.Embedding(input_dim=vocab_size,
             output_dim=embedding_dim,
             input_length=maxlen))
-        model.add(layers.LSTM(units=50,return_sequences=True))
-        model.add(layers.LSTM(units=10))
+        model.add(layers.LSTM(units=embedding_dim,return_sequences=True))
+        model.add(layers.LSTM(units=maxlen))
         model.add(layers.Dropout(0.5))
         model.add(layers.Dense(8))
-        model.add(layers.Dense(3, activation="sigmoid"))
+        model.add(layers.Dense(3, activation="softmax"))
         model.compile(optimizer="adam", loss="categorical_crossentropy", 
             metrics=['accuracy'])
         print('\n')
@@ -105,7 +105,8 @@ if __name__ == "__main__":
         
         start_time = timeit.default_timer()
         
-        model.fit(xtrain_tkns, dummy_y_train_us, epochs=10, batch_size=64)
+        model.fit(xtrain_tkns, dummy_y_train_us, epochs=5, batch_size=64, 
+                  validation_data=(xval_tkns, dummy_y_val))
 
         # Save entire model to a HDF5 file
         model.save(saved_model_path)
