@@ -15,30 +15,24 @@ import timeit
 import preprocess as prep
 
 if __name__ == "__main__":
-
-    # # Data preprocessing
-    # try: 
-    #     path = sys.argv[1]
-    # except IndexError:
-    #     print('Please specify path to data files.')
-    #     sys.exit()
-    # print('Processing files in {}...'.format(path))
-    # df = prep.merge_csv_mult_dir(sys.argv[1])
-    # df = prep.clean_and_prep(df)
-
-    # # Train/val/test split
-    # print('\nSplitting data into train/val/test...')
-    # target = 'sentiment'
-    # features = ['review_body']
-    # feature = 'review_body'
-    # X_train, X_val, X_test, y_train, y_val, y_test, indices_train, indices_val, indices_test = \
-    #     prep.train_test_val_split(df, target, features)
-    # train_df_us = prep.undersample_train(df, target, indices_train, y_train)
+    try: 
+        path = sys.argv[1]
+        action = sys.argv[2]
+    except IndexError:
+        print('Please specify path to data files and action ("model"/"kmeans").')
+        sys.exit()
     
+    if action == 'load':
+        try: 
+            model_path = sys.argv[3]
+        except IndexError:
+            print('Please specify path to saved model.')
+            sys.exit()
+
     # Data preprocessing
     X_train, X_val, X_test, y_train, y_val, y_test, \
         indices_train, indices_val, indices_test, \
-            train_df_us, df, action = prep.preprocess_split_undersample()
+            train_df_us, df, action = prep.preprocess_split_undersample(path)
 
     target = 'sentiment'
     features = ['review_body']
@@ -74,13 +68,8 @@ if __name__ == "__main__":
     print('\nStarting modeling...')
 
     if action == 'load':
-        try: 
-            path = sys.argv[3]
-        except IndexError:
-            print('Please specify path to data files and action ("model"/"kmeans").')
-            sys.exit()
         # Load saved model
-        prev_model_path = path
+        prev_model_path = model_path
         print('\nLoading model: {}\n'.format(prev_model_path))
         model = load_model(prev_model_path)
         
