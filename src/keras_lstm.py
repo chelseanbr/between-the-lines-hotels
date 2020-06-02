@@ -77,12 +77,12 @@ if __name__ == "__main__":
     
     start_time = timeit.default_timer()
     
-    model.fit(xtrain_tkns, dummy_y_train_us, epochs=20, batch_size=16, verbose=1)
+    model.fit(xtrain_tkns, dummy_y_train_us, epochs=20, batch_size=16, verbose=2)
     
-    loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us, verbose=1)
+    loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us, verbose=2)
     print("Training Accuracy: ", acc.round(2))
  
-    loss, acc = model.evaluate(xval_tkns, dummy_y_val, verbose=1)
+    loss, acc = model.evaluate(xval_tkns, dummy_y_val, verbose=2)
     print("Test Accuracy: ", acc.round(2))
     
     elapsed = timeit.default_timer() - start_time
