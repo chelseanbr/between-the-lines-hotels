@@ -82,7 +82,7 @@ if __name__ == "__main__":
     model.fit(xtrain_tkns, dummy_y_train_us, epochs=10, batch_size=64)
     
     saved_model_path = \
-        "saved_models/lstm_tokens5000_20epochs_{}.h5".format(datetime.now().strftime("%Y%m%d")) 
+        "saved_models/lstm_tokens5000_10epochs_{}.h5".format(datetime.now().strftime("%Y%m%d")) 
     # Save entire model to a HDF5 file
     model.save(saved_model_path)
     
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     print("Training Accuracy: ", acc)
  
     loss, acc = model.evaluate(xval_tkns, dummy_y_val, verbose=2)
-    print("Test Accuracy: ", acc
+    print("Test Accuracy: ", acc)
     
     elapsed = timeit.default_timer() - start_time
     print('\nTook {:.2f}s to finish'.format(elapsed))
