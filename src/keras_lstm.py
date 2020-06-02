@@ -16,24 +16,33 @@ import preprocess as prep
 
 if __name__ == "__main__":
 
-    # Data preprocessing
-    try: 
-        path = sys.argv[1]
-    except IndexError:
-        print('Please specify path to data files.')
-        sys.exit()
-    print('Processing files in {}...'.format(path))
-    df = prep.merge_csv_mult_dir(sys.argv[1])
-    df = prep.clean_and_prep(df)
+    # # Data preprocessing
+    # try: 
+    #     path = sys.argv[1]
+    # except IndexError:
+    #     print('Please specify path to data files.')
+    #     sys.exit()
+    # print('Processing files in {}...'.format(path))
+    # df = prep.merge_csv_mult_dir(sys.argv[1])
+    # df = prep.clean_and_prep(df)
 
-    # Train/val/test split
-    print('\nSplitting data into train/val/test...')
+    # # Train/val/test split
+    # print('\nSplitting data into train/val/test...')
+    # target = 'sentiment'
+    # features = ['review_body']
+    # feature = 'review_body'
+    # X_train, X_val, X_test, y_train, y_val, y_test, indices_train, indices_val, indices_test = \
+    #     prep.train_test_val_split(df, target, features)
+    # train_df_us = prep.undersample_train(df, target, indices_train, y_train)
+    
+    # Data preprocessing
+    X_train, X_val, X_test, y_train, y_val, y_test, \
+        indices_train, indices_val, indices_test, \
+            train_df_us, df, action = prep.preprocess_split_undersample()
+
     target = 'sentiment'
     features = ['review_body']
     feature = 'review_body'
-    X_train, X_val, X_test, y_train, y_val, y_test, indices_train, indices_val, indices_test = \
-        prep.train_test_val_split(df, target, features)
-    train_df_us = prep.undersample_train(df, target, indices_train, y_train)
 
     y_train_us = train_df_us[target]
     
@@ -63,45 +72,56 @@ if __name__ == "__main__":
     xval_tkns = pad_sequences(xval_tkns,padding='post', maxlen=maxlen)
         
     print('\nStarting modeling...')
-    
-    
-#     saved_model_path = \
-#         "saved_models/lstm_tokens5000_10epochs_{}.h5".format(datetime.now().strftime("%Y%m%d-%H:%M:%S")) 
-#     print('\nWill save model to: {}\n'.format(saved_model_path))
-    
-#     embedding_dim=50
-#     model=Sequential()
-#     model.add(layers.Embedding(input_dim=vocab_size,
-#           output_dim=embedding_dim,
-#           input_length=maxlen))
-#     model.add(layers.LSTM(units=50,return_sequences=True))
-#     model.add(layers.LSTM(units=10))
-#     model.add(layers.Dropout(0.5))
-#     model.add(layers.Dense(8))
-#     model.add(layers.Dense(3, activation="sigmoid"))
-#     model.compile(optimizer="adam", loss="categorical_crossentropy", 
-#          metrics=['accuracy'])
-#     print('\n')
-#     model.summary()
-    
-#     start_time = timeit.default_timer()
-    
-#     model.fit(xtrain_tkns, dummy_y_train_us, epochs=10, batch_size=64)
 
-#     # Save entire model to a HDF5 file
-#     model.save(saved_model_path)
+    if action == 'load':
+        try: 
+            path = sys.argv[3]
+        except IndexError:
+            print('Please specify path to data files and action ("model"/"kmeans").')
+            sys.exit()
+        # Load saved model
+        prev_model_path = path
+        print('\nLoading model: {}\n'.format(prev_model_path))
+        model = load_model(prev_model_path)
+        
+        loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us)
+        print("Training Accuracy: ", acc)
     
-#     elapsed = timeit.default_timer() - start_time
-#     print('\nTook {:.2f}s to finish'.format(elapsed))
+        loss, acc = model.evaluate(xval_tkns, dummy_y_val)
+        print("Test Accuracy: ", acc)
     
-    
-    # Load saved model
-    prev_model_path = 'saved_models/lstm_tokens5000_10epochs_20200602.h5'
-    print('\nLoading model: {}\n'.format(prev_model_path))
-    model = load_model(prev_model_path)
-    
-    loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us)
-    print("Training Accuracy: ", acc)
- 
-    loss, acc = model.evaluate(xval_tkns, dummy_y_val)
-    print("Test Accuracy: ", acc)
+    else: 
+        saved_model_path = \
+            "saved_models/lstm_tokens5000_10epochs_{}.h5".format(datetime.now().strftime("%Y%m%d-%H:%M:%S")) 
+        print('\nWill save model to: {}\n'.format(saved_model_path))
+        
+        embedding_dim=50
+        model=Sequential()
+        model.add(layers.Embedding(input_dim=vocab_size,
+            output_dim=embedding_dim,
+            input_length=maxlen))
+        model.add(layers.LSTM(units=50,return_sequences=True))
+        model.add(layers.LSTM(units=10))
+        model.add(layers.Dropout(0.5))
+        model.add(layers.Dense(8))
+        model.add(layers.Dense(3, activation="sigmoid"))
+        model.compile(optimizer="adam", loss="categorical_crossentropy", 
+            metrics=['accuracy'])
+        print('\n')
+        model.summary()
+        
+        start_time = timeit.default_timer()
+        
+        model.fit(xtrain_tkns, dummy_y_train_us, epochs=10, batch_size=64)
+
+        # Save entire model to a HDF5 file
+        model.save(saved_model_path)
+        
+        elapsed = timeit.default_timer() - start_time
+        print('\nTook {:.2f}s to train'.format(elapsed))
+
+        loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us)
+        print("Training Accuracy: ", acc)
+
+        loss, acc = model.evaluate(xval_tkns, dummy_y_val)
+        print("Test Accuracy: ", acc)

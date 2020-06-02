@@ -159,6 +159,35 @@ def undersample_train(df, target, indices_train, y_train):
 #######################################################
 
 
+# Complete preprocessing, splitting, undersampling #################################################
+
+def preprocess_split_undersample():
+    # Data preprocessing
+    try: 
+        path = sys.argv[1]
+        action = sys.argv[2]
+    except IndexError:
+        print('Please specify path to data files and action ("model"/"kmeans").')
+        sys.exit()
+    print('Processing files in {}...'.format(path))
+    df = merge_csv_mult_dir(sys.argv[1])
+    df = clean_and_prep(df)
+
+    # Train/val/test split
+    print('\nSplitting data into train/val/test...')
+    target = 'sentiment'
+    features = ['review_body']
+    feature = 'review_body'
+    X_train, X_val, X_test, y_train, y_val, y_test, indices_train, indices_val, indices_test = \
+        train_test_val_split(df, target, features)
+    train_df_us = undersample_train(df, target, indices_train, y_train)
+    
+    return X_train, X_val, X_test, y_train, y_val, y_test, \
+        indices_train, indices_val, indices_test, train_df_us, df, action
+
+############################################################
+
+
 # NLP ##################################################
 
 # Use NLTK's WordNetLemmatizer
@@ -195,26 +224,37 @@ def tfidf_cv(X, y, model, cv=5, scoring=['accuracy']):
 if __name__ == "__main__":
 
     # Data preprocessing
-    try: 
-        path = sys.argv[1]
-        action = sys.argv[2]
-    except IndexError:
-        print('Please specify path to data files and action ("model"/"kmeans").')
-        sys.exit()
-    print('Processing files in {}...'.format(path))
-    df = merge_csv_mult_dir(sys.argv[1])
-    df = clean_and_prep(df)
+    X_train, X_val, X_test, y_train, y_val, y_test, \
+        indices_train, indices_val, indices_test, \
+            train_df_us, df, action = preprocess_split_undersample()
+    
+    # # Data preprocessing
+    # try: 
+    #     path = sys.argv[1]
+    #     action = sys.argv[2]
+    # except IndexError:
+    #     print('Please specify path to data files and action ("model"/"kmeans").')
+    #     sys.exit()
+    # print('Processing files in {}...'.format(path))
+    # df = merge_csv_mult_dir(sys.argv[1])
+    # df = clean_and_prep(df)
 
-    # Train/val/test split
-    print('\nSplitting data into train/val/test...')
+    # # Train/val/test split
+    # print('\nSplitting data into train/val/test...')
+    # target = 'sentiment'
+    # features = ['review_body']
+    # feature = 'review_body'
+    # X_train, X_val, X_test, y_train, y_val, y_test, indices_train, indices_val, indices_test = \
+    #     train_test_val_split(df, target, features)
+    # train_df_us = undersample_train(df, target, indices_train, y_train)
+    
     target = 'sentiment'
     features = ['review_body']
     feature = 'review_body'
-    X_train, X_val, X_test, y_train, y_val, y_test, indices_train, indices_val, indices_test = \
-        train_test_val_split(df, target, features)
-    train_df_us = undersample_train(df, target, indices_train, y_train)
+
     X_train_us = train_df_us[feature].to_list()
     y_train_us = train_df_us[target].to_numpy()
+
     print('\nGetting bag of words for train data...')
     X_train_us_vect = count_vectorize(X_train_us)
 
