@@ -77,7 +77,12 @@ if __name__ == "__main__":
     
     start_time = timeit.default_timer()
     
-    model.fit(xtrain_tkns, dummy_y_train_us, epochs=20, batch_size=16)
+    model.fit(xtrain_tkns, dummy_y_train_us, epochs=4, batch_size=320)
+    
+    saved_model_path = \
+        "saved_models/lstm_tokens5000_20epochs_{}.h5".format(datetime.now().strftime("%Y%m%d")) 
+    # Save entire model to a HDF5 file
+    model.save(saved_model_path)
     
     loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us)
     print("Training Accuracy: ", acc.round(2))
@@ -87,8 +92,3 @@ if __name__ == "__main__":
     
     elapsed = timeit.default_timer() - start_time
     print('\nTook {:.2f}s to finish'.format(elapsed))
-    
-    saved_model_path = \
-        "saved_models/lstm_tokens5000_20epochs_{}.h5".format(datetime.now().strftime("%Y%m%d")) 
-    # Save entire model to a HDF5 file
-    model.save(saved_model_path)
