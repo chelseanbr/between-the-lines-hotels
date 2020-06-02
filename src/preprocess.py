@@ -9,6 +9,7 @@ from sklearn.model_selection import cross_validate
 from sklearn.pipeline import Pipeline
 
 import nltk
+nltk.download('wordnet')
 from nltk.stem.wordnet import WordNetLemmatizer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
