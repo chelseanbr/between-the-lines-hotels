@@ -54,8 +54,10 @@ if __name__ == "__main__":
     tonkenize = tokenizer.fit_on_texts(df[feature].values)
     xtrain_tkns = tokenizer.texts_to_sequences(X_train_us_vals)
     xval_tkns = tokenizer.texts_to_sequences(X_val_vals)
+
+    vocab_size=len(tokenizer.word_index)+1
     
-    maxlen = 5000
+    maxlen = 250
     xtrain_tkns = pad_sequences(xtrain_tkns,padding='post', maxlen=maxlen)
     xval_tkns = pad_sequences(xval_tkns,padding='post', maxlen=maxlen)
         
@@ -63,7 +65,7 @@ if __name__ == "__main__":
     
     embedding_dim=50
     model=Sequential()
-    model.add(layers.Embedding(input_dim=5000,
+    model.add(layers.Embedding(input_dim=vocab_size,
           output_dim=embedding_dim,
           input_length=maxlen))
     model.add(layers.LSTM(units=50,return_sequences=True))
@@ -77,8 +79,7 @@ if __name__ == "__main__":
     
     start_time = timeit.default_timer()
     
-<<<<<<< HEAD
-    model.fit(xtrain_tkns, dummy_y_train_us, epochs=4, batch_size=320)
+    model.fit(xtrain_tkns, dummy_y_train_us, epochs=10, batch_size=64)
     
     saved_model_path = \
         "saved_models/lstm_tokens5000_20epochs_{}.h5".format(datetime.now().strftime("%Y%m%d")) 
@@ -89,15 +90,13 @@ if __name__ == "__main__":
     print("Training Accuracy: ", acc.round(2))
  
     loss, acc = model.evaluate(xval_tkns, dummy_y_val)
-=======
     model.fit(xtrain_tkns, dummy_y_train_us, epochs=20, batch_size=16, verbose=2)
     
     loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us, verbose=2)
-    print("Training Accuracy: ", acc.round(2))
+    print("Training Accuracy: ", acc)
  
     loss, acc = model.evaluate(xval_tkns, dummy_y_val, verbose=2)
->>>>>>> 196ad5ea52e89fed9d9b4da159c3b3bb3c878d25
-    print("Test Accuracy: ", acc.round(2))
+    print("Test Accuracy: ", acc
     
     elapsed = timeit.default_timer() - start_time
     print('\nTook {:.2f}s to finish'.format(elapsed))
