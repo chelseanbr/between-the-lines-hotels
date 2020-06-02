@@ -14,6 +14,10 @@ from datetime import datetime
 import timeit
 import preprocess as prep
 
+# Just disables annoying TF warning, doesn't enable AVX/FMA
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
 if __name__ == "__main__":
     try: 
         path = sys.argv[1]
