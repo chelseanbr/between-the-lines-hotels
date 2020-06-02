@@ -70,6 +70,7 @@ def get_epochs_save_path():
                                                              .strftime("%Y%m%d-%H:%M:%S")) 
     print('\nWill save model to: {}\n'.format(saved_model_path))
     model_name = saved_model_path.split('/')[-1]
+    model_name = model_name.split('.')[0]
     return num_epochs, saved_model_path, model_name
         
 
@@ -124,7 +125,7 @@ if __name__ == "__main__":
 
     vocab_size=len(tokenizer.word_index)+1
     
-    maxlen = 280
+    maxlen = 200
     xtrain_tkns = pad_sequences(xtrain_tkns,padding='post', maxlen=maxlen)
     xval_tkns = pad_sequences(xval_tkns,padding='post', maxlen=maxlen)
         
@@ -165,7 +166,7 @@ if __name__ == "__main__":
     elif action == 'new_model': 
         num_epochs, saved_model_path, model_name = get_epochs_save_path()
         
-        embedding_dim=64
+        embedding_dim=128
         
 #         model=Sequential()
 #         model.add(layers.Embedding(input_dim=vocab_size,
