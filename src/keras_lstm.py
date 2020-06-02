@@ -33,7 +33,7 @@ plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
 plt.rc('figure', titlesize=BIGGEST_SIZE)  # fontsize of the figure title
 
-def plot_graphs(history, string):
+def plot_graphs(history, string, model_name):
     # Set plot sizes
     SMALL_SIZE = 22
     MEDIUM_SIZE = 24
@@ -55,17 +55,33 @@ def plot_graphs(history, string):
     plt.legend([string, 'val_'+ string])
 #     plt.show()
     plt.tight_layout()
-    plt.savefig('imgs/lstm_' + string)
+    plt.savefig('imgs/' + model_name + '_' + string)
+
+def get_epochs_save_path():
+    try: 
+        num_epochs = int(sys.argv[-1])
+    except IndexError:
+        print('Using default num_epochs = 5')
+        num_epochs = 5
+
+    saved_model_path = \
+        "saved_models/lstm_tokens5000_{}epochs_{}.h5".format(num_epochs,
+                                                             datetime.now()
+                                                             .strftime("%Y%m%d-%H:%M:%S")) 
+    print('\nWill save model to: {}\n'.format(saved_model_path))
+    model_name = saved_model_path.split('/')[-1]
+    return num_epochs, saved_model_path, model_name
+        
 
 if __name__ == "__main__":
     try: 
         path = sys.argv[1]
         action = sys.argv[2]
     except IndexError:
-        print('Please specify path to data files and action ("model"/"load").')
+        print('Please specify path to data files and action ("new_model"/"load"/"train_more").')
         sys.exit()
     
-    if action == 'load':
+    if action == 'load' or action == 'train_more':
         try: 
             model_path = sys.argv[3]
         except IndexError:
@@ -122,19 +138,32 @@ if __name__ == "__main__":
         loss, acc = model.evaluate(xval_tkns, dummy_y_val)
         print("Test Accuracy: ", acc)
     
-    elif action == 'model': 
+    elif action == 'train_more': 
+        num_epochs, saved_model_path, model_name = get_epochs_save_path()
         
-        try: 
-            num_epochs = int(sys.argv[3])
-        except IndexError:
-            print('Using default num_epochs = 5')
-            num_epochs = 5
+        # Train
+        start_time = timeit.default_timer()
         
-        saved_model_path = \
-            "saved_models/lstm_tokens5000_{}epochs_{}.h5".format(num_epochs,
-                                                                 datetime.now()
-                                                                 .strftime("%Y%m%d-%H:%M:%S")) 
-        print('\nWill save model to: {}\n'.format(saved_model_path))
+        history = model.fit(xtrain_tkns, dummy_y_train_us, epochs=num_epochs, 
+                  validation_data=(xval_tkns, dummy_y_val))
+
+        # Save entire model to a HDF5 file
+        model.save(saved_model_path)
+        
+        elapsed = timeit.default_timer() - start_time
+        print('\nTook {:.2f}s to train'.format(elapsed))
+        
+        plot_graphs(history, "accuracy", model_name)
+        plot_graphs(history, "loss", model_name)
+
+        loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us)
+        print("Training Accuracy: ", acc)
+
+        loss, acc = model.evaluate(xval_tkns, dummy_y_val)
+        print("Test Accuracy: ", acc)
+        
+    elif action == 'new_model': 
+        num_epochs, saved_model_path, model_name = get_epochs_save_path()
         
         embedding_dim=64
         
@@ -165,6 +194,7 @@ if __name__ == "__main__":
         print('\n')
         model.summary()
         
+        # Train
         start_time = timeit.default_timer()
         
         history = model.fit(xtrain_tkns, dummy_y_train_us, epochs=num_epochs, 
@@ -176,8 +206,8 @@ if __name__ == "__main__":
         elapsed = timeit.default_timer() - start_time
         print('\nTook {:.2f}s to train'.format(elapsed))
         
-        plot_graphs(history, "accuracy")
-        plot_graphs(history, "loss")
+        plot_graphs(history, "accuracy", model_name)
+        plot_graphs(history, "loss", model_name)
 
         loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us)
         print("Training Accuracy: ", acc)
