@@ -87,6 +87,11 @@ if __name__ == "__main__":
     
     model.fit(xtrain_tkns, dummy_y_train_us, epochs=10, batch_size=64)
     
+<<<<<<< HEAD
+=======
+    saved_model_path = \
+        "saved_models/lstm_tokens5000_10epochs_{}.h5".format(datetime.now().strftime("%Y%m%d")) 
+>>>>>>> 53e8dfac2f4e707128c804bd7ade0e7d34269a77
     # Save entire model to a HDF5 file
     model.save(saved_model_path)
     
