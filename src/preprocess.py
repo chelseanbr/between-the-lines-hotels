@@ -197,8 +197,9 @@ if __name__ == "__main__":
     # Data preprocessing
     try: 
         path = sys.argv[1]
+        action = sys.argv[2]
     except IndexError:
-        print('Please specify path to data files.')
+        print('Please specify path to data files and action ("model"/"kmeans").')
         sys.exit()
     print('Processing files in {}...'.format(path))
     df = merge_csv_mult_dir(sys.argv[1])
@@ -217,22 +218,28 @@ if __name__ == "__main__":
     print('\nGetting bag of words for train data...')
     X_train_us_vect = count_vectorize(X_train_us)
 
-    # Modeling
-    print('\nStarting modeling...')
+    if action == 'model': 
+        # Modeling
+        print('\nStarting modeling...')
 
-    lr = LogisticRegression(multi_class='multinomial', solver='newton-cg')
-    mnb = MultinomialNB()
-    rf = RandomForestClassifier()
-    gb = GradientBoostingClassifier()
-    xc = xgb.XGBClassifier()
+        lr = LogisticRegression(multi_class='multinomial', solver='newton-cg')
+        mnb = MultinomialNB()
+        rf = RandomForestClassifier()
+        gb = GradientBoostingClassifier()
+        xc = xgb.XGBClassifier()
 
-    # models = dict.fromkeys([lr]) # single model test
-    models = dict.fromkeys([lr, mnb, rf, gb, xc])
+        # models = dict.fromkeys([lr]) # single model test
+        models = dict.fromkeys([lr, mnb, rf, gb, xc])
 
-    for key in models:
-        print('\n\tFitting {}...'.format(key.__class__.__name__))
-        scores = tfidf_cv(X_train_us_vect, y_train_us, key, cv=5)
-        models[key] = scores
-        print('\t\tAverage train accuracy:', np.mean(models[key]['train_accuracy']))
-        print('\t\tAverage test accuracy:', np.mean(models[key]['test_accuracy']))
-        print('\n')
+        for key in models:
+            print('\n\tFitting {}...'.format(key.__class__.__name__))
+            scores = tfidf_cv(X_train_us_vect, y_train_us, key, cv=5)
+            models[key] = scores
+            print('\t\tAverage train accuracy:', np.mean(models[key]['train_accuracy']))
+            print('\t\tAverage test accuracy:', np.mean(models[key]['test_accuracy']))
+            print('\n')
+
+    elif action == 'kmeans':
+        
+    else:
+        print('Unknown action:', action)

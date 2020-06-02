@@ -3,6 +3,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import Sequential
 from tensorflow.keras import layers
 from tensorflow.keras import utils
+from keras.models import load_model
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import LabelEncoder
@@ -14,6 +15,7 @@ import timeit
 import preprocess as prep
 
 if __name__ == "__main__":
+    print('updated')
 
     # Data preprocessing
     try: 
@@ -61,7 +63,11 @@ if __name__ == "__main__":
     xtrain_tkns = pad_sequences(xtrain_tkns,padding='post', maxlen=maxlen)
     xval_tkns = pad_sequences(xval_tkns,padding='post', maxlen=maxlen)
         
+    saved_model_path = \
+        "saved_models/lstm_tokens5000_10epochs_{}.h5".format(datetime.now().strftime("%Y%m%d-%H:%M:%S"))
     print('\nStarting modeling...')
+    
+    print('\nWill save model to ', saved_model_path) 
     
     embedding_dim=50
     model=Sequential()
@@ -81,13 +87,13 @@ if __name__ == "__main__":
     
     model.fit(xtrain_tkns, dummy_y_train_us, epochs=10, batch_size=64)
     
-    saved_model_path = \
-        "saved_models/lstm_tokens5000_20epochs_{}.h5".format(datetime.now().strftime("%Y%m%d")) 
     # Save entire model to a HDF5 file
     model.save(saved_model_path)
     
+    model = load_model('saved_models/lstm_tokens5000_10epochs_20200602.h5')
+    
     loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us)
-    print("Training Accuracy: ", acc.round(2))
+    print("Training Accuracy: ", acc)
  
     loss, acc = model.evaluate(xval_tkns, dummy_y_val)
     model.fit(xtrain_tkns, dummy_y_train_us, epochs=20, batch_size=16, verbose=2)
@@ -96,7 +102,7 @@ if __name__ == "__main__":
     print("Training Accuracy: ", acc)
  
     loss, acc = model.evaluate(xval_tkns, dummy_y_val, verbose=2)
-    print("Test Accuracy: ", acc
+    print("Test Accuracy: ", acc)
     
     elapsed = timeit.default_timer() - start_time
     print('\nTook {:.2f}s to finish'.format(elapsed))
