@@ -118,14 +118,15 @@ if __name__ == "__main__":
     X_train_us_vals = train_df_us[feature].values
     X_val_vals = df.loc[indices_val, feature].values
     
-    tokenizer = Tokenizer(num_words=10000)
+    tokenizer = Tokenizer(num_words=5000)
     tonkenize = tokenizer.fit_on_texts(df[feature].values)
     xtrain_tkns = tokenizer.texts_to_sequences(X_train_us_vals)
     xval_tkns = tokenizer.texts_to_sequences(X_val_vals)
 
     vocab_size=len(tokenizer.word_index)+1
     
-    maxlen = 400
+    maxlen = 500
+    
     xtrain_tkns = pad_sequences(xtrain_tkns,padding='post', maxlen=maxlen)
     xval_tkns = pad_sequences(xval_tkns,padding='post', maxlen=maxlen)
         
@@ -167,6 +168,8 @@ if __name__ == "__main__":
         num_epochs, saved_model_path, model_name = get_epochs_save_path()
         
         embedding_dim=64
+        lstm_cells = 100
+        batch_size=500
         
 #         model=Sequential()
 #         model.add(layers.Embedding(input_dim=vocab_size,
@@ -179,12 +182,14 @@ if __name__ == "__main__":
 #         model.add(layers.Dense(3, activation="softmax"))
         
         model = Sequential([
-        # Add an Embedding layer expecting input vocab of size 5000, and output embedding dimension of size 64 we set at the top
-        layers.Embedding(vocab_size, embedding_dim),
-        layers.Bidirectional(layers.LSTM(embedding_dim)),
+        # Add an Embedding layer expecting input vocab of size 10000, and output embedding dimension of size 100 we set at the top
+        layers.Embedding(vocab_size, embedding_dim, input_length=maxlen),
+        layers.Dropout(0.2),
+        layers.Bidirectional(layers.LSTM(lstm_cells)),
     #    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(32)),
         # use ReLU in place of tanh function since they are very good alternatives of each other.
-        layers.Dense(embedding_dim, activation='relu'),
+        layers.Dense(lstm_cells*4, activation='relu'),
+        layers.Dropout(0.5),
         # Add a Dense layer with 6 units and softmax activation.
         # When we have multiple outputs, softmax convert outputs layers into a probability distribution.
         layers.Dense(3, activation='softmax')
@@ -198,7 +203,7 @@ if __name__ == "__main__":
         # Train
         start_time = timeit.default_timer()
         
-        history = model.fit(xtrain_tkns, dummy_y_train_us, epochs=num_epochs, 
+        history = model.fit(xtrain_tkns, dummy_y_train_us, epochs=num_epochs, batch_size=batch_size,
                   validation_data=(xval_tkns, dummy_y_val))
 
         # Save entire model to a HDF5 file
