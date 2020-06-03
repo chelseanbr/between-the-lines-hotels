@@ -5,7 +5,7 @@ import webbrowser
 import io
 import re
 import sys
-import pandas as pd
+# import pandas as pd
 
 def display(content, filename='output.html'):
     with open(filename, 'wb') as f:
@@ -422,10 +422,126 @@ if __name__ == "__main__":
                 'https://www.tripadvisor.com/Hotel_Review-g293916-d301411-Reviews-Mandarin_Oriental_Bangkok-Bangkok.html',\
                 'https://www.tripadvisor.com/Hotel_Review-g1507054-d15517242-Reviews-DusitD2_Ao_Nang_Krabi-Ao_Nang_Krabi_Town_Krabi_Province.html']
     
-    links_4 = ['',\
-                '',\
-                '',\
-                '',\
+    links_4 = ['https://www.tripadvisor.com/Hotel_Review-g187791-d596437-Reviews-The_Inn_At_The_Roman_Forum-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d7976127-Reviews-A_Roma_Lifestyle_Hotel-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d2372788-Reviews-Dharma_Luxury_Hotel-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d1178206-Reviews-NH_Collection_Roma_Giustiniano-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d230612-Reviews-Hotel_Colosseum-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d208552-Reviews-Boutique_Hotel_Campo_de_Fiori-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d191099-Reviews-Albergo_del_Senato-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d203175-Reviews-Hotel_Barocco-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d232875-Reviews-The_Guardian-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d229054-Reviews-Hotel_Nazionale-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d231290-Reviews-Dharma_Style_Hotel-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d239263-Reviews-Hotel_Santa_Maria-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d275876-Reviews-Palazzo_Naiadi_The_Dedica_Anthology-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d316644-Reviews-Hotel_Raffaello-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d203094-Reviews-Best_Western_Hotel_President-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d236134-Reviews-Hotel_Abruzzi-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d228988-Reviews-Amalfi_Hotel-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d264648-Reviews-Hotel_delle_Province-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d543473-Reviews-Trilussa_Palace_Congress_Spa-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d205841-Reviews-Hotel_Alexandra-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d1084840-Reviews-QuodLibet-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d232851-Reviews-Hotel_De_Russie-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d1510471-Reviews-UNAHOTELS_Deco_Roma-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d203080-Reviews-The_Westin_Excelsior_Rome-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d650621-Reviews-Yes_Hotel-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d7134644-Reviews-Palazzo_Navona_Hotel-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d629750-Reviews-Hotel_Villa_Eur_Parco_dei_Pini-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d1729030-Reviews-IQ_Hotel_Roma-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d2213312-Reviews-The_First_Roma_Arte-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d557956-Reviews-Hotel_Golden-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d248861-Reviews-Hotel_Adriano-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d229043-Reviews-Hotel_Hiberia-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d2238199-Reviews-Hotel_Lunetta-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d577598-Reviews-Fabulous_Village-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d229087-Reviews-The_Inn_At_The_Spanish_Steps-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d4698947-Reviews-Appia_Antica_Resort-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d229991-Reviews-Best_Western_Plus_Hotel_Spring_House-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d208768-Reviews-Hotel_Italia-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d229102-Reviews-Hotel_delle_Nazioni-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d238031-Reviews-Hotel_Modigliani-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d3244512-Reviews-The_Independent_Hotel-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d203082-Reviews-Hotel_Regno-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d229036-Reviews-Hotel_Splendide_Royal-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d208553-Reviews-Kolbe_Hotel_Rome-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d190138-Reviews-Rome_Cavalieri_A_Waldorf_Astoria_Hotel-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d203087-Reviews-The_St_Regis_Rome-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d263860-Reviews-The_Beehive-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d3964772-Reviews-Rome_Times_Hotel-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d229422-Reviews-Crowne_Plaza_Rome_St_Peter_s-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d203093-Reviews-Best_Western_Plus_Hotel_Universo-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d581021-Reviews-Yellow_Square-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d228970-Reviews-FH_Grand_Hotel_Palatino-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d2163417-Reviews-Villa_Agrippina_Gran_Melia-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d230405-Reviews-NH_Collection_Roma_Vittorio_Veneto-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d203086-Reviews-Hotel_Morgana-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d228986-Reviews-Aldrovandi_Villa_Borghese-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d228975-Reviews-Hotel_Savoy_Roma-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d232888-Reviews-Ariston_Hotel-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d237193-Reviews-Hotel_Grifo-Rome_Lazio.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g187791-d231944-Reviews-Luxe_Rose_Garden_Hotel_Roma-Rome_Lazio.html']
+
+    links_6 = ['https://www.tripadvisor.com/Hotel_Review-g186338-d1507196-Reviews-Apex_London_Wall_Hotel-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d209229-Reviews-The_Bloomsbury-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d193108-Reviews-Rosewood_London-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d1845678-Reviews-Corinthia_London-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d187569-Reviews-The_Langham_London-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d1026084-Reviews-The_Megaro_Hotel-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d192031-Reviews-Novotel_London_Waterloo-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d192033-Reviews-Radisson_Blu_Edwardian_Hampshire_Hotel-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d187685-Reviews-Claridge_s-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d193113-Reviews-St_Giles_London-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d195279-Reviews-Corus_Hyde_Park_Hotel_Sure_Hotel_Collection_by_Best_Western-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d2539103-Reviews-Apex_Temple_Court_Hotel-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d572859-Reviews-Apex_City_of_London_Hotel-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d6822967-Reviews-The_Hoxton_Holborn-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d199849-Reviews-DoubleTree_by_Hilton_Hotel_London_Docklands_Riverside-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d8505156-Reviews-Hilton_London_Bankside-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d193121-Reviews-The_Milestone_Hotel_and_Residences-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d309532-Reviews-Ace_Hotel_London_Shoreditch-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d4062677-Reviews-The_Resident_Soho-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d798951-Reviews-Andaz_London_Liverpool_Street-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d193123-Reviews-Royal_Garden_Hotel-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d3398027-Reviews-The_Westbridge_Hotel-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d195185-Reviews-Hilton_London_Kensington-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d2554997-Reviews-The_Ampersand_Hotel-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d195204-Reviews-DoubleTree_by_Hilton_Hotel_London_Victoria-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d291617-Reviews-Novotel_London_Excel-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d193133-Reviews-Holiday_Inn_London_Kensington_Forum-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d7179933-Reviews-Point_A_Hotel_London_Canary_Wharf-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d192030-Reviews-DoubleTree_by_Hilton_London_Angel_Kings_Cross_Formerly_Islington-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d192068-Reviews-Pullman_London_St_Pancras_Hotel-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d278540-Reviews-Grand_Plaza_Serviced_Apartments-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d248802-Reviews-St_Ermin_s_Hotel_Autograph_Collection-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d3507299-Reviews-DoubleTree_by_Hilton_London_Greenwich-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d577546-Reviews-The_W14_Kensington-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d585836-Reviews-Hilton_London_Canary_Wharf-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d210361-Reviews-Premier_Inn_London_County_Hall_hotel-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d1600126-Reviews-Rafayel_on_the_Left_Bank-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d189041-Reviews-The_President_Hotel-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d258944-Reviews-Park_Grand_London_Lancaster_Gate-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d6703394-Reviews-The_Z_Hotel_Piccadilly-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d289185-Reviews-Ibis_London_Excel_Docklands-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d187594-Reviews-The_Athenaeum_Hotel_Residences-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d236350-Reviews-Sofitel_London_St_James-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d188961-Reviews-Hotel_41-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d193043-Reviews-Citadines_Trafalgar_Square_London-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d7193214-Reviews-Premier_Inn_London_City_Aldgate_hotel-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d5823268-Reviews-Dorsett_Shepherds_Bush_London-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d255225-Reviews-Flemings_Mayfair-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d254575-Reviews-Luna_Simone_Hotel-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d195285-Reviews-Sloane_Square_Hotel-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d193122-Reviews-The_Gore_Starhotels_Collezione-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d210066-Reviews-Alhambra_Hotel-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d189735-Reviews-The_Resident_Kensington_formerly_The_Nadler_Kensington-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d1719249-Reviews-H10_London_Waterloo-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d195198-Reviews-Crowne_Plaza_London_Kensington-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d9950629-Reviews-Hub_by_Premier_Inn_London_Spitalfields_Brick_Lane_hotel-London_England.html',\
+                'https://www.tripadvisor.com/Hotel_Review-g186338-d1159072-Reviews-Novotel_London_Paddington_Hotel-London_England.html']
+    
+    links_temp = ['',\
                 '',\
                 '',\
                 '',\
@@ -488,8 +604,8 @@ if __name__ == "__main__":
     #     'https://www.tripadvisor.com/Hotel_Review-g60763-d93437-Reviews-Hotel_Edison-New_York_City_New_York.html',\
     #     'https://www.tripadvisor.com/Hotel_Review-g60763-d3533197-Reviews-Hyatt_Union_Square_New_York-New_York_City_New_York.html']
 
-    url_pgs = [links_3]
-    pgs = ['links_3']
+    url_pgs = [links_6]
+    pgs = ['links_6']
 
     for url_pg, pg in zip(url_pgs, pgs):
         print(pg)

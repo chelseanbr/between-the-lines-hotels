@@ -228,7 +228,7 @@ if __name__ == "__main__":
         path = sys.argv[1]
         action = sys.argv[2]
     except IndexError:
-        print('Please specify path to data files and action ("model"/"kmeans").')
+        print('Please specify path to data files and action ("model").')
         sys.exit()
 
     # Data preprocessing
@@ -267,20 +267,20 @@ if __name__ == "__main__":
             print('\t\tAverage test accuracy:', np.mean(models[key]['test_accuracy']))
             print('\n')
 
-    elif action == 'kmeans':
-        print('\nStarting kmeans clustering...')
-        vocab = X_train_us_vect.columns
-        kmeans = KMeans(n_clusters=5)
+    # elif action == 'kmeans':
+    #     print('\nStarting kmeans clustering...')
+    #     vocab = X_train_us_vect.columns
+    #     kmeans = KMeans(n_clusters=5)
 
-        tfidf = TfidfTransformer()
-        X_train_us_vect = tfidf.fit_transform(X_train_us_vect)
-        print('\n\tFitting kmeans...')
-        kmeans.fit(X_train_us_vect)
+    #     tfidf = TfidfTransformer()
+    #     X_train_us_vect = tfidf.fit_transform(X_train_us_vect)
+    #     print('\n\tFitting kmeans...')
+    #     kmeans.fit(X_train_us_vect)
 
-        top_centroids = kmeans.cluster_centers_.argsort()[:,-1:-11:-1]
-        print("\n3) top features (words) for each cluster:")
-        for num, centroid in enumerate(top_centroids):
-            print(f"{num}, {', '.join(vocab[i] for i in centroid)}")
+    #     top_centroids = kmeans.cluster_centers_.argsort()[:,-1:-11:-1]
+    #     print("\n3) top features (words) for each cluster:")
+    #     for num, centroid in enumerate(top_centroids):
+    #         print(f"{num}, {', '.join(vocab[i] for i in centroid)}")
 
     else:
         print('Unknown action:', action)
