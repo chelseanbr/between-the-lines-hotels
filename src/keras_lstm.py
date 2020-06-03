@@ -118,14 +118,14 @@ if __name__ == "__main__":
     X_train_us_vals = train_df_us[feature].values
     X_val_vals = df.loc[indices_val, feature].values
     
-    tokenizer = Tokenizer(num_words=5000)
+    tokenizer = Tokenizer(num_words=10000)
     tonkenize = tokenizer.fit_on_texts(df[feature].values)
     xtrain_tkns = tokenizer.texts_to_sequences(X_train_us_vals)
     xval_tkns = tokenizer.texts_to_sequences(X_val_vals)
 
     vocab_size=len(tokenizer.word_index)+1
     
-    maxlen = 200
+    maxlen = 400
     xtrain_tkns = pad_sequences(xtrain_tkns,padding='post', maxlen=maxlen)
     xval_tkns = pad_sequences(xval_tkns,padding='post', maxlen=maxlen)
         
@@ -166,7 +166,7 @@ if __name__ == "__main__":
     elif action == 'new_model': 
         num_epochs, saved_model_path, model_name = get_epochs_save_path()
         
-        embedding_dim=128
+        embedding_dim=64
         
 #         model=Sequential()
 #         model.add(layers.Embedding(input_dim=vocab_size,
