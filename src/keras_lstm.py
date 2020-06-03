@@ -125,7 +125,7 @@ if __name__ == "__main__":
 
     vocab_size=len(tokenizer.word_index)+1
     
-    maxlen = 500
+    maxlen = 500 #PARAMS
     
     xtrain_tkns = pad_sequences(xtrain_tkns,padding='post', maxlen=maxlen)
     xval_tkns = pad_sequences(xval_tkns,padding='post', maxlen=maxlen)
@@ -167,9 +167,9 @@ if __name__ == "__main__":
     elif action == 'new_model': 
         num_epochs, saved_model_path, model_name = get_epochs_save_path()
         
-        embedding_dim=64
-        lstm_cells = 100
-        batch_size=500
+        embedding_dim=64 #PARAMS
+        lstm_cells = 100 #PARAMS
+        batch_size=500 #PARAMS
         
 #         model=Sequential()
 #         model.add(layers.Embedding(input_dim=vocab_size,
@@ -185,12 +185,13 @@ if __name__ == "__main__":
         # Add an Embedding layer expecting input vocab of size 10000, and output embedding dimension of size 100 we set at the top
         layers.Embedding(vocab_size, embedding_dim, input_length=maxlen),
         layers.Dropout(0.2),
-        layers.Bidirectional(layers.LSTM(lstm_cells)),
+        layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
         layers.Bidirectional(layers.LSTM(lstm_cells)),
     #    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(32)),
         # use ReLU in place of tanh function since they are very good alternatives of each other.
-        layers.Dense(lstm_cells*4, activation='relu'),
         layers.Dropout(0.5),
+        layers.Dense(lstm_cells*4, activation='relu'),
+        # layers.Dropout(0.5),
         # Add a Dense layer with 6 units and softmax activation.
         # When we have multiple outputs, softmax convert outputs layers into a probability distribution.
         layers.Dense(3, activation='softmax')
