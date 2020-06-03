@@ -174,8 +174,8 @@ if __name__ == "__main__":
         num_epochs, saved_model_path, model_name = get_epochs_save_path()
         
         embedding_dim=64 #PARAMS
-        lstm_cells = 100 #PARAMS
-        batch_size=1000 #PARAMS
+        lstm_cells = 96 #PARAMS
+        batch_size=1024 #PARAMS
         
 #         model=Sequential()
 #         model.add(layers.Embedding(input_dim=vocab_size,
