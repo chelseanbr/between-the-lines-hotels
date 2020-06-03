@@ -14,6 +14,8 @@ import sys
 from datetime import datetime
 import timeit
 import preprocess as prep
+from nltk.corpus import stopwords
+STOPWORDS = set(stopwords.words('english'))
 
 # Just disables annoying TF warning, doesn't enable AVX/FMA
 import os
@@ -117,18 +119,22 @@ if __name__ == "__main__":
     print('\nTokenizing X_train/val data...')
     X_train_us_vals = train_df_us[feature].values
     X_val_vals = df.loc[indices_val, feature].values
+
+    maxlen = 400 #PARAMS
+    oov_tok = '<OOV>'
+    num_words = 5000
+    trunc_type = 'post'
+    padding_type = 'post'
     
-    tokenizer = Tokenizer(num_words=5000)
-    tonkenize = tokenizer.fit_on_texts(df[feature].values)
+    tokenizer = Tokenizer(num_words=num_words, oov_token=oov_tok)
+    tonkenize = tokenizer.fit_on_texts(X_train_us_vals)
     xtrain_tkns = tokenizer.texts_to_sequences(X_train_us_vals)
     xval_tkns = tokenizer.texts_to_sequences(X_val_vals)
 
     vocab_size=len(tokenizer.word_index)+1
-    
-    maxlen = 500 #PARAMS
-    
-    xtrain_tkns = pad_sequences(xtrain_tkns,padding='post', maxlen=maxlen)
-    xval_tkns = pad_sequences(xval_tkns,padding='post', maxlen=maxlen)
+        
+    xtrain_tkns = pad_sequences(xtrain_tkns,padding=padding_type, truncating=trunc_type, maxlen=maxlen)
+    xval_tkns = pad_sequences(xval_tkns,padding=padding_type, truncating=trunc_type, maxlen=maxlen)
         
     print('\nStarting modeling...')
 
