@@ -169,7 +169,7 @@ if __name__ == "__main__":
         
         embedding_dim=64 #PARAMS
         lstm_cells = 100 #PARAMS
-        batch_size=500 #PARAMS
+        batch_size=1000 #PARAMS
         
 #         model=Sequential()
 #         model.add(layers.Embedding(input_dim=vocab_size,
