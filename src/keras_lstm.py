@@ -186,6 +186,7 @@ if __name__ == "__main__":
         layers.Embedding(vocab_size, embedding_dim, input_length=maxlen),
         layers.Dropout(0.2),
         layers.Bidirectional(layers.LSTM(lstm_cells)),
+        layers.Bidirectional(layers.LSTM(lstm_cells)),
     #    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(32)),
         # use ReLU in place of tanh function since they are very good alternatives of each other.
         layers.Dense(lstm_cells*4, activation='relu'),
