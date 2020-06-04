@@ -210,8 +210,8 @@ if __name__ == "__main__":
         
         model = Sequential([
         # Add an Embedding layer expecting input vocab of size 10000, and output embedding dimension of size 100 we set at the top
-        layers.Embedding(vocab_size, embedding_dim, input_length=maxlen),
-        # layers.Embedding(vocab_size, embedding_dim),
+        # layers.Embedding(vocab_size, embedding_dim, input_length=maxlen),
+        layers.Embedding(vocab_size, embedding_dim),
 
         # layers.Dropout(0.2),
 
@@ -221,7 +221,7 @@ if __name__ == "__main__":
         # use ReLU in place of tanh function since they are very good alternatives of each other.
 
         # layers.LSTM(lstm_cells,return_sequences=True),
-        # layers.LSTM(maxlen),
+        # layers.LSTM(lstm_cells),
 
         layers.Dropout(0.5),
         layers.Dense(embedding_dim, activation='relu'),
