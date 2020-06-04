@@ -115,7 +115,13 @@ if __name__ == "__main__":
     
     # encoded_y_val = encoder.transform(y_val)
     # dummy_y_val = utils.to_categorical(encoded_y_val)
-    
+
+    # Change Train and Val labels into ints
+    label_tokenizer = Tokenizer()
+    label_tokenizer.fit_on_texts(set(y_train_us))
+    training_label_seq = np.array(label_tokenizer.texts_to_sequences(training_label_seq))
+    validation_label_seq = np.array(label_tokenizer.texts_to_sequences(y_val))
+
     # Removing punctuation and stop words from X data
     X_train_us_vals = train_df_us[feature].str.lower()
     X_val_vals = df.loc[indices_val, feature].str.lower()
@@ -155,10 +161,10 @@ if __name__ == "__main__":
 
     if action == 'load':
         
-        loss, acc = model.evaluate(xtrain_tkns, y_train_us)
+        loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
     
-        loss, acc = model.evaluate(xval_tkns, y_val)
+        loss, acc = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
     
     elif action == 'train_more': 
@@ -167,8 +173,8 @@ if __name__ == "__main__":
         # Train
         start_time = timeit.default_timer()
         
-        history = model.fit(xtrain_tkns, y_train_us, epochs=num_epochs, 
-                  validation_data=(xval_tkns, y_val))
+        history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, 
+                  validation_data=(xval_tkns, validation_label_seq))
 
         # Save entire model to a HDF5 file
         model.save(saved_model_path)
@@ -179,10 +185,10 @@ if __name__ == "__main__":
         plot_graphs(history, "accuracy", model_name)
         plot_graphs(history, "loss", model_name)
 
-        loss, acc = model.evaluate(xtrain_tkns, y_train_us)
+        loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
 
-        loss, acc = model.evaluate(xval_tkns, y_val)
+        loss, acc = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
         
     elif action == 'new_model': 
@@ -226,8 +232,8 @@ if __name__ == "__main__":
         # Train
         start_time = timeit.default_timer()
         
-        history = model.fit(xtrain_tkns, y_train_us, epochs=num_epochs, batch_size=batch_size,
-                  validation_data=(xval_tkns, y_val))
+        history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, batch_size=batch_size,
+                  validation_data=(xval_tkns, validation_label_seq))
 
         # Save entire model to a HDF5 file
         model.save(saved_model_path)
@@ -238,10 +244,10 @@ if __name__ == "__main__":
         plot_graphs(history, "accuracy", model_name)
         plot_graphs(history, "loss", model_name)
 
-        loss, acc = model.evaluate(xtrain_tkns, y_train_us)
+        loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
 
-        loss, acc = model.evaluate(xval_tkns, y_val)
+        loss, acc = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
         
     else:
