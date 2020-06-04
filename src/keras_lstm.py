@@ -3,6 +3,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import Sequential
 from tensorflow.keras import layers
 from tensorflow.keras import utils
+from tensorflow.keras import metrics
 from tensorflow.keras.models import load_model
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
@@ -27,7 +28,6 @@ SMALL_SIZE = 22
 MEDIUM_SIZE = 24
 BIGGER_SIZE = 26
 BIGGEST_SIZE = 28
-
 plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
 plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
 plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
@@ -36,25 +36,57 @@ plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
 plt.rc('figure', titlesize=BIGGEST_SIZE)  # fontsize of the figure title
 
-def plot_graphs(history, string, model_name):
-    # Set plot sizes
-    SMALL_SIZE = 22
-    MEDIUM_SIZE = 24
-    BIGGER_SIZE = 26
-    BIGGEST_SIZE = 28
-
-    plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
-    plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
-    plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
-    plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
-    plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
-    plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
-    plt.rc('figure', titlesize=BIGGEST_SIZE)  # fontsize of the figure title
+# Define custom metrics
+def recall(y_true, y_pred):
+    y_true = K.ones_like(y_true) 
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    all_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
     
+    recall = true_positives / (all_positives + K.epsilon())
+    return recall
+
+def precision(y_true, y_pred):
+    y_true = K.ones_like(y_true) 
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    
+    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+    precision = true_positives / (predicted_positives + K.epsilon())
+    return precision
+
+def f1_score(y_true, y_pred):
+    precision = precision_m(y_true, y_pred)
+    recall = recall_m(y_true, y_pred)
+    return 2*((precision*recall)/(precision+recall+K.epsilon()))
+
+class MulticlassTruePositives(metrics.Metric):
+    def __init__(self, name='multiclass_true_positives', **kwargs):
+        super(MulticlassTruePositives, self).__init__(name=name, **kwargs)
+        self.true_positives = self.add_weight(name='tp', initializer='zeros')
+
+    def update_state(self, y_true, y_pred, sample_weight=None):
+        y_pred = tf.reshape(tf.argmax(y_pred, axis=1), shape=(-1, 1))
+        values = tf.cast(y_true, 'int32') == tf.cast(y_pred, 'int32')
+        values = tf.cast(values, 'float32')
+        if sample_weight is not None:
+            sample_weight = tf.cast(sample_weight, 'float32')
+            values = tf.multiply(values, sample_weight)
+        self.true_positives.assign_add(tf.reduce_sum(values))
+
+    def result(self):
+        return self.true_positives
+
+    def reset_states(self):
+        # The state of the metric will be reset at the start of each epoch.
+        self.true_positives.assign(0.)
+
+# Plotting
+def plot_graphs(history, string, model_name):
+    """Plot history graphs for loss/accuracy"""
     plt.plot(history.history[string])
     plt.plot(history.history['val_'+string])
     plt.xlabel("Epochs")
     plt.ylabel(string)
+    plt.title('string')
     plt.legend([string, 'val_'+ string])
 #     plt.show()
     plt.tight_layout()
@@ -99,46 +131,37 @@ if __name__ == "__main__":
     # Data preprocessing
     X_train, X_val, X_test, y_train, y_val, y_test, \
         indices_train, indices_val, indices_test, \
-            train_df_us, df = prep.preprocess_split_undersample(path)
+            train_df, df = prep.preprocess_split(path)
 
     target = 'sentiment'
     features = ['review_body']
     feature = 'review_body'
 
-    y_train_us = train_df_us[target]
-    
-    # # encode class values as integers
-    # encoder = LabelEncoder()
-    # encoded_y_train_us = encoder.fit_transform(y_train_us)
-    # # convert integers to dummy variables (i.e. one hot encoded)
-    # dummy_y_train_us = utils.to_categorical(encoded_y_train_us)
-    
-    # encoded_y_val = encoder.transform(y_val)
-    # dummy_y_val = utils.to_categorical(encoded_y_val)
+    y_train = train_df[target]
 
     # Change Train and Val labels into ints
     label_tokenizer = Tokenizer()
-    label_tokenizer.fit_on_texts(set(y_train_us))
-    training_label_seq = np.array(label_tokenizer.texts_to_sequences(y_train_us))
+    label_tokenizer.fit_on_texts(set(y_train))
+    training_label_seq = np.array(label_tokenizer.texts_to_sequences(y_train))
     validation_label_seq = np.array(label_tokenizer.texts_to_sequences(y_val))
 
     # Removing punctuation and stop words from X data
-    X_train_us_vals = train_df_us[feature].str.lower()
+    X_train_vals = train_df[feature].str.lower()
     X_val_vals = df.loc[indices_val, feature].str.lower()
 
     stop = [re.sub('[^\w\s]', '', stopword) for stopword in STOPWORDS]
     stop_pat = ' | '.join(stop)
     
     print('\nRemoving punctuation and stop words from X_train/val data...')
-    X_train_us_vals = X_train_us_vals.str.replace('[^\w\s]', '')
+    X_train_vals = X_train_vals.str.replace('[^\w\s]', '')
     X_val_vals = X_val_vals.str.replace('[^\w\s]', '')
 
-    X_train_us_vals = X_train_us_vals.str.replace(stop_pat, ' ')
+    X_train_vals = X_train_vals.str.replace(stop_pat, ' ')
     X_val_vals = X_val_vals.str.replace(stop_pat, ' ')
 
     # Tokenize X data
     print('\nTokenizing X_train/val data...')
-    X_train_us_vals = X_train_us_vals.values
+    X_train_vals = X_train_vals.values
     X_val_vals = X_val_vals.values
 
     maxlen = 400 #PARAMS
@@ -148,8 +171,8 @@ if __name__ == "__main__":
     padding_type = 'post'
     
     tokenizer = Tokenizer(num_words=num_words, oov_token=oov_tok)
-    tonkenize = tokenizer.fit_on_texts(X_train_us_vals)
-    xtrain_tkns = tokenizer.texts_to_sequences(X_train_us_vals)
+    tonkenize = tokenizer.fit_on_texts(X_train_vals)
+    xtrain_tkns = tokenizer.texts_to_sequences(X_train_vals)
     xval_tkns = tokenizer.texts_to_sequences(X_val_vals)
 
     vocab_size=len(tokenizer.word_index)+1
@@ -161,10 +184,12 @@ if __name__ == "__main__":
 
     if action == 'load':
         
-        loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
+        # loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc, sparse_cat_acc, f1_score, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
-    
-        loss, acc = model.evaluate(xval_tkns, validation_label_seq)
+
+        # loss, acc = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc, sparse_cat_acc, f1_score, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
     
     elif action == 'train_more': 
@@ -185,10 +210,12 @@ if __name__ == "__main__":
         plot_graphs(history, "accuracy", model_name)
         plot_graphs(history, "loss", model_name)
 
-        loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
+        # loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc, sparse_cat_acc, f1_score, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
 
-        loss, acc = model.evaluate(xval_tkns, validation_label_seq)
+        # loss, acc = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc, sparse_cat_acc, f1_score, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
         
     elif action == 'new_model': 
@@ -215,7 +242,7 @@ if __name__ == "__main__":
 
         # layers.Dropout(0.2),
 
-        # layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
+        layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
         layers.Bidirectional(layers.LSTM(lstm_cells)),
 
         # use ReLU in place of tanh function since they are very good alternatives of each other.
@@ -232,7 +259,7 @@ if __name__ == "__main__":
         ])
         
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", 
-            metrics=['accuracy'])
+            metrics=['accuracy', metrics.sparse_categorical_accuracy, f1_score, precision, recall, MulticlassTruePositives()])
         print('\n')
         model.summary()
         
@@ -251,10 +278,12 @@ if __name__ == "__main__":
         plot_graphs(history, "accuracy", model_name)
         plot_graphs(history, "loss", model_name)
 
-        loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
+        # loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc, sparse_cat_acc, f1_score, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
 
-        loss, acc = model.evaluate(xval_tkns, validation_label_seq)
+        # loss, acc = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc, sparse_cat_acc, f1_score, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
         
     else:

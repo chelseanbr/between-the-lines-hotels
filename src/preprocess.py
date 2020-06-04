@@ -10,7 +10,7 @@ from sklearn.pipeline import Pipeline
 
 import nltk
 from nltk.tokenize import RegexpTokenizer
-nltk.download('wordnet')
+nltk.download('wordnet', quiet=True, raise_on_error=True)
 from nltk.stem.wordnet import WordNetLemmatizer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
@@ -20,31 +20,37 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 import xgboost as xgb
-from sklearn.cluster import KMeans
 
 
-# Load data from multiple CSVs in multiple folders ##########
+ # Load data from single CSV or from multiple CSVs in multiple folders #################
 
-def merge_csv_mult_dir(path_to_dir):
-    # Get all non-zip folders/files in dir
-    names = os.listdir(path_to_dir)
-    folders = [name for name in names if not name.endswith('.zip')] # Remove names found for zips
-    print('\tNon-zip folders/files found in {}: {}'.format(path_to_dir, folders))
-    # From each folder, read all CSV files into Pandas df
-    dfs = []
-    for folder in folders:
-        try: 
-            data_dir = path_to_dir + '/' + folder + '/'
-            csv_filenames = os.listdir(data_dir)    
-            for name in csv_filenames:
-                df = pd.read_csv(data_dir + name)
-                df['csv'] = name
-                df['folder'] = folder
-                dfs.append(df)
-        except NotADirectoryError:
-            print('\tSkipping (not a directory):', data_dir)
-    df_all = pd.concat(dfs, ignore_index=True)
-    return df_all
+def load_data(path_to_dir):
+    """Load data from single CSV or from multiple CSVs in multiple folders"""
+    if '.csv' in path_to_dir:
+        print('Reading {}...'.format(path_to_dir))
+        df = pd.read_csv(path_to_dir)
+        return df
+    else:
+        print('Processing files in {}...'.format(path_to_dir))
+        # Get all non-zip folders/files in dir
+        names = os.listdir(path_to_dir)
+        folders = [name for name in names if not name.endswith('.zip')] # Remove names found for zips
+        print('\tNon-zip folders/files found in {}: {}'.format(path_to_dir, folders))
+        # From each folder, read all CSV files into Pandas df
+        dfs = []
+        for folder in folders:
+            try: 
+                data_dir = path_to_dir + '/' + folder + '/'
+                csv_filenames = os.listdir(data_dir)    
+                for name in csv_filenames:
+                    df = pd.read_csv(data_dir + name)
+                    df['csv'] = name
+                    df['folder'] = folder
+                    dfs.append(df)
+            except NotADirectoryError:
+                print('\tSkipping (not a directory):', data_dir)
+        df_all = pd.concat(dfs, ignore_index=True)
+        return df_all
     
 ############################################################
 
@@ -52,11 +58,24 @@ def merge_csv_mult_dir(path_to_dir):
 # Functions for data cleaning & prep ####################
 
 def add_city_col(df):
+    """Add 'city' column from 'url'"""
     df['city'] = df['url'].str.split('-', expand=True).iloc[:, -2]
     return df
 
-def clean_usernames(df):
+def add_loc_col(df):
+    """Add clean location column 'loc' from 'city'"""
+    df['loc'] = df['city']
+    locs_dict = {'New_York':'New_York', 'Tokyo':'Tokyo', 'Phuket':'Thailand', 'Bali':'Bali', \
+        'Cuba':'Cuba', 'Domi':'Dominican_Republic', 'Dubai':'Dubai', 'Cayo_Guillermo':'Cuba', \
+            'Pattaya':'Thailand', 'Uvero_Alto_Punta_Cana_La_Altagracia_Province_Do':'Dominican_Republic',\
+                'Krabi':'Thailand', 'Chiang_Mai':'Thailand', 'Khao_Lak_Phang_Nga_Province':'Thailand',\
+                    'Bangkok':'Thailand'}
+    for loc in locs_dict:
+        df.loc[df[df['city'].str.contains(loc)].index, 'loc'] = locs_dict[loc]
+    return df
 
+def clean_usernames(df):
+    """Add 'user_name_clean' column from 'user_name'"""
     df['user_name_clean'] = df['user_name'].str.split('<', expand=True).iloc[:, 0]
     return df
 
@@ -66,6 +85,7 @@ def clean_usernames(df):
 # Fully clean & prepare data #########################
 
 def clean_and_prep(df):
+    """Fully clean & prepare data"""
     # # Change 'review_date' to datetime type
     # df['review_date'] = pd.to_datetime(df['review_date'])
 
@@ -79,6 +99,8 @@ def clean_and_prep(df):
 
     # Get 'city' from 'url'
     df = add_city_col(df)
+    # Get clean location 'loc' from city col
+    df = add_loc_col(df)
     # Clean 'user_name'
     df = clean_usernames(df)
 
@@ -101,45 +123,31 @@ def clean_and_prep(df):
 
 # Train-test-val split ###################################
 
-def train_test_val_split(df, target, features):
-    indices = df.index
+def train_test_val_split(df, target):
+    """Train-test-val split - shuffled, stratified, 80:20 ratios --> 64/20/16 train/test/val"""
+    train_df, test_df = train_test_split(df, test_size=0.2, shuffle=True, \
+        stratify=df[target], random_state=42)
+    train_df, val_df = train_test_split(train_df, test_size=0.2, shuffle=True, \
+        stratify=train_df[target], random_state=42)
 
-    X = df[features]
-    y = df[target].to_numpy()
-
-    X_train_init, X_test, y_train_init, y_test, indices_train_init, indices_test = \
-        train_test_split(X, y, indices, test_size=0.2, shuffle=True, stratify=y, random_state=42)
-
-    # Get train_init df with train indices
-    train_init_df = df.iloc[indices_train_init,:]
-
-    X_train_init2 = train_init_df['review_body']
-    y_train_init2 = train_init_df[target].to_numpy()
-    train_init_indices2 = train_init_df.index
-
-    X_train, X_val, y_train, y_val, indices_train, indices_val = \
-        train_test_split(X_train_init, y_train_init, train_init_indices2, test_size=0.2, 
-                         shuffle=True, stratify=y_train_init, random_state=42)
+    print('\tTrain: {}, Test: {}, Val: {}'.format(train_df.shape[0], test_df.shape[0], val_df.shape[0]))
     
-    print('\tTrain: {}, Val: {}, Test: {}'.format(X_train.shape[0], X_val.shape[0], X_test.shape[0]))
-    return X_train, X_val, X_test, y_train, y_val, y_test, indices_train, indices_val, indices_test
+    return train_df, test_df, val_df
 
 #######################################################
 
 # Undersample train due to class imbalance ###################################
 
-def undersample_train(df, target, indices_train, y_train):
-    # Get train df with train indices
-    train_df = df.iloc[indices_train,:]
-    train_df.shape
-
+def undersample_train(train_df, target):
+    """Undersample train due to class imbalance"""
+    y_train = train_df[target]
     # Get classes and counts
     unique, counts = np.unique(y_train, return_counts=True)
 
     # Determine majority, middle, and minority classes
     majority_class = unique[np.argmax(counts)]
     minority_class = unique[np.argmin(counts)]
-    mid_class = np.unique(y_train[(y_train!=majority_class) & (y_train!=minority_class)])[0]
+    mid_class = (set(unique) - set([majority_class, minority_class])).pop()
     print('\tMajority Class: {}, Middle Class: {}, Minority Class: {}'.format(majority_class, mid_class, minority_class))
 
     # Get indices per class
@@ -154,7 +162,7 @@ def undersample_train(df, target, indices_train, y_train):
     rand_mid_indices = np.random.choice(class_indices[mid_class], class_indices[minority_class].shape[0], replace=False)
     undersample_indices = np.concatenate([class_indices[minority_class], rand_mid_indices, rand_maj_indices])
 
-    train_df_us = df.iloc[undersample_indices,:]
+    train_df_us = train_df.loc[undersample_indices,:]
     print('\tFinal undersampled train size:', train_df_us.shape[0])
     return train_df_us
 
@@ -164,22 +172,32 @@ def undersample_train(df, target, indices_train, y_train):
 # Complete preprocessing, splitting, undersampling #################################################
 
 def preprocess_split_undersample(path):
+    """Complete preprocessing, splitting, undersampling"""
+    train_df, test_df, val_df = preprocess_split(path)
+
+    train_df_us = undersample_train(train_df, target)
+    
+    return train_df_us, test_df, val_df
+
+############################################################
+
+
+# Complete preprocessing, train-test-val split #################################################
+
+def preprocess_split(path):
+    """Complete preprocessing, train-test-val split"""
     # Data preprocessing
-    print('Processing files in {}...'.format(path))
-    df = merge_csv_mult_dir(path)
+    df = load_data(path)
     df = clean_and_prep(df)
 
-    # Train/val/test split
-    print('\nSplitting data into train/val/test...')
+    # Train/test/val split
+    print('\nSplitting data into train/test/val...')
     target = 'sentiment'
     features = ['review_body']
     feature = 'review_body'
-    X_train, X_val, X_test, y_train, y_val, y_test, indices_train, indices_val, indices_test = \
-        train_test_val_split(df, target, features)
-    train_df_us = undersample_train(df, target, indices_train, y_train)
-    
-    return X_train, X_val, X_test, y_train, y_val, y_test, \
-        indices_train, indices_val, indices_test, train_df_us, df
+    train_df, test_df, val_df = train_test_val_split(df, target)
+
+    return train_df, test_df, val_df
 
 ############################################################
 
@@ -232,9 +250,7 @@ if __name__ == "__main__":
         sys.exit()
 
     # Data preprocessing
-    X_train, X_val, X_test, y_train, y_val, y_test, \
-        indices_train, indices_val, indices_test, \
-            train_df_us, df = preprocess_split_undersample(path)
+    train_df_us, test_df, val_df = preprocess_split_undersample(path)
     
     target = 'sentiment'
     features = ['review_body']
@@ -266,21 +282,6 @@ if __name__ == "__main__":
             print('\t\tAverage train accuracy:', np.mean(models[key]['train_accuracy']))
             print('\t\tAverage test accuracy:', np.mean(models[key]['test_accuracy']))
             print('\n')
-
-    # elif action == 'kmeans':
-    #     print('\nStarting kmeans clustering...')
-    #     vocab = X_train_us_vect.columns
-    #     kmeans = KMeans(n_clusters=5)
-
-    #     tfidf = TfidfTransformer()
-    #     X_train_us_vect = tfidf.fit_transform(X_train_us_vect)
-    #     print('\n\tFitting kmeans...')
-    #     kmeans.fit(X_train_us_vect)
-
-    #     top_centroids = kmeans.cluster_centers_.argsort()[:,-1:-11:-1]
-    #     print("\n3) top features (words) for each cluster:")
-    #     for num, centroid in enumerate(top_centroids):
-    #         print(f"{num}, {', '.join(vocab[i] for i in centroid)}")
 
     else:
         print('Unknown action:', action)
