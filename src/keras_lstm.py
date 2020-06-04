@@ -194,9 +194,9 @@ if __name__ == "__main__":
     elif action == 'new_model': 
         num_epochs, saved_model_path, model_name = get_epochs_save_path()
         
-        embedding_dim=64 #PARAMS
-        lstm_cells = 96 #PARAMS
-        batch_size=32 #PARAMS
+        embedding_dim = 64 #PARAMS
+        lstm_cells = 64 #PARAMS
+        batch_size = 32 #PARAMS
         
 #         model=Sequential()
 #         model.add(layers.Embedding(input_dim=vocab_size,
@@ -212,16 +212,16 @@ if __name__ == "__main__":
         # Add an Embedding layer expecting input vocab of size 10000, and output embedding dimension of size 100 we set at the top
         layers.Embedding(vocab_size, embedding_dim, input_length=maxlen),
         # layers.Embedding(vocab_size, embedding_dim),
-        
+
         # layers.Dropout(0.2),
 
         # layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
-        # layers.Bidirectional(layers.LSTM(lstm_cells)),
+        layers.Bidirectional(layers.LSTM(lstm_cells)),
 
         # use ReLU in place of tanh function since they are very good alternatives of each other.
 
-        layers.LSTM(lstm_cells,return_sequences=True),
-        layers.LSTM(lstm_cells),
+        # layers.LSTM(lstm_cells,return_sequences=True),
+        # layers.LSTM(maxlen),
 
         layers.Dropout(0.5),
         layers.Dense(embedding_dim, activation='relu'),
