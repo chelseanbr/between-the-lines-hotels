@@ -119,7 +119,7 @@ if __name__ == "__main__":
     # Change Train and Val labels into ints
     label_tokenizer = Tokenizer()
     label_tokenizer.fit_on_texts(set(y_train_us))
-    training_label_seq = np.array(label_tokenizer.texts_to_sequences(training_label_seq))
+    training_label_seq = np.array(label_tokenizer.texts_to_sequences(y_train_us))
     validation_label_seq = np.array(label_tokenizer.texts_to_sequences(y_val))
 
     # Removing punctuation and stop words from X data
