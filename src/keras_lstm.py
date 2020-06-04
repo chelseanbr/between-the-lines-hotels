@@ -210,13 +210,14 @@ if __name__ == "__main__":
         
         model = Sequential([
         # Add an Embedding layer expecting input vocab of size 10000, and output embedding dimension of size 100 we set at the top
-        layers.Embedding(vocab_size, embedding_dim, input_length=maxlen),
-        layers.Dropout(0.2),
+        # layers.Embedding(vocab_size, embedding_dim, input_length=maxlen),
+        layers.Embedding(vocab_size, embedding_dim),
+        # layers.Dropout(0.2),
         layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
         layers.Bidirectional(layers.LSTM(lstm_cells)),
     #    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(32)),
         # use ReLU in place of tanh function since they are very good alternatives of each other.
-        layers.Dropout(0.5),
+        layers.Dropout(0.2),
         layers.Dense(lstm_cells*4, activation='relu'),
         # layers.Dropout(0.5),
         # Add a Dense layer with 6 units and softmax activation.
