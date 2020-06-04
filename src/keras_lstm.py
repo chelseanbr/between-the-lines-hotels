@@ -14,6 +14,7 @@ import sys
 from datetime import datetime
 import timeit
 import preprocess as prep
+import re
 from nltk.corpus import stopwords
 STOPWORDS = set(stopwords.words('english'))
 
@@ -106,19 +107,33 @@ if __name__ == "__main__":
 
     y_train_us = train_df_us[target]
     
-    # encode class values as integers
-    encoder = LabelEncoder()
-    encoded_y_train_us = encoder.fit_transform(y_train_us)
-    # convert integers to dummy variables (i.e. one hot encoded)
-    dummy_y_train_us = utils.to_categorical(encoded_y_train_us)
+    # # encode class values as integers
+    # encoder = LabelEncoder()
+    # encoded_y_train_us = encoder.fit_transform(y_train_us)
+    # # convert integers to dummy variables (i.e. one hot encoded)
+    # dummy_y_train_us = utils.to_categorical(encoded_y_train_us)
     
-    encoded_y_val = encoder.transform(y_val)
-    dummy_y_val = utils.to_categorical(encoded_y_val)
-        
+    # encoded_y_val = encoder.transform(y_val)
+    # dummy_y_val = utils.to_categorical(encoded_y_val)
+    
+    # Removing punctuation and stop words from X data
+    X_train_us_vals = train_df_us[feature].str.lower()
+    X_val_vals = df.loc[indices_val, feature].str.lower()
+
+    stop = [re.sub('[^\w\s]', '', stopword) for stopword in STOPWORDS]
+    stop_pat = ' | '.join(stop)
+    
+    print('\nRemoving punctuation and stop words from X_train/val data...')
+    X_train_us_vals = X_train_us_vals.str.replace('[^\w\s]', '')
+    X_val_vals = X_val_vals.str.replace('[^\w\s]', '')
+
+    X_train_us_vals = X_train_us_vals.str.replace(stop_pat, ' ')
+    X_val_vals = X_val_vals.str.replace(stop_pat, ' ')
+
     # Tokenize X data
     print('\nTokenizing X_train/val data...')
-    X_train_us_vals = train_df_us[feature].values
-    X_val_vals = df.loc[indices_val, feature].values
+    X_train_us_vals = X_train_us_vals.values
+    X_val_vals = X_val_vals.values
 
     maxlen = 400 #PARAMS
     oov_tok = '<OOV>'
@@ -140,10 +155,10 @@ if __name__ == "__main__":
 
     if action == 'load':
         
-        loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us)
+        loss, acc = model.evaluate(xtrain_tkns, y_train_us)
         print("Training Accuracy: ", acc)
     
-        loss, acc = model.evaluate(xval_tkns, dummy_y_val)
+        loss, acc = model.evaluate(xval_tkns, y_val)
         print("Test Accuracy: ", acc)
     
     elif action == 'train_more': 
@@ -152,8 +167,8 @@ if __name__ == "__main__":
         # Train
         start_time = timeit.default_timer()
         
-        history = model.fit(xtrain_tkns, dummy_y_train_us, epochs=num_epochs, 
-                  validation_data=(xval_tkns, dummy_y_val))
+        history = model.fit(xtrain_tkns, y_train_us, epochs=num_epochs, 
+                  validation_data=(xval_tkns, y_val))
 
         # Save entire model to a HDF5 file
         model.save(saved_model_path)
@@ -164,10 +179,10 @@ if __name__ == "__main__":
         plot_graphs(history, "accuracy", model_name)
         plot_graphs(history, "loss", model_name)
 
-        loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us)
+        loss, acc = model.evaluate(xtrain_tkns, y_train_us)
         print("Training Accuracy: ", acc)
 
-        loss, acc = model.evaluate(xval_tkns, dummy_y_val)
+        loss, acc = model.evaluate(xval_tkns, y_val)
         print("Test Accuracy: ", acc)
         
     elif action == 'new_model': 
@@ -200,10 +215,10 @@ if __name__ == "__main__":
         # layers.Dropout(0.5),
         # Add a Dense layer with 6 units and softmax activation.
         # When we have multiple outputs, softmax convert outputs layers into a probability distribution.
-        layers.Dense(3, activation='softmax')
+        layers.Dense(4, activation='softmax')
         ])
         
-        model.compile(optimizer="adam", loss="categorical_crossentropy", 
+        model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", 
             metrics=['accuracy'])
         print('\n')
         model.summary()
@@ -211,8 +226,8 @@ if __name__ == "__main__":
         # Train
         start_time = timeit.default_timer()
         
-        history = model.fit(xtrain_tkns, dummy_y_train_us, epochs=num_epochs, batch_size=batch_size,
-                  validation_data=(xval_tkns, dummy_y_val))
+        history = model.fit(xtrain_tkns, y_train_us, epochs=num_epochs, batch_size=batch_size,
+                  validation_data=(xval_tkns, y_val))
 
         # Save entire model to a HDF5 file
         model.save(saved_model_path)
@@ -223,10 +238,10 @@ if __name__ == "__main__":
         plot_graphs(history, "accuracy", model_name)
         plot_graphs(history, "loss", model_name)
 
-        loss, acc = model.evaluate(xtrain_tkns, dummy_y_train_us)
+        loss, acc = model.evaluate(xtrain_tkns, y_train_us)
         print("Training Accuracy: ", acc)
 
-        loss, acc = model.evaluate(xval_tkns, dummy_y_val)
+        loss, acc = model.evaluate(xval_tkns, y_val)
         print("Test Accuracy: ", acc)
         
     else:
