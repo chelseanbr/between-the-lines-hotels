@@ -248,9 +248,6 @@ if __name__ == "__main__":
         
         history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, batch_size=batch_size,
                   callbacks=callbacks_list, validation_data=(xval_tkns, validation_label_seq))
-
-        # Save entire model to a HDF5 file
-        model.save(saved_model_path)
         
         elapsed = timeit.default_timer() - start_time
         print('\nTook {:.2f}s to train'.format(elapsed))
@@ -265,6 +262,9 @@ if __name__ == "__main__":
         # loss, acc = model.evaluate(xval_tkns, validation_label_seq)
         loss, acc = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
+
+        # Save entire model to a HDF5 file
+        model.save(saved_model_path)
 
         ##############################
         # Check saved models
