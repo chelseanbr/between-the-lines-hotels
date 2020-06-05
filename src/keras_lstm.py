@@ -15,17 +15,6 @@ rn.seed(42)
 # tf.set_random_seed(42)
 tf.random.set_seed(42)
 
-from tensorflow.keras import backend as K
-
-session_conf = tf.ConfigProto(
-      intra_op_parallelism_threads=1,
-      inter_op_parallelism_threads=1)
-
-#Force Tensorflow to use a single thread
-sess = tf.Session(graph=tf.get_default_graph(), config=session_conf)
-
-K.set_session(sess)
-
 # Rest of the code follows from here on ...
 
 from tensorflow.keras.preprocessing.text import Tokenizer
