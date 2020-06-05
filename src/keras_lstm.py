@@ -20,6 +20,10 @@ from datetime import datetime
 import timeit
 import preprocess as prep
 import re
+from numpy.random import seed
+seed(42)# keras seed fixing
+import tensorflow as tf
+tf.random.set_seed(42)# tensorflow seed fixing
 
 # Just disables annoying TF warning, doesn't enable AVX/FMA
 import os
