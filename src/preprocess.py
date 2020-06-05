@@ -31,7 +31,7 @@ FEATURES = [FEATURE]
 def load_data(path_to_dir):
     """Load data from single CSV or from multiple CSVs in multiple folders"""
     if '.csv' in path_to_dir:
-        print('Reading {}...'.format(path_to_dir))
+        print('\nReading {}...'.format(path_to_dir))
         df = pd.read_csv(path_to_dir)
         return df
     else:

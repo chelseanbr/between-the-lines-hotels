@@ -144,6 +144,7 @@ if __name__ == "__main__":
 
     # Change Train and Val labels into ints
     y_train = train_df[TARGET]
+    y_val = val_df[TARGET]
     label_tokenizer = Tokenizer()
     label_tokenizer.fit_on_texts(set(y_train))
     training_label_seq = np.array(label_tokenizer.texts_to_sequences(y_train))
