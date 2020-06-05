@@ -264,7 +264,7 @@ if __name__ == "__main__":
         # layers.Embedding(vocab_size, embedding_dim, input_length=maxlen),
         layers.Embedding(vocab_size, embedding_dim),
 
-        # layers.Dropout(0.2),
+        layers.Dropout(0.2),
 
         layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
         layers.Bidirectional(layers.LSTM(lstm_cells)),
@@ -283,7 +283,7 @@ if __name__ == "__main__":
         ])
         
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", 
-            metrics=['accuracy', precision, recall, MulticlassTruePositives()])
+            metrics=['accuracy', precision, recall, multiclass_tp])
         print('\n')
         model.summary()
         
@@ -303,6 +303,7 @@ if __name__ == "__main__":
         plot_graphs(history, "loss", model_name)
         plot_graphs(history, "precision", model_name)
         plot_graphs(history, "recall", model_name)
+        plot_graphs(history, "multiclass_tp", model_name)
 
         # loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
         loss, acc, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
