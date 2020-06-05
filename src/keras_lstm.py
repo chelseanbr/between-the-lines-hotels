@@ -146,11 +146,11 @@ if __name__ == "__main__":
     train_df, test_df, val_df = prep.preprocess_split(path)
 
     # Get smaller samples of data
-    train_df, _ = train_test_split(train_df, train_size=0.01, shuffle=True, \
+    train_df, _ = train_test_split(train_df, train_size=0.005, shuffle=True, \
         stratify=train_df[TARGET], random_state=42)
-    val_df, _ = train_test_split(val_df, train_size=0.01, shuffle=True, \
+    val_df, _ = train_test_split(val_df, train_size=0.005, shuffle=True, \
             stratify=val_df[TARGET],random_state=42)
-    print('Taking 1pct of data - Train: {}, Val: {}'.format(train_df.shape[0], val_df.shape[0]))
+    print('Taking 0.5pct of data - Train: {}, Val: {}'.format(train_df.shape[0], val_df.shape[0]))
 
     # Change Train and Val labels into ints
     y_train = train_df[TARGET]
@@ -266,7 +266,7 @@ if __name__ == "__main__":
 
         # layers.Dropout(0.2),
 
-        layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
+        # layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
         layers.Bidirectional(layers.LSTM(lstm_cells)),
 
         # use ReLU in place of tanh function since they are very good alternatives of each other.
