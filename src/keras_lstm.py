@@ -258,83 +258,83 @@ if __name__ == "__main__":
         loss, acc = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
 
-        # ##############################
-        # # Check saved models
-        # print('\nChecking saved model...')
+        ##############################
+        # Check saved models
+        print('\nChecking saved model...')
 
-        # # Data preprocessing
-        # train_df, test_df, val_df = prep.preprocess_split(path)
+        # Data preprocessing
+        train_df, test_df, val_df = prep.preprocess_split(path)
 
-        # # Get smaller samples of data
-        # train_df, _ = train_test_split(train_df, train_size=0.001, shuffle=True, \
-        #     stratify=train_df[TARGET], random_state=42)
-        # val_df, _ = train_test_split(val_df, train_size=0.001, shuffle=True, \
-        #         stratify=val_df[TARGET],random_state=42)
-        # print('Taking 0.1pct of data - Train: {}, Val: {}'.format(train_df.shape[0], val_df.shape[0]))
+        # Get smaller samples of data
+        train_df, _ = train_test_split(train_df, train_size=0.001, shuffle=True, \
+            stratify=train_df[TARGET], random_state=42)
+        val_df, _ = train_test_split(val_df, train_size=0.001, shuffle=True, \
+                stratify=val_df[TARGET],random_state=42)
+        print('Taking 0.1pct of data - Train: {}, Val: {}'.format(train_df.shape[0], val_df.shape[0]))
 
-        # # Change Train and Val labels into ints
-        # y_train = train_df[TARGET]
-        # y_val = val_df[TARGET]
-        # label_tokenizer = Tokenizer()
-        # label_tokenizer.fit_on_texts(set(y_train))
-        # training_label_seq = np.array(label_tokenizer.texts_to_sequences(y_train))
-        # validation_label_seq = np.array(label_tokenizer.texts_to_sequences(y_val))
+        # Change Train and Val labels into ints
+        y_train = train_df[TARGET]
+        y_val = val_df[TARGET]
+        label_tokenizer = Tokenizer()
+        label_tokenizer.fit_on_texts(set(y_train))
+        training_label_seq = np.array(label_tokenizer.texts_to_sequences(y_train))
+        validation_label_seq = np.array(label_tokenizer.texts_to_sequences(y_val))
 
-        # # Get class weights
-        # class_weights = class_weight.compute_class_weight('balanced',
-        #                                             np.unique(y_train),
-        #                                             y_train)
+        # Get class weights
+        class_weights = class_weight.compute_class_weight('balanced',
+                                                    np.unique(y_train),
+                                                    y_train)
 
-        # # Lower case, remove punctuation and stop words from X data
-        # X_train_vals = train_df[FEATURE].str.lower()
-        # X_val_vals = val_df[FEATURE].str.lower()
+        # Lower case, remove punctuation and stop words from X data
+        X_train_vals = train_df[FEATURE].str.lower()
+        X_val_vals = val_df[FEATURE].str.lower()
 
-        # stopwords = prep.set_stopwords()
-        # stop_pat = ' | '.join(stopwords)
+        stopwords = prep.set_stopwords()
+        stop_pat = ' | '.join(stopwords)
         
-        # print('\nRemoving punctuation and stop words from X_train/val data...')
-        # X_train_vals = X_train_vals.str.replace('[^\w\s]', '')
-        # X_val_vals = X_val_vals.str.replace('[^\w\s]', '')
+        print('\nRemoving punctuation and stop words from X_train/val data...')
+        X_train_vals = X_train_vals.str.replace('[^\w\s]', '')
+        X_val_vals = X_val_vals.str.replace('[^\w\s]', '')
 
-        # X_train_vals = X_train_vals.str.replace(stop_pat, ' ')
-        # X_val_vals = X_val_vals.str.replace(stop_pat, ' ')
+        X_train_vals = X_train_vals.str.replace(stop_pat, ' ')
+        X_val_vals = X_val_vals.str.replace(stop_pat, ' ')
 
-        # # Tokenize X data
-        # print('\nTokenizing X_train/val data...')
-        # X_train_vals = X_train_vals.values
-        # X_val_vals = X_val_vals.values
+        # Tokenize X data
+        print('\nTokenizing X_train/val data...')
+        X_train_vals = X_train_vals.values
+        X_val_vals = X_val_vals.values
 
-        # # PARAMS
-        # maxlen = 280
-        # oov_tok = '<OOV>'
-        # num_words = 5000
-        # trunc_type = 'post'
-        # padding_type = 'post'
+        # PARAMS
+        maxlen = 280
+        oov_tok = '<OOV>'
+        num_words = 5000
+        trunc_type = 'post'
+        padding_type = 'post'
         
-        # tokenizer = Tokenizer(num_words=num_words, oov_token=oov_tok)
-        # tonkenize = tokenizer.fit_on_texts(X_train_vals)
-        # xtrain_tkns = tokenizer.texts_to_sequences(X_train_vals)
-        # xval_tkns = tokenizer.texts_to_sequences(X_val_vals)
+        tokenizer = Tokenizer(num_words=num_words, oov_token=oov_tok)
+        tonkenize = tokenizer.fit_on_texts(X_train_vals)
+        xtrain_tkns = tokenizer.texts_to_sequences(X_train_vals)
+        xval_tkns = tokenizer.texts_to_sequences(X_val_vals)
 
-        # vocab_size=len(tokenizer.word_index)+1
+        vocab_size=len(tokenizer.word_index)+1
             
-        # xtrain_tkns = pad_sequences(xtrain_tkns,padding=padding_type, truncating=trunc_type, maxlen=maxlen)
-        # xval_tkns = pad_sequences(xval_tkns,padding=padding_type, truncating=trunc_type, maxlen=maxlen)
+        xtrain_tkns = pad_sequences(xtrain_tkns,padding=padding_type, truncating=trunc_type, maxlen=maxlen)
+        xval_tkns = pad_sequences(xval_tkns,padding=padding_type, truncating=trunc_type, maxlen=maxlen)
             
-        # print('\nStarting modeling...')
+        print('\nStarting modeling...')
 
-        # saved_model1 = load_model(saved_model_path)
-        # loss, acc = saved_model1.evaluate(xtrain_tkns, training_label_seq)
-        # print("Training Accuracy: ", acc)
-        # loss, acc = saved_model1.evaluate(xval_tkns, validation_label_seq)
-        # print("Test Accuracy: ", acc)
+        saved_model1 = load_model(saved_model_path)
+        loss, acc = saved_model1.evaluate(xtrain_tkns, training_label_seq)
+        print("Training Accuracy: ", acc)
+        loss, acc = saved_model1.evaluate(xval_tkns, validation_label_seq)
+        print("Test Accuracy: ", acc)
 
-        # saved_model2 = load_model("BEST_saved_models/" + model_name)
-        # loss, acc = saved_model2.evaluate(xtrain_tkns, training_label_seq)
-        # print("Training Accuracy: ", acc)
-        # loss, acc = saved_model2.evaluate(xval_tkns, validation_label_seq)
-        # print("Test Accuracy: ", acc)
-        # #################################
-        
+        saved_model2 = load_model("BEST_saved_models/" + model_name)
+        loss, acc = saved_model2.evaluate(xtrain_tkns, training_label_seq)
+        print("Training Accuracy: ", acc)
+        loss, acc = saved_model2.evaluate(xval_tkns, validation_label_seq)
+        print("Test Accuracy: ", acc)
+        #################################
+
     else:
         print('Unknown action:', action)
