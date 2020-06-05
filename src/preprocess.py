@@ -1,6 +1,8 @@
 import os
 import sys
 import numpy as np
+np.random.seed(42) # for reproducibility
+
 import pandas as pd
 import re
 

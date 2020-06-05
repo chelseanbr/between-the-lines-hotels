@@ -1,3 +1,6 @@
+import numpy as np
+np.random.seed(42) # for reproducibility
+
 import tensorflow as tf
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
@@ -13,7 +16,6 @@ from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import class_weight
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import sys
 from datetime import datetime
@@ -174,7 +176,7 @@ if __name__ == "__main__":
         start_time = timeit.default_timer()
         
         history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, 
-                  validation_data=(xval_tkns, validation_label_seq), class_weight=class_weights)
+                  validation_data=(xval_tkns, validation_label_seq), class_weight=class_weights, shuffle=False)
 
         # Save entire model to a HDF5 file
         model.save(saved_model_path, save_weights_only=FALSE)
