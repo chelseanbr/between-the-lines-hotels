@@ -114,7 +114,7 @@ def get_epochs_save_path():
         num_epochs = 5
 
     saved_model_path = \
-        "saved_models/lstm_tokens5000_{}epochs_{}.h5".format(num_epochs,
+        "saved_models/lstm_tokens5000_{}epochs_{}".format(num_epochs,
                                                              datetime.now()
                                                              .strftime("%Y%m%d-%H:%M:%S")) 
     print('\nWill save model to: {}\n'.format(saved_model_path))
@@ -275,8 +275,8 @@ if __name__ == "__main__":
         layers.Dropout(0.5),
         # use ReLU in place of tanh function since they are very good alternatives of each other.
         layers.Dense(embedding_dim, activation='relu'),
-        layers.Dropout(0.2),
-        layers.Dense(8),
+        # layers.Dropout(0.2),
+        # layers.Dense(8),
         layers.Dropout(0.2),
         # Add a Dense layer with 6 units and softmax activation.
         # When we have multiple outputs, softmax convert outputs layers into a probability distribution.
