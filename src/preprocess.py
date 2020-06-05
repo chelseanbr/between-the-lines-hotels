@@ -19,7 +19,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
-import xgboost as xgb
+# import xgboost as xgb
 
 # Constants
 TARGET = 'sentiment'
