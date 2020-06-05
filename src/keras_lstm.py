@@ -266,7 +266,7 @@ if __name__ == "__main__":
 
         layers.Dropout(0.5),
 
-        layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
+        layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True, dropout=0.5, recurrent_dropout=0.5)),
         layers.Bidirectional(layers.LSTM(lstm_cells)),
 
         # use ReLU in place of tanh function since they are very good alternatives of each other.
