@@ -247,7 +247,7 @@ if __name__ == "__main__":
         
         embedding_dim = 64 #PARAMS
         lstm_cells = 96 #PARAMS
-        batch_size = 32 #PARAMS
+        batch_size = 256 #PARAMS
         
 #         model=Sequential()
 #         model.add(layers.Embedding(input_dim=vocab_size,
@@ -266,8 +266,8 @@ if __name__ == "__main__":
 
         layers.Dropout(0.2),
 
-        layers.Conv1D(64, 5, activation='relu'),
-        layers.MaxPooling1D(pool_size=4),
+        layers.Conv1D(embedding_dim, 3, activation='relu'),
+        layers.MaxPooling1D(pool_size=2),
 
         layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
         layers.Bidirectional(layers.LSTM(lstm_cells)),
@@ -278,8 +278,8 @@ if __name__ == "__main__":
         layers.Dropout(0.5),
         # use ReLU in place of tanh function since they are very good alternatives of each other.
         layers.Dense(embedding_dim, activation='relu'),
-        layers.Dropout(0.2),
-        layers.Dense(8),
+        # layers.Dropout(0.2),
+        # layers.Dense(8),
         layers.Dropout(0.2),
         # Add a Dense layer with 6 units and softmax activation.
         # When we have multiple outputs, softmax convert outputs layers into a probability distribution.
