@@ -68,7 +68,7 @@ def get_epochs_save_path():
         num_epochs = 5
 
     saved_model_path = \
-        "saved_models/lstm_{}epochs_{}.h5".format(num_epochs,
+        "saved_models/lstm_{}epochs_{}".format(num_epochs,
                                                              datetime.now()
                                                              .strftime("%Y%m%d-%H:%M:%S")) 
     print('\nWill save model to: {}\n'.format(saved_model_path))
@@ -141,7 +141,7 @@ if __name__ == "__main__":
     # PARAMS
     maxlen = 280
     oov_tok = '<OOV>'
-    num_words = 10000
+    num_words = 5000
     trunc_type = 'post'
     padding_type = 'post'
     
@@ -235,7 +235,7 @@ if __name__ == "__main__":
         # Train
         start_time = timeit.default_timer()
 
-        checkpoint = ModelCheckpoint("BEST_saved_models" + 'model_name' + '_{epoch:02d}-{val_loss:.2f}.hdf5', monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=False)
+        checkpoint = ModelCheckpoint("BEST_saved_models/" + model_name + '_{epoch:02d}-{val_loss:.2f}', monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=False)
         callbacks_list = [checkpoint]
         
         history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, batch_size=batch_size,
