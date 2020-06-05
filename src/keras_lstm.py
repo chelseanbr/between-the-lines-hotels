@@ -247,7 +247,7 @@ if __name__ == "__main__":
         
         embedding_dim = 64 #PARAMS
         lstm_cells = 96 #PARAMS
-        batch_size = 256 #PARAMS
+        batch_size = 128 #PARAMS
         
 #         model=Sequential()
 #         model.add(layers.Embedding(input_dim=vocab_size,
@@ -275,7 +275,7 @@ if __name__ == "__main__":
         # layers.LSTM(lstm_cells,return_sequences=True),
         # layers.LSTM(lstm_cells),
 
-        layers.Dropout(0.5),
+        layers.Dropout(0.2),
         # use ReLU in place of tanh function since they are very good alternatives of each other.
         layers.Dense(embedding_dim, activation='relu'),
         # layers.Dropout(0.2),
