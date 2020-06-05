@@ -177,7 +177,7 @@ if __name__ == "__main__":
                   validation_data=(xval_tkns, validation_label_seq), class_weight=class_weights)
 
         # Save entire model to a HDF5 file
-        model.save(saved_model_path)
+        model.save(saved_model_path, save_weights_only=FALSE)
         
         elapsed = timeit.default_timer() - start_time
         print('\nTook {:.2f}s to train'.format(elapsed))
@@ -235,7 +235,7 @@ if __name__ == "__main__":
         # Train
         start_time = timeit.default_timer()
 
-        checkpoint = ModelCheckpoint("BEST_" + saved_model_path, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=True)
+        checkpoint = ModelCheckpoint("BEST_saved_models" + 'model_name' + '_{epoch:02d}-{val_loss:.2f}.hdf5', monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=False)
         callbacks_list = [checkpoint]
         
         history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, batch_size=batch_size,
