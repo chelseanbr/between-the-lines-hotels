@@ -266,8 +266,8 @@ if __name__ == "__main__":
 
         layers.Dropout(0.5),
 
-        layers.Conv1D(64, 5, activation='relu'))
-        layers.MaxPooling1D(pool_size=4))
+        layers.Conv1D(64, 5, activation='relu'),
+        layers.MaxPooling1D(pool_size=4),
 
         layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
         layers.Bidirectional(layers.LSTM(lstm_cells)),
