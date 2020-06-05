@@ -258,6 +258,7 @@ if __name__ == "__main__":
         loss, acc = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
 
+
         # Check saved models
         print('\nChecking saved model...')
         saved_model1 = load_model(saved_model_path)
@@ -265,7 +266,8 @@ if __name__ == "__main__":
         print("Training Accuracy: ", acc)
         loss, acc = saved_model1.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
-        saved_model2 = load_model("BEST_saved_models/" + model_name')
+
+        saved_model2 = load_model("BEST_saved_models/" + model_name)
         loss, acc = saved_model2.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
         loss, acc = saved_model2.evaluate(xval_tkns, validation_label_seq)
