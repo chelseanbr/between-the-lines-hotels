@@ -1,10 +1,12 @@
-import tensorflow as tf
-import random as rn
-
-os.environ['PYTHONHASHSEED'] = '0'
-
+import numpy as np
 # Setting the seed for numpy-generated random numbers
 np.random.seed(42)
+import tensorflow as tf
+import random as rn
+import os
+os.environ['PYTHONHASHSEED'] = '0'
+# Just disables annoying TF warning, doesn't enable AVX/FMA
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 # Setting the seed for python random numbers
 rn.seed(42)
@@ -25,10 +27,6 @@ K.set_session(sess)
 
 # Rest of the code follows from here on ...
 
-import numpy as np
-np.random.seed(42) # for reproducibility
-
-import tensorflow as tf
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import Sequential
@@ -48,14 +46,6 @@ from datetime import datetime
 import timeit
 import preprocess as prep
 import re
-from numpy.random import seed
-seed(42)# keras seed fixing
-import tensorflow as tf
-tf.random.set_seed(42)# tensorflow seed fixing
-
-# Just disables annoying TF warning, doesn't enable AVX/FMA
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 # Constants
 TARGET = 'sentiment'
