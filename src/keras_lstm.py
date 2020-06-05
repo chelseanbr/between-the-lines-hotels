@@ -265,10 +265,10 @@ if __name__ == "__main__":
         layers.Embedding(vocab_size, embedding_dim, input_length=maxlen),
         # layers.Embedding(vocab_size, embedding_dim),
 
-        layers.Dropout(0.2),
+        layers.Dropout(0.25),
 
-        layers.Conv1D(embedding_dim, 3, padding='same', activation='relu'),
-        layers.MaxPooling1D(pool_size=2),
+        layers.Conv1D(embedding_dim/2, 5, padding='valid', activation='relu', strides=1),
+        layers.MaxPooling1D(pool_size=4),
 
         layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
         layers.Bidirectional(layers.LSTM(lstm_cells)),
