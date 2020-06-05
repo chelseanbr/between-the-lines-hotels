@@ -9,9 +9,9 @@ from sklearn.model_selection import cross_validate
 from sklearn.pipeline import Pipeline
 
 import nltk
+from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
-nltk.download('wordnet', quiet=True, raise_on_error=True)
-from nltk.stem.wordnet import WordNetLemmatizer
+from nltk.stem import SnowballStemmer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 
@@ -21,6 +21,10 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 import xgboost as xgb
 
+# Constants
+TARGET = 'sentiment'
+FEATURE = 'review_body'
+FEATURES = [FEATURE]
 
  # Load data from single CSV or from multiple CSVs in multiple folders #################
 
@@ -86,13 +90,14 @@ def clean_usernames(df):
 
 def clean_and_prep(df):
     """Fully clean & prepare data"""
+    print('Cleaning data...')
     # # Change 'review_date' to datetime type
     # df['review_date'] = pd.to_datetime(df['review_date'])
 
     # Drop duplicate rows
-    df.drop_duplicates(inplace=True)
+    df = df.drop_duplicates()
     # Fill nulls for 'user_location' with 'n/a'
-    df.fillna({'user_location': 'n/a'}, inplace=True)
+    df = df.fillna({'user_location': 'n/a'})
 
     # # Add col 'review_length' from 'review_body'
     # df['review_length'] = df['review_body'].str.len()
@@ -101,18 +106,20 @@ def clean_and_prep(df):
     df = add_city_col(df)
     # Get clean location 'loc' from city col
     df = add_loc_col(df)
-    # Clean 'user_name'
-    df = clean_usernames(df)
+
+    # # Clean 'user_name'
+    # df = clean_usernames(df)
 
     # Add 'sentiment' column mapped by 'rating'
     df['sentiment'] = df['rating'].map({1: 'negative', 2: 'negative', 3: 'neutral', 4:'positive', 5:'positive'})
-    # Add 'sentiment' column mapped by 'sentiment'
-    df['polarity'] = df['sentiment'].map({'negative': 0, 'neutral': 0.5, 'positive': 1})
-    # Add 'sentiment_int' column mapped by 'sentiment'
-    df['sentiment_int'] = (df['polarity'] * 2).astype(int)
-    # Move 'sentiment' col to be last
-    last_col = df.pop('sentiment')
-    df.insert(df.shape[1], 'sentiment', last_col)
+   
+#    # Add 'sentiment' column mapped by 'sentiment'
+#     df['polarity'] = df['sentiment'].map({'negative': 0, 'neutral': 0.5, 'positive': 1})
+#     # Add 'sentiment_int' column mapped by 'sentiment'
+#     df['sentiment_int'] = (df['polarity'] * 2).astype(int)
+#     # Move 'sentiment' col to be last
+#     last_col = df.pop('sentiment')
+#     df.insert(df.shape[1], 'sentiment', last_col)
     return df
 
 #######################################################
@@ -123,7 +130,7 @@ def clean_and_prep(df):
 
 # Train-test-val split ###################################
 
-def train_test_val_split(df, target):
+def train_test_val_split(df, target=TARGET):
     """Train-test-val split - shuffled, stratified, 80:20 ratios --> 64/20/16 train/test/val"""
     train_df, test_df = train_test_split(df, test_size=0.2, shuffle=True, \
         stratify=df[target], random_state=42)
@@ -138,7 +145,7 @@ def train_test_val_split(df, target):
 
 # Undersample train due to class imbalance ###################################
 
-def undersample_train(train_df, target):
+def undersample_train(train_df, target=TARGET):
     """Undersample train due to class imbalance"""
     y_train = train_df[target]
     # Get classes and counts
@@ -175,7 +182,7 @@ def preprocess_split_undersample(path):
     """Complete preprocessing, splitting, undersampling"""
     train_df, test_df, val_df = preprocess_split(path)
 
-    train_df_us = undersample_train(train_df, target)
+    train_df_us = undersample_train(train_df)
     
     return train_df_us, test_df, val_df
 
@@ -192,10 +199,7 @@ def preprocess_split(path):
 
     # Train/test/val split
     print('\nSplitting data into train/test/val...')
-    target = 'sentiment'
-    features = ['review_body']
-    feature = 'review_body'
-    train_df, test_df, val_df = train_test_val_split(df, target)
+    train_df, test_df, val_df = train_test_val_split(df)
 
     return train_df, test_df, val_df
 
@@ -204,28 +208,35 @@ def preprocess_split(path):
 
 # NLP ##################################################
 
-# Use NLTK's WordNetLemmatizer
-def tokenizer(str_input):
-    lem = WordNetLemmatizer()
-    nltk.download('stopwords', quiet=True, raise_on_error=True)
-    stop_words = set(nltk.corpus.stopwords.words('english'))
-    tokenized_stop_words = [lem.lemmatize(word) for word in stop_words]
+def my_tokenizer(str_input):
+    """Tokenize with NLTK's SnowballStemmer, remove non-alpha chars"""
+    stemmer = SnowballStemmer('english')
+    stemmed_stopwords = set_stopwords()
 
     tokenizer = RegexpTokenizer(r"[a-zA-Z]+")
     tokens = tokenizer.tokenize(str_input)
 
-    words = [lem.lemmatize(word) for word in tokens if word not in tokenized_stop_words]
+    words = [stemmer.stem(word) for word in tokens if word not in stemmed_stopwords]
     return words
 
 def set_stopwords():
-    lem = WordNetLemmatizer()
-    nltk.download('stopwords', quiet=True, raise_on_error=True)
-    stop_words = set(nltk.corpus.stopwords.words('english'))
-    tokenized_stop_words = [lem.lemmatize(word) for word in stop_words]
-    return tokenized_stop_words
+    """Snowball-Stem English stopwords, 
+    list found at http://www.textfixer.com/resources/common-english-words.txt"""
+    stemmer = SnowballStemmer('english')
+    STOPWORDS = "a,able,about,across,after,all,almost,also,am,among,an,and,any"+\
+        "are,as,at,be,because,been,but,by,can,could,dear,did,do,does,either"+\
+        "else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his"+\
+        "how,however,i,if,in,into,is,it,its,just,least,let,like,likely,may"+\
+        "me,might,most,must,my,neither,no,of,off,often,on,only,or,other,our"+\
+        "own,rather,said,say,says,she,should,since,so,some,than,that,the,their"+\
+        "them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were"+\
+        "what,when,where,which,while,who,whom,why,will,with,would,yet,you,your"
+    STOPWORDS = STOPWORDS.split(',') 
+    stemmed_stopwords = set([stemmer.stem(word) for word in STOPWORDS])
+    return stemmed_stopwords
 
 def count_vectorize(texts):
-    tokenized_stop_words = set_stopwords()
+    stemmed_stopwords = set_stopwords()
     count_vect = CountVectorizer(tokenizer=tokenizer, stop_words=tokenized_stop_words, max_features=5000)
     matrix = count_vect.fit_transform(texts)
     results = pd.DataFrame(matrix.toarray(), columns=count_vect.get_feature_names())
@@ -251,13 +262,9 @@ if __name__ == "__main__":
 
     # Data preprocessing
     train_df_us, test_df, val_df = preprocess_split_undersample(path)
-    
-    target = 'sentiment'
-    features = ['review_body']
-    feature = 'review_body'
 
-    X_train_us = train_df_us[feature].to_list()
-    y_train_us = train_df_us[target].to_numpy()
+    X_train_us = train_df_us[FEATURE].to_list()
+    y_train_us = train_df_us[TARGET].to_numpy()
 
     print('\nGetting bag of words for train data...')
     X_train_us_vect = count_vectorize(X_train_us)

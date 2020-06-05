@@ -8,6 +8,7 @@ from tensorflow.keras.models import load_model
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import LabelEncoder
+from sklearn.utils import class_weight
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -22,6 +23,11 @@ STOPWORDS = set(stopwords.words('english'))
 # Just disables annoying TF warning, doesn't enable AVX/FMA
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
+# Constants
+TARGET = 'sentiment'
+FEATURE = 'review_body'
+FEATURES = [FEATURE]
 
 # Set plot sizes
 SMALL_SIZE = 22
@@ -114,7 +120,7 @@ if __name__ == "__main__":
         path = sys.argv[1]
         action = sys.argv[2]
     except IndexError:
-        print('Please specify path to data files and action ("new_model"/"load"/"train_more").')
+        print('Please specify path to data and action ("new_model"/"load"/"train_more").')
         sys.exit()
     
     if action == 'load' or action == 'train_more':
@@ -129,25 +135,29 @@ if __name__ == "__main__":
         model = load_model(prev_model_path)
 
     # Data preprocessing
-    X_train, X_val, X_test, y_train, y_val, y_test, \
-        indices_train, indices_val, indices_test, \
-            train_df, df = prep.preprocess_split(path)
+    train_df, test_df, val_df = prep.preprocess_split(path)
 
-    target = 'sentiment'
-    features = ['review_body']
-    feature = 'review_body'
+    # Get smaller samples of data
+    train_df, _ = train_test_split(train_df, train_size=0.05, shuffle=True, \
+        stratify=train_df[TARGET], random_state=42)
+    val_df, _ = train_test_split(val_df, train_size=0.05, shuffle=True, \
+            stratify=val_df[TARGET],random_state=42)
+    print('Taking 5pct of data - Train: {}, Val: {}'.format(train_df.shape[0], val_df.shape[0]))
 
-    y_train = train_df[target]
-
+    # Get class weights
+    class_weights = class_weight.compute_class_weight('balanced',
+                                                 np.unique(y_train),
+                                                 y_train)
     # Change Train and Val labels into ints
+    y_train = train_df[TARGET]
     label_tokenizer = Tokenizer()
     label_tokenizer.fit_on_texts(set(y_train))
     training_label_seq = np.array(label_tokenizer.texts_to_sequences(y_train))
     validation_label_seq = np.array(label_tokenizer.texts_to_sequences(y_val))
 
-    # Removing punctuation and stop words from X data
-    X_train_vals = train_df[feature].str.lower()
-    X_val_vals = df.loc[indices_val, feature].str.lower()
+    # Lower case, remove punctuation and stop words from X data
+    X_train_vals = train_df[FEATURE].str.lower()
+    X_val_vals = val_df[FEATURE].str.lower()
 
     stop = [re.sub('[^\w\s]', '', stopword) for stopword in STOPWORDS]
     stop_pat = ' | '.join(stop)
@@ -164,7 +174,7 @@ if __name__ == "__main__":
     X_train_vals = X_train_vals.values
     X_val_vals = X_val_vals.values
 
-    maxlen = 400 #PARAMS
+    maxlen = 280 #PARAMS
     oov_tok = '<OOV>'
     num_words = 5000
     trunc_type = 'post'
@@ -199,7 +209,7 @@ if __name__ == "__main__":
         start_time = timeit.default_timer()
         
         history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, 
-                  validation_data=(xval_tkns, validation_label_seq))
+                  validation_data=(xval_tkns, validation_label_seq), class_weight=class_weights)
 
         # Save entire model to a HDF5 file
         model.save(saved_model_path)
