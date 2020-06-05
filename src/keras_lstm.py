@@ -273,13 +273,14 @@ if __name__ == "__main__":
 
         layers.LSTM(lstm_cells,return_sequences=True),
         layers.LSTM(lstm_cells,return_sequences=True),
+        layers.LSTM(lstm_cells,return_sequences=True),
         layers.LSTM(lstm_cells),
 
-        layers.Dropout(0.5),
+        layers.Dropout(0.2),
         layers.Dense(embedding_dim, activation='relu'),
-        layers.Dropout(0.5),
+        layers.Dropout(0.2),
         layers.Dense(8),
-        layers.Dropout(0.5),
+        layers.Dropout(0.2),
         # Add a Dense layer with 6 units and softmax activation.
         # When we have multiple outputs, softmax convert outputs layers into a probability distribution.
         layers.Dense(4, activation='softmax')
