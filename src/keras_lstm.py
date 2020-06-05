@@ -15,8 +15,6 @@ rn.seed(42)
 # tf.set_random_seed(42)
 tf.random.set_seed(42)
 
-# Rest of the code follows from here on ...
-
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import Sequential
@@ -108,19 +106,25 @@ if __name__ == "__main__":
     train_df, test_df, val_df = prep.preprocess_split(path)
 
     # Get smaller samples of data
-    train_df, _ = train_test_split(train_df, train_size=0.001, shuffle=True, \
+    train_df, _ = train_test_split(train_df, train_size=0.001, shuffle=False, \
         stratify=train_df[TARGET], random_state=42)
-    val_df, _ = train_test_split(val_df, train_size=0.001, shuffle=True, \
+    val_df, _ = train_test_split(val_df, train_size=0.001, shuffle=False, \
             stratify=val_df[TARGET],random_state=42)
-    print('Taking 0.1pct of data - Train: {}, Val: {}'.format(train_df.shape[0], val_df.shape[0]))
+    test_df, _ = train_test_split(test_df, train_size=0.001, shuffle=False, \
+            stratify=test_df[TARGET],random_state=42)
+    print('Taking 0.1pct of data - Train: {}, Val: {}, Test: {}'.format(train_df.shape[0], val_df.shape[0], test_df.shape[0]))
 
     # Change Train and Val labels into ints
     y_train = train_df[TARGET]
     y_val = val_df[TARGET]
+    y_test = val_df[TARGET]
+
     label_tokenizer = Tokenizer()
     label_tokenizer.fit_on_texts(set(y_train))
+
     training_label_seq = np.array(label_tokenizer.texts_to_sequences(y_train))
     validation_label_seq = np.array(label_tokenizer.texts_to_sequences(y_val))
+    test_label_seq = np.array(label_tokenizer.texts_to_sequences(y_test))
 
     # Get class weights
     class_weights = class_weight.compute_class_weight('balanced',
@@ -130,6 +134,7 @@ if __name__ == "__main__":
     # Lower case, remove punctuation and stop words from X data
     X_train_vals = train_df[FEATURE].str.lower()
     X_val_vals = val_df[FEATURE].str.lower()
+    X_test_vals = test_df[FEATURE].str.lower()
 
     stopwords = prep.set_stopwords()
     stop_pat = ' | '.join(stopwords)
@@ -137,14 +142,16 @@ if __name__ == "__main__":
     print('\nRemoving punctuation and stop words from X_train/val data...')
     X_train_vals = X_train_vals.str.replace('[^\w\s]', '')
     X_val_vals = X_val_vals.str.replace('[^\w\s]', '')
+    X_test_vals = X_test_vals.str.replace('[^\w\s]', '')
 
     X_train_vals = X_train_vals.str.replace(stop_pat, ' ')
     X_val_vals = X_val_vals.str.replace(stop_pat, ' ')
 
     # Tokenize X data
-    print('\nTokenizing X_train/val data...')
+    print('\nTokenizing X_train/val/test data...')
     X_train_vals = X_train_vals.values
     X_val_vals = X_val_vals.values
+    X_test_vals = X_test_vals.values
 
     # PARAMS
     maxlen = 280
@@ -157,22 +164,25 @@ if __name__ == "__main__":
     tonkenize = tokenizer.fit_on_texts(X_train_vals)
     xtrain_tkns = tokenizer.texts_to_sequences(X_train_vals)
     xval_tkns = tokenizer.texts_to_sequences(X_val_vals)
+    xtest_tkns = tokenizer.texts_to_sequences(X_test_vals)
 
     vocab_size=len(tokenizer.word_index)+1
         
     xtrain_tkns = pad_sequences(xtrain_tkns,padding=padding_type, truncating=trunc_type, maxlen=maxlen)
     xval_tkns = pad_sequences(xval_tkns,padding=padding_type, truncating=trunc_type, maxlen=maxlen)
+    xtest_tkns = pad_sequences(xtest_tkns,padding=padding_type, truncating=trunc_type, maxlen=maxlen)
         
     print('\nStarting modeling...')
 
     if action == 'load':
         
-        # loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
         loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
 
-        # loss, acc = model.evaluate(xval_tkns, validation_label_seq)
         loss, acc = model.evaluate(xval_tkns, validation_label_seq)
+        print("Val Accuracy: ", acc)
+
+        loss, acc = model.evaluate(xtest_tkns, test_label_seq)
         print("Test Accuracy: ", acc)
     
     elif action == 'train_more': 
@@ -180,12 +190,12 @@ if __name__ == "__main__":
         
         # Train
         start_time = timeit.default_timer()
-        
-        history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, 
-                  validation_data=(xval_tkns, validation_label_seq), class_weight=class_weights, shuffle=False)
 
-        # Save entire model to a HDF5 file
-        model.save(saved_model_path, save_weights_only=FALSE)
+        checkpoint = ModelCheckpoint("BEST_saved_models/" + model_name, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=False)
+        callbacks_list = [checkpoint]
+        
+        history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, batch_size=batch_size,
+                  callbacks=callbacks_list, validation_data=(xval_tkns, validation_label_seq), class_weight=class_weights, shuffle=False)
         
         elapsed = timeit.default_timer() - start_time
         print('\nTook {:.2f}s to train'.format(elapsed))
@@ -193,13 +203,17 @@ if __name__ == "__main__":
         plot_graphs(history, "accuracy", model_name)
         plot_graphs(history, "loss", model_name)
 
-        # loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
         loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
 
-        # loss, acc = model.evaluate(xval_tkns, validation_label_seq)
         loss, acc = model.evaluate(xval_tkns, validation_label_seq)
+        print("Val Accuracy: ", acc)
+
+        loss, acc = model.evaluate(xtest_tkns, test_label_seq)
         print("Test Accuracy: ", acc)
+
+        # Save entire model
+        model.save(saved_model_path, save_weights_only=False, include_optimizer=True)
         
     elif action == 'new_model': 
         num_epochs, saved_model_path, model_name = get_epochs_save_path()
@@ -236,7 +250,7 @@ if __name__ == "__main__":
         ])
         
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", 
-            metrics=['accuracy'])
+            weighted_metrics=['accuracy'])
         print('\n')
         model.summary()
         
@@ -247,7 +261,7 @@ if __name__ == "__main__":
         callbacks_list = [checkpoint]
         
         history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, batch_size=batch_size,
-                  callbacks=callbacks_list, validation_data=(xval_tkns, validation_label_seq))
+                  callbacks=callbacks_list, validation_data=(xval_tkns, validation_label_seq), class_weight=class_weights, shuffle=False)
         
         elapsed = timeit.default_timer() - start_time
         print('\nTook {:.2f}s to train'.format(elapsed))
@@ -255,16 +269,17 @@ if __name__ == "__main__":
         plot_graphs(history, "accuracy", model_name)
         plot_graphs(history, "loss", model_name)
 
-        # loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
         loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
 
-        # loss, acc = model.evaluate(xval_tkns, validation_label_seq)
         loss, acc = model.evaluate(xval_tkns, validation_label_seq)
+        print("Val Accuracy: ", acc)
+
+        loss, acc = model.evaluate(xtest_tkns, test_label_seq)
         print("Test Accuracy: ", acc)
 
-        # Save entire model to a HDF5 file
-        model.save(saved_model_path)
+        # Save entire model
+        model.save(saved_model_path, save_weights_only=False, include_optimizer=True)
 
         ##############################
         # Check saved models
