@@ -1,3 +1,30 @@
+import tensorflow as tf
+import random as rn
+
+os.environ['PYTHONHASHSEED'] = '0'
+
+# Setting the seed for numpy-generated random numbers
+np.random.seed(42)
+
+# Setting the seed for python random numbers
+rn.seed(42)
+
+# Setting the graph-level random seed.
+tf.set_random_seed(42)
+
+from tensorflow.keras import backend as K
+
+session_conf = tf.ConfigProto(
+      intra_op_parallelism_threads=1,
+      inter_op_parallelism_threads=1)
+
+#Force Tensorflow to use a single thread
+sess = tf.Session(graph=tf.get_default_graph(), config=session_conf)
+
+K.set_session(sess)
+
+# Rest of the code follows from here on ...
+
 import numpy as np
 np.random.seed(42) # for reproducibility
 
@@ -8,7 +35,6 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras import layers
 from tensorflow.keras import utils
 from tensorflow.keras import metrics
-from tensorflow.keras import backend as K
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.models import load_model
 from sklearn.model_selection import train_test_split
