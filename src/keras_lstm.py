@@ -96,15 +96,15 @@ class MulticlassTruePositives(metrics.Metric):
 # Plotting
 def plot_graphs(history, string, model_name):
     """Plot history graphs for loss/accuracy"""
-    plt.plot(history.history[string])
-    plt.plot(history.history['val_'+string])
-    plt.xlabel("Epochs")
-    plt.ylabel(string)
-    plt.title('string')
-    plt.legend([string, 'val_'+ string])
-#     plt.show()
-    plt.tight_layout()
-    plt.savefig('imgs/' + model_name + '_' + string)
+    fig, ax = plt.subplots(figsize=(8,8))
+    ax.plot(history.history['train_'+string])
+    ax.plot(history.history['val_'+string])
+    ax.set_xlabel("Epochs")
+    ax.set_ylabel(string)
+    ax.set_title('string')
+    ax.legend([string, 'val_'+ string])
+    fig.tight_layout()
+    fig.savefig('imgs/' + model_name + '_' + string)
 
 def get_epochs_save_path():
     try: 
@@ -146,11 +146,11 @@ if __name__ == "__main__":
     train_df, test_df, val_df = prep.preprocess_split(path)
 
     # Get smaller samples of data
-    train_df, _ = train_test_split(train_df, train_size=0.005, shuffle=True, \
+    train_df, _ = train_test_split(train_df, train_size=0.001, shuffle=True, \
         stratify=train_df[TARGET], random_state=42)
-    val_df, _ = train_test_split(val_df, train_size=0.005, shuffle=True, \
+    val_df, _ = train_test_split(val_df, train_size=0.001, shuffle=True, \
             stratify=val_df[TARGET],random_state=42)
-    print('Taking 0.5pct of data - Train: {}, Val: {}'.format(train_df.shape[0], val_df.shape[0]))
+    print('Taking 0.1pct of data - Train: {}, Val: {}'.format(train_df.shape[0], val_df.shape[0]))
 
     # Change Train and Val labels into ints
     y_train = train_df[TARGET]
