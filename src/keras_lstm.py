@@ -266,7 +266,8 @@ if __name__ == "__main__":
 
         layers.Dropout(0.5),
 
-        layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True, dropout=0.5, recurrent_dropout=0.5)),
+        layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
+        layers.Dropout(0.5),
         layers.Bidirectional(layers.LSTM(lstm_cells)),
 
         # use ReLU in place of tanh function since they are very good alternatives of each other.
@@ -276,6 +277,8 @@ if __name__ == "__main__":
 
         layers.Dropout(0.5),
         layers.Dense(embedding_dim, activation='relu'),
+        layers.Dropout(0.5),
+        layers.Dense(8),
         layers.Dropout(0.5),
         # Add a Dense layer with 6 units and softmax activation.
         # When we have multiple outputs, softmax convert outputs layers into a probability distribution.
