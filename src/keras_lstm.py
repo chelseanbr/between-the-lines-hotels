@@ -207,11 +207,11 @@ if __name__ == "__main__":
     if action == 'load':
         
         # loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
-        loss, acc, sparse_cat_acc, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
 
         # loss, acc = model.evaluate(xval_tkns, validation_label_seq)
-        loss, acc, sparse_cat_acc, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
     
     elif action == 'train_more': 
@@ -231,13 +231,15 @@ if __name__ == "__main__":
         
         plot_graphs(history, "accuracy", model_name)
         plot_graphs(history, "loss", model_name)
+        plot_graphs(history, "precision", model_name)
+        plot_graphs(history, "recall", model_name)
 
         # loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
-        loss, acc, sparse_cat_acc, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
 
         # loss, acc = model.evaluate(xval_tkns, validation_label_seq)
-        loss, acc, sparse_cat_acc, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
         
     elif action == 'new_model': 
@@ -281,7 +283,7 @@ if __name__ == "__main__":
         ])
         
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", 
-            metrics=['accuracy', metrics.sparse_categorical_accuracy, precision, recall, MulticlassTruePositives()])
+            metrics=['accuracy', precision, recall, MulticlassTruePositives()])
         print('\n')
         model.summary()
         
@@ -299,13 +301,15 @@ if __name__ == "__main__":
         
         plot_graphs(history, "accuracy", model_name)
         plot_graphs(history, "loss", model_name)
+        plot_graphs(history, "precision", model_name)
+        plot_graphs(history, "recall", model_name)
 
         # loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
-        loss, acc, sparse_cat_acc, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
 
         # loss, acc = model.evaluate(xval_tkns, validation_label_seq)
-        loss, acc, sparse_cat_acc, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
         
     else:
