@@ -17,8 +17,6 @@ from datetime import datetime
 import timeit
 import preprocess as prep
 import re
-from nltk.corpus import stopwords
-STOPWORDS = set(stopwords.words('english'))
 
 # Just disables annoying TF warning, doesn't enable AVX/FMA
 import os
@@ -144,10 +142,6 @@ if __name__ == "__main__":
             stratify=val_df[TARGET],random_state=42)
     print('Taking 5pct of data - Train: {}, Val: {}'.format(train_df.shape[0], val_df.shape[0]))
 
-    # Get class weights
-    class_weights = class_weight.compute_class_weight('balanced',
-                                                 np.unique(y_train),
-                                                 y_train)
     # Change Train and Val labels into ints
     y_train = train_df[TARGET]
     label_tokenizer = Tokenizer()
@@ -155,12 +149,17 @@ if __name__ == "__main__":
     training_label_seq = np.array(label_tokenizer.texts_to_sequences(y_train))
     validation_label_seq = np.array(label_tokenizer.texts_to_sequences(y_val))
 
+    # Get class weights
+    class_weights = class_weight.compute_class_weight('balanced',
+                                                 np.unique(y_train),
+                                                 y_train)
+
     # Lower case, remove punctuation and stop words from X data
     X_train_vals = train_df[FEATURE].str.lower()
     X_val_vals = val_df[FEATURE].str.lower()
 
-    stop = [re.sub('[^\w\s]', '', stopword) for stopword in STOPWORDS]
-    stop_pat = ' | '.join(stop)
+    stopwords = prep.set_stopwords()
+    stop_pat = ' | '.join(stopwords)
     
     print('\nRemoving punctuation and stop words from X_train/val data...')
     X_train_vals = X_train_vals.str.replace('[^\w\s]', '')
@@ -174,7 +173,8 @@ if __name__ == "__main__":
     X_train_vals = X_train_vals.values
     X_val_vals = X_val_vals.values
 
-    maxlen = 280 #PARAMS
+    # PARAMS
+    maxlen = 280
     oov_tok = '<OOV>'
     num_words = 5000
     trunc_type = 'post'
