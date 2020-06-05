@@ -43,57 +43,6 @@ plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
 plt.rc('figure', titlesize=BIGGEST_SIZE)  # fontsize of the figure title
 
-# Define custom metrics
-def recall(y_true, y_pred):
-    """Recall metric.
-    Computes the recall, a metric for multi-label classification of
-    how many relevant items are selected.
-    """
-    y_true = K.ones_like(y_true) 
-    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-    all_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
-    
-    recall = true_positives / (all_positives + K.epsilon())
-    return recall
-
-def precision(y_true, y_pred):
-    """Precision metric.
-    Computes the precision, a metric for multi-label classification of
-    how many selected items are relevant.
-    """
-    y_true = K.ones_like(y_true) 
-    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-    
-    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
-    precision = true_positives / (predicted_positives + K.epsilon())
-    return precision
-
-# def f1_score(y_true, y_pred):
-#     precision = precision_m(y_true, y_pred)
-#     recall = recall_m(y_true, y_pred)
-#     return 2*((precision*recall)/(precision+recall+K.epsilon()))
-
-class MulticlassTruePositives(metrics.Metric):
-    def __init__(self, name='multiclass_true_positives', **kwargs):
-        super(MulticlassTruePositives, self).__init__(name=name, **kwargs)
-        self.true_positives = self.add_weight(name='tp', initializer='zeros')
-
-    def update_state(self, y_true, y_pred, sample_weight=None):
-        y_pred = tf.reshape(tf.argmax(y_pred, axis=1), shape=(-1, 1))
-        values = tf.cast(y_true, 'int32') == tf.cast(y_pred, 'int32')
-        values = tf.cast(values, 'float32')
-        if sample_weight is not None:
-            sample_weight = tf.cast(sample_weight, 'float32')
-            values = tf.multiply(values, sample_weight)
-        self.true_positives.assign_add(tf.reduce_sum(values))
-
-    def result(self):
-        return self.true_positives
-
-    def reset_states(self):
-        # The state of the metric will be reset at the start of each epoch.
-        self.true_positives.assign(0.)
-
 # Plotting
 def plot_graphs(history, string, model_name):
     """Plot history graphs for loss/accuracy"""
@@ -208,11 +157,11 @@ if __name__ == "__main__":
     if action == 'load':
         
         # loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
-        loss, acc, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
 
         # loss, acc = model.evaluate(xval_tkns, validation_label_seq)
-        loss, acc, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
     
     elif action == 'train_more': 
@@ -232,15 +181,13 @@ if __name__ == "__main__":
         
         plot_graphs(history, "accuracy", model_name)
         plot_graphs(history, "loss", model_name)
-        plot_graphs(history, "precision", model_name)
-        plot_graphs(history, "recall", model_name)
 
         # loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
-        loss, acc, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
 
         # loss, acc = model.evaluate(xval_tkns, validation_label_seq)
-        loss, acc, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
         
     elif action == 'new_model': 
@@ -249,16 +196,6 @@ if __name__ == "__main__":
         embedding_dim = 64 #PARAMS
         lstm_cells = 100 #PARAMS
         batch_size = 32 #PARAMS
-        
-#         model=Sequential()
-#         model.add(layers.Embedding(input_dim=vocab_size,
-#             output_dim=embedding_dim,
-#             input_length=maxlen))
-#         model.add(layers.LSTM(units=embedding_dim,return_sequences=True))
-#         model.add(layers.LSTM(units=maxlen))
-#         model.add(layers.Dropout(0.5))
-#         model.add(layers.Dense(8))
-#         model.add(layers.Dense(3, activation="softmax"))
         
         model = Sequential([
         # Add an Embedding layer expecting input vocab of size 5000, and output embedding dimension of size 64 we set at the top
@@ -282,13 +219,13 @@ if __name__ == "__main__":
         # layers.Dropout(0.2),
         # layers.Dense(8),
         layers.Dropout(0.2),
-        # Add a Dense layer with 6 units and softmax activation.
+        # Add a Dense layer with 4 units and softmax activation.
         # When we have multiple outputs, softmax convert outputs layers into a probability distribution.
         layers.Dense(4, activation='softmax')
         ])
         
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", 
-            metrics=['accuracy', precision, recall, multiclass_tp])
+            metrics=['accuracy'])
         print('\n')
         model.summary()
         
@@ -309,15 +246,13 @@ if __name__ == "__main__":
         
         plot_graphs(history, "accuracy", model_name)
         plot_graphs(history, "loss", model_name)
-        plot_graphs(history, "precision", model_name)
-        plot_graphs(history, "recall", model_name)
 
         # loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
-        loss, acc, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
 
         # loss, acc = model.evaluate(xval_tkns, validation_label_seq)
-        loss, acc, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
         
     else:
