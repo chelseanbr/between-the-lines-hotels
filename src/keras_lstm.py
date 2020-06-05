@@ -12,7 +12,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 rn.seed(42)
 
 # Setting the graph-level random seed.
-tf.set_random_seed(42)
+# tf.set_random_seed(42)
+tf.random.set_seed(42)
 
 from tensorflow.keras import backend as K
 
