@@ -4,6 +4,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras import layers
 from tensorflow.keras import utils
 from tensorflow.keras import metrics
+from tensorflow.keras import backend as K
 from tensorflow.keras.models import load_model
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
@@ -57,10 +58,10 @@ def precision(y_true, y_pred):
     precision = true_positives / (predicted_positives + K.epsilon())
     return precision
 
-def f1_score(y_true, y_pred):
-    precision = precision_m(y_true, y_pred)
-    recall = recall_m(y_true, y_pred)
-    return 2*((precision*recall)/(precision+recall+K.epsilon()))
+# def f1_score(y_true, y_pred):
+#     precision = precision_m(y_true, y_pred)
+#     recall = recall_m(y_true, y_pred)
+#     return 2*((precision*recall)/(precision+recall+K.epsilon()))
 
 class MulticlassTruePositives(metrics.Metric):
     def __init__(self, name='multiclass_true_positives', **kwargs):
@@ -192,15 +193,16 @@ if __name__ == "__main__":
     xval_tkns = pad_sequences(xval_tkns,padding=padding_type, truncating=trunc_type, maxlen=maxlen)
         
     print('\nStarting modeling...')
+    multiclass_tp = MulticlassTruePositives()
 
     if action == 'load':
         
         # loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
-        loss, acc, sparse_cat_acc, f1_score, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc, sparse_cat_acc, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
 
         # loss, acc = model.evaluate(xval_tkns, validation_label_seq)
-        loss, acc, sparse_cat_acc, f1_score, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc, sparse_cat_acc, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
     
     elif action == 'train_more': 
@@ -222,11 +224,11 @@ if __name__ == "__main__":
         plot_graphs(history, "loss", model_name)
 
         # loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
-        loss, acc, sparse_cat_acc, f1_score, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc, sparse_cat_acc, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
 
         # loss, acc = model.evaluate(xval_tkns, validation_label_seq)
-        loss, acc, sparse_cat_acc, f1_score, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc, sparse_cat_acc, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
         
     elif action == 'new_model': 
@@ -270,7 +272,7 @@ if __name__ == "__main__":
         ])
         
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", 
-            metrics=['accuracy', metrics.sparse_categorical_accuracy, f1_score, precision, recall, MulticlassTruePositives()])
+            metrics=['accuracy', metrics.sparse_categorical_accuracy, precision, recall, MulticlassTruePositives()])
         print('\n')
         model.summary()
         
@@ -290,11 +292,11 @@ if __name__ == "__main__":
         plot_graphs(history, "loss", model_name)
 
         # loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
-        loss, acc, sparse_cat_acc, f1_score, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc, sparse_cat_acc, precision, recall, multiclass_tp = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
 
         # loss, acc = model.evaluate(xval_tkns, validation_label_seq)
-        loss, acc, sparse_cat_acc, f1_score, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc, sparse_cat_acc, precision, recall, multiclass_tp = model.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
         
     else:
