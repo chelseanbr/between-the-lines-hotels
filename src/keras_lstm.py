@@ -152,7 +152,6 @@ if __name__ == "__main__":
     xval_tkns = pad_sequences(xval_tkns,padding=padding_type, truncating=trunc_type, maxlen=maxlen)
         
     print('\nStarting modeling...')
-    multiclass_tp = MulticlassTruePositives()
 
     if action == 'load':
         
@@ -257,4 +256,3 @@ if __name__ == "__main__":
         
     else:
         print('Unknown action:', action)
-        
