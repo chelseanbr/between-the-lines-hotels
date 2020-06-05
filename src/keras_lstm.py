@@ -1,3 +1,4 @@
+import tensorflow as tf
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import Sequential
@@ -43,6 +44,10 @@ plt.rc('figure', titlesize=BIGGEST_SIZE)  # fontsize of the figure title
 
 # Define custom metrics
 def recall(y_true, y_pred):
+    """Recall metric.
+    Computes the recall, a metric for multi-label classification of
+    how many relevant items are selected.
+    """
     y_true = K.ones_like(y_true) 
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     all_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
@@ -51,6 +56,10 @@ def recall(y_true, y_pred):
     return recall
 
 def precision(y_true, y_pred):
+    """Precision metric.
+    Computes the precision, a metric for multi-label classification of
+    how many selected items are relevant.
+    """
     y_true = K.ones_like(y_true) 
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     
