@@ -264,7 +264,7 @@ if __name__ == "__main__":
         layers.Embedding(vocab_size, embedding_dim, input_length=maxlen),
         # layers.Embedding(vocab_size, embedding_dim),
 
-        layers.Dropout(0.5),
+        layers.Dropout(0.2),
 
         layers.Conv1D(64, 5, activation='relu'),
         layers.MaxPooling1D(pool_size=4),
@@ -278,8 +278,8 @@ if __name__ == "__main__":
         layers.Dropout(0.5),
         # use ReLU in place of tanh function since they are very good alternatives of each other.
         layers.Dense(embedding_dim, activation='relu'),
-        # layers.Dropout(0.2),
-        # layers.Dense(8),
+        layers.Dropout(0.2),
+        layers.Dense(8),
         layers.Dropout(0.2),
         # Add a Dense layer with 6 units and softmax activation.
         # When we have multiple outputs, softmax convert outputs layers into a probability distribution.
