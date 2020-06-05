@@ -235,7 +235,7 @@ if __name__ == "__main__":
         # Train
         start_time = timeit.default_timer()
 
-        checkpoint = ModelCheckpoint("BEST_saved_models/" + model_name + '_{epoch:02d}-{val_loss:.2f}', monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=False)
+        checkpoint = ModelCheckpoint("BEST_saved_models/" + model_name', monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=False)
         callbacks_list = [checkpoint]
         
         history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, batch_size=batch_size,
@@ -256,6 +256,19 @@ if __name__ == "__main__":
 
         # loss, acc = model.evaluate(xval_tkns, validation_label_seq)
         loss, acc = model.evaluate(xval_tkns, validation_label_seq)
+        print("Test Accuracy: ", acc)
+
+        # Check saved models
+        print('\nChecking saved model...')
+        saved_model1 = load_model(saved_model_path)
+        loss, acc = saved_model1.evaluate(xtrain_tkns, training_label_seq)
+        print("Training Accuracy: ", acc)
+        loss, acc = saved_model1.evaluate(xval_tkns, validation_label_seq)
+        print("Test Accuracy: ", acc)
+        saved_model2 = load_model("BEST_saved_models/" + model_name')
+        loss, acc = saved_model2.evaluate(xtrain_tkns, training_label_seq)
+        print("Training Accuracy: ", acc)
+        loss, acc = saved_model2.evaluate(xval_tkns, validation_label_seq)
         print("Test Accuracy: ", acc)
         
     else:
