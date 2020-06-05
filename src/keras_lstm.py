@@ -272,6 +272,7 @@ if __name__ == "__main__":
         # use ReLU in place of tanh function since they are very good alternatives of each other.
 
         layers.LSTM(lstm_cells,return_sequences=True),
+        layers.LSTM(lstm_cells,return_sequences=True),
         layers.LSTM(lstm_cells),
 
         layers.Dropout(0.5),
