@@ -7,10 +7,8 @@ import os
 os.environ['PYTHONHASHSEED'] = '0'
 # Just disables annoying TF warning, doesn't enable AVX/FMA
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-
 # Setting the seed for python random numbers
 rn.seed(42)
-
 # Setting the graph-level random seed.
 # tf.set_random_seed(42)
 tf.random.set_seed(42)
@@ -24,7 +22,6 @@ from tensorflow.keras import metrics
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.models import load_model
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import class_weight
 import pandas as pd
@@ -106,11 +103,11 @@ if __name__ == "__main__":
     train_df, test_df, val_df = prep.preprocess_split(path)
 
     # Get smaller samples of data
-    train_df, _ = train_test_split(train_df, train_size=0.001, shuffle=False, \
+    train_df, _ = train_test_split(train_df, train_size=0.001, shuffle=True, \
         stratify=train_df[TARGET], random_state=42)
-    val_df, _ = train_test_split(val_df, train_size=0.001, shuffle=False, \
+    val_df, _ = train_test_split(val_df, train_size=0.001, shuffle=True, \
             stratify=val_df[TARGET],random_state=42)
-    test_df, _ = train_test_split(test_df, train_size=0.001, shuffle=False, \
+    test_df, _ = train_test_split(test_df, train_size=0.001, shuffle=True, \
             stratify=test_df[TARGET],random_state=42)
     print('Taking 0.1pct of data - Train: {}, Val: {}, Test: {}'.format(train_df.shape[0], val_df.shape[0], test_df.shape[0]))
 
