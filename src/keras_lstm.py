@@ -188,7 +188,7 @@ if __name__ == "__main__":
     # PARAMS
     maxlen = 280
     oov_tok = '<OOV>'
-    num_words = 5000
+    num_words = 10000
     trunc_type = 'post'
     padding_type = 'post'
     
@@ -265,7 +265,7 @@ if __name__ == "__main__":
         layers.Embedding(vocab_size, embedding_dim, input_length=maxlen),
         # layers.Embedding(vocab_size, embedding_dim),
 
-        layers.Dropout(0.25),
+        layers.Dropout(0.5),
 
         layers.Conv1D(embedding_dim/2, 5, padding='valid', activation='relu', strides=1),
         layers.MaxPooling1D(pool_size=4),
@@ -276,7 +276,7 @@ if __name__ == "__main__":
         # layers.LSTM(lstm_cells,return_sequences=True),
         # layers.LSTM(lstm_cells),
 
-        layers.Dropout(0.2),
+        layers.Dropout(0.5),
         # use ReLU in place of tanh function since they are very good alternatives of each other.
         layers.Dense(embedding_dim, activation='relu'),
         # layers.Dropout(0.2),
@@ -295,7 +295,7 @@ if __name__ == "__main__":
         # Train
         start_time = timeit.default_timer()
 
-        checkpoint = ModelCheckpoint(saved_model_path+'_BEST', monitor='val_acc', verbose=1, save_best_only=True, mode='max',save_weights_only=True)
+        checkpoint = ModelCheckpoint(saved_model_path+'_BEST', monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=True)
         callbacks_list = [checkpoint]
         
         history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, batch_size=batch_size,
