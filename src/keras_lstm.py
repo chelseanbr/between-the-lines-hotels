@@ -6,6 +6,7 @@ from tensorflow.keras import layers
 from tensorflow.keras import utils
 from tensorflow.keras import metrics
 from tensorflow.keras import backend as K
+from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.models import load_model
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
@@ -246,8 +247,8 @@ if __name__ == "__main__":
         num_epochs, saved_model_path, model_name = get_epochs_save_path()
         
         embedding_dim = 64 #PARAMS
-        lstm_cells = 96 #PARAMS
-        batch_size = 128 #PARAMS
+        lstm_cells = 100 #PARAMS
+        batch_size = 32 #PARAMS
         
 #         model=Sequential()
 #         model.add(layers.Embedding(input_dim=vocab_size,
@@ -266,7 +267,7 @@ if __name__ == "__main__":
 
         layers.Dropout(0.2),
 
-        layers.Conv1D(embedding_dim, 3, activation='relu'),
+        layers.Conv1D(embedding_dim, 3, padding='same', activation='relu'),
         layers.MaxPooling1D(pool_size=2),
 
         layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
@@ -293,9 +294,12 @@ if __name__ == "__main__":
         
         # Train
         start_time = timeit.default_timer()
+
+        checkpoint = ModelCheckpoint(saved_model_path+'_BEST', monitor='val_acc', verbose=1, save_best_only=True, mode='max',save_weights_only=True)
+        callbacks_list = [checkpoint]
         
         history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, batch_size=batch_size,
-                  validation_data=(xval_tkns, validation_label_seq))
+                  callbacks=callbacks_list, validation_data=(xval_tkns, validation_label_seq))
 
         # Save entire model to a HDF5 file
         model.save(saved_model_path)
