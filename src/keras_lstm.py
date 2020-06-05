@@ -97,7 +97,7 @@ class MulticlassTruePositives(metrics.Metric):
 def plot_graphs(history, string, model_name):
     """Plot history graphs for loss/accuracy"""
     fig, ax = plt.subplots(figsize=(8,8))
-    ax.plot(history.history['train_'+string])
+    ax.plot(history.history[string])
     ax.plot(history.history['val_'+string])
     ax.set_xlabel("Epochs")
     ax.set_ylabel(string)
