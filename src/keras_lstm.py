@@ -116,18 +116,18 @@ if __name__ == "__main__":
     y_val = val_df[TARGET]
     y_test = val_df[TARGET]
 
-    label_tokenizer = Tokenizer()
-    label_tokenizer.fit_on_texts(set(y_train))
+    label_encoder = LabelEncoder()
+    label_encoder.fit(y_train)
 
-    training_label_seq = np.array(label_tokenizer.texts_to_sequences(y_train))
-    validation_label_seq = np.array(label_tokenizer.texts_to_sequences(y_val))
-    test_label_seq = np.array(label_tokenizer.texts_to_sequences(y_test))
+    training_label_seq = label_encoder.transform(y_train)
+    validation_label_seq = label_encoder.transform(y_val)
+    test_label_seq = label_encoder.transform(y_test)
 
     # Get class weights
     class_weights = class_weight.compute_class_weight('balanced',
-                                                 list(label_tokenizer.word_index.keys()),
+                                                 label_encoder.classes_,
                                                  y_train)
-    class_weights_dict = {k-1:v for k,v in zip(label_tokenizer.word_index.values(), class_weights)}
+    class_weights_dict = {k:v for k,v in zip(np.arange(label_encoder.classes_.shape[0]), class_weights)}
     
     # Lower case, remove punctuation and stop words from X data
     X_train_vals = train_df[FEATURE].str.lower()
@@ -244,7 +244,7 @@ if __name__ == "__main__":
         layers.Dropout(0.2),
         # Add a Dense layer with 4 units and softmax activation.
         # When we have multiple outputs, softmax convert outputs layers into a probability distribution.
-        layers.Dense(4, activation='softmax')
+        layers.Dense(3, activation='softmax')
         ])
         
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", 
