@@ -189,7 +189,7 @@ if __name__ == "__main__":
         # Train
         start_time = timeit.default_timer()
 
-        checkpoint = ModelCheckpoint("BEST_saved_models/" + model_name, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=False)
+        checkpoint = ModelCheckpoint("BEST_saved_models/" + model_name + '_{epoch:02d}-{val_loss:.2f}', monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=False)
         callbacks_list = [checkpoint]
         
         history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, batch_size=batch_size,
@@ -211,7 +211,7 @@ if __name__ == "__main__":
         print("Test Accuracy: ", acc)
 
         # Save entire model
-        model.save(saved_model_path, save_weights_only=False, include_optimizer=True)
+        model.save(saved_model_path, include_optimizer=True)
         
     elif action == 'new_model': 
         num_epochs, saved_model_path, model_name = get_epochs_save_path()
