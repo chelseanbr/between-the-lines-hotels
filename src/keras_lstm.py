@@ -256,7 +256,7 @@ if __name__ == "__main__":
         num_epochs, saved_model_path, model_name = get_epochs_save_path()
         
         # Set params
-        embedding_dim = 64 #PARAMS
+        embedding_dim = 128 #PARAMS
         lstm_cells = 100 #PARAMS
         batch_size = 32 #PARAMS
         
@@ -266,21 +266,22 @@ if __name__ == "__main__":
         layers.Embedding(vocab_size, embedding_dim, input_length=maxlen),
         # layers.Embedding(vocab_size, embedding_dim),
 
-        # layers.Dropout(0.5),
+        layers.Dropout(0.25),
 
-        # layers.Conv1D(embedding_dim/2, 5, padding='valid', activation='relu', strides=1),
-        # layers.MaxPooling1D(pool_size=4),
+        layers.Conv1D(embedding_dim/2, 5, padding='valid', activation='relu', strides=1),
+        layers.MaxPooling1D(pool_size=4),
 
-        # layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
-        # layers.Bidirectional(layers.LSTM(lstm_cells)),
+        layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
+        layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
+        layers.Bidirectional(layers.LSTM(lstm_cells)),
 
-        layers.LSTM(lstm_cells,return_sequences=True),
-        layers.LSTM(lstm_cells),
+        # layers.LSTM(lstm_cells,return_sequences=True),
+        # layers.LSTM(lstm_cells),
 
         layers.Dropout(0.5),
         # use ReLU in place of tanh function since they are very good alternatives of each other.
         layers.Dense(embedding_dim, activation='relu'),
-        # layers.Dropout(0.2),
+        layers.Dropout(0.2),
         # layers.Dense(8),
         # layers.Dropout(0.2),
         # Add a Dense layer with 4 units and softmax activation.
