@@ -225,23 +225,23 @@ if __name__ == "__main__":
         layers.Embedding(vocab_size, embedding_dim, input_length=maxlen),
         # layers.Embedding(vocab_size, embedding_dim),
 
-        layers.Dropout(0.5),
+        # layers.Dropout(0.5),
 
-        layers.Conv1D(embedding_dim/2, 5, padding='valid', activation='relu', strides=1),
-        layers.MaxPooling1D(pool_size=4),
+        # layers.Conv1D(embedding_dim/2, 5, padding='valid', activation='relu', strides=1),
+        # layers.MaxPooling1D(pool_size=4),
 
-        layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
-        layers.Bidirectional(layers.LSTM(lstm_cells)),
+        # layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
+        # layers.Bidirectional(layers.LSTM(lstm_cells)),
 
         # layers.LSTM(lstm_cells,return_sequences=True),
-        # layers.LSTM(lstm_cells),
+        layers.LSTM(lstm_cells),
 
-        layers.Dropout(0.5),
+        # layers.Dropout(0.5),
         # use ReLU in place of tanh function since they are very good alternatives of each other.
         layers.Dense(embedding_dim, activation='relu'),
         # layers.Dropout(0.2),
         # layers.Dense(8),
-        layers.Dropout(0.2),
+        # layers.Dropout(0.2),
         # Add a Dense layer with 4 units and softmax activation.
         # When we have multiple outputs, softmax convert outputs layers into a probability distribution.
         layers.Dense(3, activation='softmax')
@@ -255,7 +255,7 @@ if __name__ == "__main__":
         # Train
         start_time = timeit.default_timer()
 
-        checkpoint = ModelCheckpoint("BEST_saved_models/" + model_name, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=False)
+        checkpoint = ModelCheckpoint("BEST_saved_models/" + model_name + '_{epoch:02d}-{val_loss:.2f}', monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=False)
         callbacks_list = [checkpoint]
         
         history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, batch_size=batch_size,
@@ -277,7 +277,7 @@ if __name__ == "__main__":
         print("Test Accuracy: ", acc)
 
         # Save entire model
-        model.save(saved_model_path, save_weights_only=False, include_optimizer=True)
+        model.save(saved_model_path, include_optimizer=True)
 
     else:
         print('Unknown action:', action)
