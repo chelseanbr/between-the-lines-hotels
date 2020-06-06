@@ -114,7 +114,7 @@ if __name__ == "__main__":
     # Change Train and Val labels into ints
     y_train = train_df[TARGET]
     y_val = val_df[TARGET]
-    y_test = val_df[TARGET]
+    y_test = test_df[TARGET]
 
     label_encoder = LabelEncoder()
     label_encoder.fit(y_train)
