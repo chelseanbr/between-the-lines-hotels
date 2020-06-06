@@ -15,15 +15,17 @@ tf.random.set_seed(42)
 
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-from tensorflow.keras.models import Sequential
 from tensorflow.keras import layers
 from tensorflow.keras import utils
 from tensorflow.keras import metrics
+from tensorflow.keras import backend as K
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.models import load_model
+from tensorflow.keras.models import Sequential
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.utils import class_weight
+from nltk.stem import SnowballStemmer
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
@@ -63,7 +65,9 @@ def plot_graphs(history, string, model_name):
     fig.tight_layout()
     fig.savefig('imgs/' + model_name + '_' + string)
 
+# Get epochs, time, save path
 def get_epochs_save_path():
+    """Get # epochs from sys args and time to define save model path"""
     try: 
         num_epochs = int(sys.argv[-1])
     except IndexError:
@@ -78,7 +82,27 @@ def get_epochs_save_path():
     model_name = saved_model_path.split('/')[-1]
     model_name = model_name.split('.')[0]
     return num_epochs, saved_model_path, model_name
-        
+ 
+# Define custom metrics ###############
+def recall(y_true, y_pred):
+    """Calculate multiclass recall"""
+    y_true = K.ones_like(y_true) 
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    all_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+    
+    recall = true_positives / (all_positives + K.epsilon())
+    return recall
+
+def precision(y_true, y_pred):
+    """Calculate multiclass precision"""
+    y_true = K.ones_like(y_true) 
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    
+    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+    precision = true_positives / (predicted_positives + K.epsilon())
+    return precision
+
+#############################
 
 if __name__ == "__main__":
     try: 
@@ -99,9 +123,11 @@ if __name__ == "__main__":
         print('\nLoading model: {}\n'.format(prev_model_path))
         model = load_model(prev_model_path)
 
-    # Data preprocessing
+    # Data preprocessing #############
     train_df, test_df, val_df = prep.preprocess_split(path)
+    
 
+    # Optional, to save time ##############
     # Get smaller samples of data
     train_df, _ = train_test_split(train_df, train_size=0.001, shuffle=True, \
         stratify=train_df[TARGET], random_state=42)
@@ -111,6 +137,9 @@ if __name__ == "__main__":
             stratify=test_df[TARGET],random_state=42)
     print('Taking 0.1pct of data - Train: {}, Val: {}, Test: {}'.format(train_df.shape[0], val_df.shape[0], test_df.shape[0]))
 
+    ########################
+    
+    # Further prepare data #############
     # Change Train and Val labels into ints
     y_train = train_df[TARGET]
     y_val = val_df[TARGET]
@@ -134,25 +163,36 @@ if __name__ == "__main__":
     X_val_vals = val_df[FEATURE].str.lower()
     X_test_vals = test_df[FEATURE].str.lower()
 
+    # Get stopwords
     stopwords = prep.set_stopwords()
     stop_pat = ' | '.join(stopwords)
     
-    print('\nRemoving punctuation and stop words from X_train/val data...')
-    X_train_vals = X_train_vals.str.replace('[^\w\s]', '')
-    X_val_vals = X_val_vals.str.replace('[^\w\s]', '')
-    X_test_vals = X_test_vals.str.replace('[^\w\s]', '')
+    # Remove punctuation digits, and stop words
+    regex = '[^a-zA-Z\s]'
+    print('\nRemoving punctuation, digits, and stop words from X_train/val/test data...')
+    X_train_vals = X_train_vals.str.replace(regex, '')
+    X_val_vals = X_val_vals.str.replace(regex, '')
+    X_test_vals = X_test_vals.str.replace(regex, '')
 
     X_train_vals = X_train_vals.str.replace(stop_pat, ' ')
     X_val_vals = X_val_vals.str.replace(stop_pat, ' ')
-
-    # Tokenize X data
+    X_test_vals = X_test_vals.str.replace(stop_pat, ' ')
+    
+    # Snowball stemming
+    stemmer = SnowballStemmer('english')
+    X_train_vals = X_train_vals.apply(lambda x: ' '.join([stemmer.stem(word) for word in x.split()]))
+    X_val_vals = X_val_vals.apply(lambda x: ' '.join([stemmer.stem(word) for word in x.split()]))
+    X_test_vals = X_test_vals.apply(lambda x: ' '.join([stemmer.stem(word) for word in x.split()]))
+    
+    # Tokenize data ######################
+    
     print('\nTokenizing X_train/val/test data...')
     X_train_vals = X_train_vals.values
     X_val_vals = X_val_vals.values
     X_test_vals = X_test_vals.values
 
-    # PARAMS
-    maxlen = 280
+    # Set tokenization params
+    maxlen = 300
     oov_tok = '<OOV>'
     num_words = 5000
     trunc_type = 'post'
@@ -166,21 +206,20 @@ if __name__ == "__main__":
 
     vocab_size=len(tokenizer.word_index)+1
         
+    # Pad with zeros
     xtrain_tkns = pad_sequences(xtrain_tkns,padding=padding_type, truncating=trunc_type, maxlen=maxlen)
     xval_tkns = pad_sequences(xval_tkns,padding=padding_type, truncating=trunc_type, maxlen=maxlen)
     xtest_tkns = pad_sequences(xtest_tkns,padding=padding_type, truncating=trunc_type, maxlen=maxlen)
         
+    # Start modeling ##################
     print('\nStarting modeling...')
 
     if action == 'load':
-        
-        loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc, precision, recall = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
-
-        loss, acc = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc, precision, recall = model.evaluate(xval_tkns, validation_label_seq)
         print("Val Accuracy: ", acc)
-
-        loss, acc = model.evaluate(xtest_tkns, test_label_seq)
+        loss, acc, precision, recall = model.evaluate(xtest_tkns, test_label_seq)
         print("Test Accuracy: ", acc)
     
     elif action == 'train_more': 
@@ -189,7 +228,7 @@ if __name__ == "__main__":
         # Train
         start_time = timeit.default_timer()
 
-        checkpoint = ModelCheckpoint("BEST_saved_models/" + model_name + '_{epoch:02d}-{val_loss:.2f}', monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=False)
+        checkpoint = ModelCheckpoint("BEST_saved_models/" + model_name, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=False)
         callbacks_list = [checkpoint]
         
         history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, batch_size=batch_size,
@@ -200,14 +239,14 @@ if __name__ == "__main__":
         
         plot_graphs(history, "accuracy", model_name)
         plot_graphs(history, "loss", model_name)
+        plot_graphs(history, "precision", model_name)
+        plot_graphs(history, "recall", model_name)
 
-        loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc, precision, recall = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
-
-        loss, acc = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc, precision, recall = model.evaluate(xval_tkns, validation_label_seq)
         print("Val Accuracy: ", acc)
-
-        loss, acc = model.evaluate(xtest_tkns, test_label_seq)
+        loss, acc, precision, recall = model.evaluate(xtest_tkns, test_label_seq)
         print("Test Accuracy: ", acc)
 
         # Save entire model
@@ -216,10 +255,12 @@ if __name__ == "__main__":
     elif action == 'new_model': 
         num_epochs, saved_model_path, model_name = get_epochs_save_path()
         
+        # Set params
         embedding_dim = 64 #PARAMS
         lstm_cells = 100 #PARAMS
         batch_size = 32 #PARAMS
         
+        # MODEL
         model = Sequential([
         # Add an Embedding layer expecting input vocab of size 5000, and output embedding dimension of size 64 we set at the top
         layers.Embedding(vocab_size, embedding_dim, input_length=maxlen),
@@ -247,15 +288,16 @@ if __name__ == "__main__":
         layers.Dense(3, activation='softmax')
         ])
         
+        # Compile model, show summary
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", 
-            weighted_metrics=['accuracy'])
+            weighted_metrics=['accuracy', precision, recall])
         print('\n')
         model.summary()
         
         # Train
         start_time = timeit.default_timer()
 
-        checkpoint = ModelCheckpoint("BEST_saved_models/" + model_name + '_{epoch:02d}-{val_loss:.2f}', monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=False)
+        checkpoint = ModelCheckpoint("BEST_saved_models/" + model_name, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=False)
         callbacks_list = [checkpoint]
         
         history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, batch_size=batch_size,
@@ -266,14 +308,14 @@ if __name__ == "__main__":
         
         plot_graphs(history, "accuracy", model_name)
         plot_graphs(history, "loss", model_name)
+        plot_graphs(history, "precision", model_name)
+        plot_graphs(history, "recall", model_name)
 
-        loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc, precision, recall = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
-
-        loss, acc = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc, precision, recall = model.evaluate(xval_tkns, validation_label_seq)
         print("Val Accuracy: ", acc)
-
-        loss, acc = model.evaluate(xtest_tkns, test_label_seq)
+        loss, acc, precision, recall = model.evaluate(xtest_tkns, test_label_seq)
         print("Test Accuracy: ", acc)
 
         # Save entire model
