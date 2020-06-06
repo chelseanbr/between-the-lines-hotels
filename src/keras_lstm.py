@@ -127,7 +127,7 @@ if __name__ == "__main__":
     class_weights = class_weight.compute_class_weight('balanced',
                                                  list(label_tokenizer.word_index.keys()),
                                                  y_train)
-    class_weights_dict = {k:v for k,v in zip(label_tokenizer.word_index.values(), class_weights)}
+    class_weights_dict = {k-1:v for k,v in zip(label_tokenizer.word_index.values(), class_weights)}
     
     # Lower case, remove punctuation and stop words from X data
     X_train_vals = train_df[FEATURE].str.lower()
