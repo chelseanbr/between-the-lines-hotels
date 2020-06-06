@@ -233,10 +233,10 @@ if __name__ == "__main__":
         # layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True)),
         # layers.Bidirectional(layers.LSTM(lstm_cells)),
 
-        # layers.LSTM(lstm_cells,return_sequences=True),
+        layers.LSTM(lstm_cells,return_sequences=True),
         layers.LSTM(lstm_cells),
 
-        # layers.Dropout(0.5),
+        layers.Dropout(0.5),
         # use ReLU in place of tanh function since they are very good alternatives of each other.
         layers.Dense(embedding_dim, activation='relu'),
         # layers.Dropout(0.2),
