@@ -41,7 +41,7 @@ ___
 3. Balanced training data with undersampling
 4. Evaluated models on accuracy and confusion matrix
 
-## File Directory
+## Directory Structure
 ```bash
 between-the-lines-hotels
 ├── README.md
@@ -64,8 +64,12 @@ between-the-lines-hotels
     ├── keras_lstm.py
     ├── preprocess.py
     └── scrapers
-        └── tripadvisor_scraper.*.py (10 files)
+        └── tripadvisor_scraper*.py (10 files)
 ```
+### File Descriptions and Instructions for Use:
+* The src folder contains all python modules.
+  1. Inside, the scrapers folder contains 10 tripadvisor_scraper*.py modules that can be run to scrape Tripadvisor hotel reviews. Each module contains different links to scrape from and the output of the modules are CSV files, one per hotel/link.
+* The jupyter notebook eda.ipynb contains my EDA and shows how I loaded data from multiple CSV files contained in multiple folders into a pandas dataframe.
 
 ## EDA
 * Whole dataset consisted of 1.2 million hotel reviews in English, each with a Tripadvisor “bubble” rating from 1 to 5

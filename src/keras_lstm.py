@@ -123,18 +123,19 @@ if __name__ == "__main__":
         model = load_model(prev_model_path, custom_objects={'precision':precision, 'recall':recall})
 
     # Data preprocessing #############
-    train_df, test_df, val_df = prep.preprocess_split(path)
+    # train_df, test_df, val_df = prep.preprocess_split(path)
+    train_df, test_df, val_df = prep.preprocess_split_undersample(path) # Undersample train
     
 
     # Optional, to save time ##############
     # Get smaller samples of data
-    train_df, _ = train_test_split(train_df, train_size=0.5, shuffle=True, \
+    train_df, _ = train_test_split(train_df, train_size=0.01, shuffle=True, \
         stratify=train_df[TARGET], random_state=42)
-    val_df, _ = train_test_split(val_df, train_size=0.5, shuffle=True, \
+    val_df, _ = train_test_split(val_df, train_size=0.01, shuffle=True, \
             stratify=val_df[TARGET],random_state=42)
-    test_df, _ = train_test_split(test_df, train_size=0.5, shuffle=True, \
+    test_df, _ = train_test_split(test_df, train_size=0.01, shuffle=True, \
             stratify=test_df[TARGET],random_state=42)
-    print('Taking 50pct of data - Train: {}, Val: {}, Test: {}'.format(train_df.shape[0], val_df.shape[0], test_df.shape[0]))
+    print('Taking 5pct of data - Train: {}, Val: {}, Test: {}'.format(train_df.shape[0], val_df.shape[0], test_df.shape[0]))
 
     ########################
     
@@ -220,6 +221,10 @@ if __name__ == "__main__":
         print("Val Accuracy: ", acc)
         loss, acc, precision, recall = model.evaluate(xtest_tkns, test_label_seq)
         print("Test Accuracy: ", acc)
+    
+    elif action == 'predict':
+        y_pred_proba = model.predict(xtest_tkns)
+        y_pred = np.argmax(y_pred_proba, axis=1)
     
     elif action == 'train_more': 
         num_epochs, saved_model_path, model_name = get_epochs_save_path()
