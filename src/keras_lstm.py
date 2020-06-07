@@ -120,7 +120,7 @@ if __name__ == "__main__":
         # Load saved model
         prev_model_path = model_path
         print('\nLoading model: {}\n'.format(prev_model_path))
-        model = load_model(prev_model_path)
+        model = load_model(prev_model_path, custom_objects={'precision':precision, 'recall':recall})
 
     # Data preprocessing #############
     train_df, test_df, val_df = prep.preprocess_split(path)
@@ -128,13 +128,13 @@ if __name__ == "__main__":
 
     # Optional, to save time ##############
     # Get smaller samples of data
-    train_df, _ = train_test_split(train_df, train_size=0.001, shuffle=True, \
+    train_df, _ = train_test_split(train_df, train_size=0.5, shuffle=True, \
         stratify=train_df[TARGET], random_state=42)
-    val_df, _ = train_test_split(val_df, train_size=0.001, shuffle=True, \
+    val_df, _ = train_test_split(val_df, train_size=0.5, shuffle=True, \
             stratify=val_df[TARGET],random_state=42)
-    test_df, _ = train_test_split(test_df, train_size=0.001, shuffle=True, \
+    test_df, _ = train_test_split(test_df, train_size=0.5, shuffle=True, \
             stratify=test_df[TARGET],random_state=42)
-    print('Taking 0.1pct of data - Train: {}, Val: {}, Test: {}'.format(train_df.shape[0], val_df.shape[0], test_df.shape[0]))
+    print('Taking 50pct of data - Train: {}, Val: {}, Test: {}'.format(train_df.shape[0], val_df.shape[0], test_df.shape[0]))
 
     ########################
     
