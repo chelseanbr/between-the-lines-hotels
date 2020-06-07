@@ -53,13 +53,10 @@ between-the-lines-hotels
     ├── flask_app
     │   ├── app.py
     │   ├── boostrap
-    │   │   └── Folders: css, fonts, js
+    │   │   └── (Folders: css, fonts, js)
     │   ├── static
-    │   │   ├── Folders: css, fonts, js
-    │   │   ├── hotel.jpg
-    │   │   ├── wordcloud_negative.png
-    │   │   ├── wordcloud_neutral.png
-    │   │   └── wordcloud_positive.png
+    │   │   ├── (Folders: css, fonts, js)
+    │   │   └── (4 images)
     │   └── templates
     │       ├── jumbotron.html
     │       ├── predict.html
