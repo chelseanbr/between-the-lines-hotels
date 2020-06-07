@@ -129,13 +129,14 @@ if __name__ == "__main__":
 
     # Optional, to save time ##############
     # Get smaller samples of data
-    train_df, _ = train_test_split(train_df, train_size=0.01, shuffle=True, \
+    pct = 5
+    train_df, _ = train_test_split(train_df, train_size=pct/100.00, shuffle=True, \
         stratify=train_df[TARGET], random_state=42)
-    val_df, _ = train_test_split(val_df, train_size=0.01, shuffle=True, \
+    val_df, _ = train_test_split(val_df, train_size=pct/100.00, shuffle=True, \
             stratify=val_df[TARGET],random_state=42)
-    test_df, _ = train_test_split(test_df, train_size=0.01, shuffle=True, \
+    test_df, _ = train_test_split(test_df, train_size=pct/100.00, shuffle=True, \
             stratify=test_df[TARGET],random_state=42)
-    print('Taking 5pct of data - Train: {}, Val: {}, Test: {}'.format(train_df.shape[0], val_df.shape[0], test_df.shape[0]))
+    print('Taking {}pct of data - Train: {}, Val: {}, Test: {}'.format(pct, train_df.shape[0], val_df.shape[0], test_df.shape[0]))
 
     ########################
     
@@ -215,11 +216,11 @@ if __name__ == "__main__":
     print('\nStarting modeling...')
 
     if action == 'load':
-        loss, acc, precision, recall = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
-        loss, acc, precision, recall = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc = model.evaluate(xval_tkns, validation_label_seq)
         print("Val Accuracy: ", acc)
-        loss, acc, precision, recall = model.evaluate(xtest_tkns, test_label_seq)
+        loss, acc = model.evaluate(xtest_tkns, test_label_seq)
         print("Test Accuracy: ", acc)
     
     elif action == 'predict':
@@ -243,14 +244,12 @@ if __name__ == "__main__":
         
         plot_graphs(history, "accuracy", model_name)
         plot_graphs(history, "loss", model_name)
-        plot_graphs(history, "precision", model_name)
-        plot_graphs(history, "recall", model_name)
 
-        loss, acc, precision, recall = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
-        loss, acc, precision, recall = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc = model.evaluate(xval_tkns, validation_label_seq)
         print("Val Accuracy: ", acc)
-        loss, acc, precision, recall = model.evaluate(xtest_tkns, test_label_seq)
+        loss, acc = model.evaluate(xtest_tkns, test_label_seq)
         print("Test Accuracy: ", acc)
 
         # Save entire model
@@ -295,7 +294,7 @@ if __name__ == "__main__":
         
         # Compile model, show summary
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", 
-            weighted_metrics=['accuracy', precision, recall])
+            weighted_metrics=['accuracy', 'val_accuracy'])
         print('\n')
         model.summary()
         
@@ -313,14 +312,12 @@ if __name__ == "__main__":
         
         plot_graphs(history, "accuracy", model_name)
         plot_graphs(history, "loss", model_name)
-        plot_graphs(history, "precision", model_name)
-        plot_graphs(history, "recall", model_name)
 
-        loss, acc, precision, recall = model.evaluate(xtrain_tkns, training_label_seq)
+        loss, acc = model.evaluate(xtrain_tkns, training_label_seq)
         print("Training Accuracy: ", acc)
-        loss, acc, precision, recall = model.evaluate(xval_tkns, validation_label_seq)
+        loss, acc = model.evaluate(xval_tkns, validation_label_seq)
         print("Val Accuracy: ", acc)
-        loss, acc, precision, recall = model.evaluate(xtest_tkns, test_label_seq)
+        loss, acc = model.evaluate(xtest_tkns, test_label_seq)
         print("Test Accuracy: ", acc)
 
         # Save entire model
