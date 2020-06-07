@@ -10,8 +10,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 # Setting the seed for python random numbers
 rn.seed(42)
 # Setting the graph-level random seed.
-# tf.set_random_seed(42)
-tf.random.set_seed(42)
+tf.compat.v1.set_random_seed(42)
 
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
@@ -170,9 +169,9 @@ if __name__ == "__main__":
     # Remove punctuation digits, and stop words
     regex = '[^a-zA-Z\s]'
     print('\nRemoving punctuation, digits, and stop words from X_train/val/test data...')
-    X_train_vals = X_train_vals.str.replace(regex, '')
-    X_val_vals = X_val_vals.str.replace(regex, '')
-    X_test_vals = X_test_vals.str.replace(regex, '')
+    X_train_vals = X_train_vals.str.replace(regex, ' ')
+    X_val_vals = X_val_vals.str.replace(regex, ' ')
+    X_test_vals = X_test_vals.str.replace(regex, ' ')
 
     X_train_vals = X_train_vals.str.replace(stop_pat, ' ')
     X_val_vals = X_val_vals.str.replace(stop_pat, ' ')
