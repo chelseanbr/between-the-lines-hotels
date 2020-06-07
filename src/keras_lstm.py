@@ -170,9 +170,9 @@ if __name__ == "__main__":
     # Remove punctuation digits, and stop words
     regex = '[^a-zA-Z\s]'
     print('\nRemoving punctuation, digits, and stop words from X_train/val/test data...')
-    X_train_vals = X_train_vals.str.replace(regex, '')
-    X_val_vals = X_val_vals.str.replace(regex, '')
-    X_test_vals = X_test_vals.str.replace(regex, '')
+    X_train_vals = X_train_vals.str.replace(regex, ' ')
+    X_val_vals = X_val_vals.str.replace(regex, ' ')
+    X_test_vals = X_test_vals.str.replace(regex, ' ')
 
     X_train_vals = X_train_vals.str.replace(stop_pat, ' ')
     X_val_vals = X_val_vals.str.replace(stop_pat, ' ')
