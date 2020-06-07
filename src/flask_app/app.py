@@ -22,7 +22,7 @@ def show_pred():
     text = str(request.form['user_input'])
     tokenized_text = process_input(text)
     # PREDICT
-    return str(tokenized_text)
+    return render_template('predict.html', review=text, tokenized_review=str(tokenized_text))
 
 def set_stopwords():
     """Snowball-Stem English stopwords, 
