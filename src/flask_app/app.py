@@ -24,7 +24,7 @@ maxlen = 550
 num_words = 5000
 
 # Path to model
-model_path = 'BEST_saved_models/lstm_10epochs_20200608-04:29:46/'
+model_path = 'BEST_saved_models/lstm_6epochs_20200608-07:34:50/'
 
 # Home page
 @app.route('/')
@@ -133,7 +133,7 @@ def process_input(text, maxlen, num_words):
     padding_type = 'post'
     
     # Load tokenizer from pickle
-    with open('src/tokenizer.pickle', 'rb') as handle:
+    with open('src/tokenizer_50pct.pickle', 'rb') as handle:
         tokenizer = pickle.load(handle)
     tokenized_text = tokenizer.texts_to_sequences(tokenized_text)
         

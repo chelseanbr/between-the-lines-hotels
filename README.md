@@ -1,5 +1,6 @@
 # Between the Lines of Tripadvisor Hotel Reviews
-![Image from https://www.pexels.com/photo/bedroom-door-entrance-guest-room-271639/](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/hotel.jpg?raw=true)
+![Image from https://www.pexels.com/photo/bedroom-door-entrance-guest-room-271639/](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/hotel.jpg)
+## Check out my Airbnb Review Sentiment Classifier (Web App): https://tinyurl.com/rating-predictor
 #### Link to Presentation: https://docs.google.com/presentation/d/1nZ9morIyqlIuJPOEAuhNwTw9m3lByksouw4KqXlmOfQ/edit?usp=sharing
 _____
 ## Initial Project Proposal
@@ -32,7 +33,8 @@ ___
 #### Solution: Mine hotel reviews “labeled” with ratings and use them to predict sentiment.
 
 ## Summary of Process
-![Tripadvisor_Logo_horizontal-lockup_registered_RGB.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/Tripadvisor_Logo_horizontal-lockup_registered_RGB.png) ![bs.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/bs.png)
+![Tripadvisor_Logo_horizontal-lockup_registered_RGB.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/Tripadvisor_Logo_horizontal-lockup_registered_RGB.png) 
+![bs.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/bs.png)
 1. Web-scraped TripAdvisor hotel reviews
   * 2 EC2 instances ran in parallel over 2 days
   * Set up data cleaning, EDA, and modeling pipeline while scraping
@@ -86,7 +88,7 @@ between-the-lines-hotels
 
 * Added sentiment label based on hotel rating per review
 
-![countplot_ratings_full.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/countplot_ratings_full.png)
+![countplot_ratings_full.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/countplot_ratings_full.png)
 
 ![pie_sentiments_initial.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/pie_sentiments_initial.png)
 
@@ -97,7 +99,7 @@ between-the-lines-hotels
 ### Handling Imbalanced Classes
 * Under-sampled train data to balance classes
 * Train data qty reduced from ~300k to 94k observations
-![pie_sentiments_initial.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/pie_sentiments_train_undersample.png)
+![pie_sentiments_initial.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/pie_sentiments_train_undersample.png)
 * Validation set had 77k observations, test set had 96k
 
 ### NLP
@@ -117,7 +119,7 @@ WordNetLemmatizer,
 and 5,000 features
 
 ## Results
-![confusion_matrix_final_lr_test.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/confusion_matrix_final_lr_test.png)
+![confusion_matrix_final_lr_val.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/images/confusion_matrix_final_lr_val.png)
 
 * Logistic Regression (multinomial)
 * Achieved after tuning C to 0.1 with GridSearch
@@ -129,7 +131,7 @@ and 5,000 features
 
 ![wordcloud_neutral.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/wordcloud_neutral.png)
 
-![wordcloud_negative.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/wordcloud_negative.png)
+![wordcloud_negative.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/confusion_matrix_final_lr_val.png)
 
 ### Example of final model use on Airbnb review:
 > "Street noise is noticeable at the higher floors"
@@ -226,21 +228,28 @@ weighted avg       0.90      0.86      0.88     19478
    macro avg       0.67      0.73      0.69     24347
 weighted avg       0.91      0.87      0.88     24347
 ```
-![confusion_matrix_train_lstm_10epochs_20200608-04/29/46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/neural_net_cm/confusion_matrix_train_lstm_10epochs_20200608-04/29/46.png)
+![confusion_matrix_train_lstm_10epochs_20200608-04:29:46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_train_lstm_10epochs_20200608-04:29:46.png)
 
-![confusion_matrix_val_lstm_10epochs_20200608-04/29/46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/neural_net_cm/confusion_matrix_val_lstm_10epochs_20200608-04/29/46.png)
+![confusion_matrix_val_lstm_10epochs_20200608-04:29:46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_val_lstm_10epochs_20200608-04:29:46.png)
 
-![confusion_matrix_test_lstm_10epochs_20200608-04/29/46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/neural_net_cm/confusion_matrix_test_lstm_10epochs_20200608-04/29/46.png)
+![lstm_10epochs_20200608-04:29:46_loss.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_10epochs_20200608-04:29:46_loss.png)
 
-![lstm_10epochs_20200608-04/29/46_loss.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/neural_net_history/lstm_10epochs_20200608-04/29/46_loss.png)
-
-![lstm_10epochs_20200608-04/29/46_accuracy.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/neural_net_history/lstm_10epochs_20200608-04/29/46_accuracy.png)
-
+![lstm_10epochs_20200608-04:29:46_accuracy.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_10epochs_20200608-04:29:46_accuracy.png)
 ```bash
+Reading data/tripadvisor_reviews_1p2m.csv...
+Cleaning data...
+
+Splitting data into train/test/val...
+        Train: 779120, Test: 243475, Val: 194780
+Taking 50pct of data - Train: 389560, Val: 97390, Test: 121737
+
+Removing punctuation, digits, and stop words from X_train/val/test data...
+
+Tokenizing X_train/val/test data...
+
+Starting modeling...
+
 Will save model to: saved_models/lstm_6epochs_20200608-07:34:50
-
-2020-06-08 07:34:50.551559: E tensorflow/stream_executor/cuda/cuda_driver.cc:313] failed call to cuInit: UNKNOWN ERROR (303)
-
 
 Model: "sequential"
 _________________________________________________________________
@@ -270,10 +279,104 @@ Total params: 1,320,739
 Trainable params: 1,320,739
 Non-trainable params: 0
 _________________________________________________________________
+Epoch 1/6
+6087/6087 [==============================] - ETA: 0s - loss: 0.5901 - accuracy
+: 0.8166
+Epoch 00001: val_accuracy improved from -inf to 0.86511, saving model to BEST_
+saved_models/lstm_6epochs_20200608-07:34:50/
+6087/6087 [==============================] - 3186s 523ms/step - loss: 0.5901 -
+ accuracy: 0.8166 - val_loss: 0.3307 - val_accuracy: 0.8651
+Epoch 2/6
+6087/6087 [==============================] - ETA: 0s - loss: 0.5084 - accuracy
+: 0.8421
+Epoch 00002: val_accuracy improved from 0.86511 to 0.87598, saving mo[35/2291]
+ST_saved_models/lstm_6epochs_20200608-07:34:50/
+6087/6087 [==============================] - 3184s 523ms/step - loss: 0.5084 $
+ accuracy: 0.8421 - val_loss: 0.2904 - val_accuracy: 0.8760
+Epoch 3/6
+6087/6087 [==============================] - ETA: 0s - loss: 0.4790 - accurac$
+: 0.8503
+Epoch 00003: val_accuracy did not improve from 0.87598
+6087/6087 [==============================] - 3183s 523ms/step - loss: 0.4790 $
+ accuracy: 0.8503 - val_loss: 0.2989 - val_accuracy: 0.8741
+Epoch 4/6
+6087/6087 [==============================] - ETA: 0s - loss: 0.4599 - accurac$
+: 0.8547
+Epoch 00004: val_accuracy did not improve from 0.87598
+6087/6087 [==============================] - 3181s 523ms/step - loss: 0.4599 $
+ accuracy: 0.8547 - val_loss: 0.3054 - val_accuracy: 0.8668
+Epoch 5/6
+6087/6087 [==============================] - ETA: 0s - loss: 0.4451 - accurac$
+: 0.8563
+Epoch 00005: val_accuracy did not improve from 0.87598
+6087/6087 [==============================] - 3187s 524ms/step - loss: 0.4451 $
+ accuracy: 0.8563 - val_loss: 0.3043 - val_accuracy: 0.8694
+Epoch 6/6
+6087/6087 [==============================] - ETA: 0s - loss: 0.4308 - accurac$
+: 0.8600
+Epoch 00006: val_accuracy improved from 0.87598 to 0.87695, saving model to B$
+ST_saved_models/lstm_6epochs_20200608-07:34:50/
+6087/6087 [==============================] - 3181s 523ms/step - loss: 0.4308 $
+ accuracy: 0.8600 - val_loss: 0.2901 - val_accuracy: 0.8769
 
+Took 19116.94s to train
+12174/12174 [==============================] - 823s 68ms/step - loss: 0.2432 $
+ accuracy: 0.8971
+Training Accuracy:  0.8971455097198486
+3044/3044 [==============================] - 204s 67ms/step - loss: 0.5526 - $
+ccuracy: 0.8769
+Val Accuracy:  0.876948356628418
+3805/3805 [==============================] - 255s 67ms/step - loss: 0.5434 - $ccuracy: 0.8782
+Test Accuracy:  0.8781553506851196
+
+        Predict train
+              precision    recall  f1-score   support
+
+    negative       0.82      0.83      0.83     24673
+     neutral       0.46      0.80      0.58     34034
+    positive       0.99      0.91      0.95    330853
+
+    accuracy                           0.90    389560
+   macro avg       0.76      0.85      0.79    389560
+weighted avg       0.93      0.90      0.91    389560
+
+
+        Predict val
+              precision    recall  f1-score   support
+
+    negative       0.72      0.71      0.72      6168
+     neutral       0.40      0.70      0.51      8508
+    positive       0.98      0.91      0.94     82714
+
+    accuracy                           0.88     97390
+   macro avg       0.70      0.77      0.72     97390
+weighted avg       0.92      0.88      0.89     97390
+
+
+        Predict test
+              precision    recall  f1-score   support
+
+    negative       0.72      0.74      0.73      7710
+     neutral       0.40      0.70      0.51     10636
+    positive       0.98      0.91      0.94    103391
+
+    accuracy                           0.88    121737
+   macro avg       0.70      0.78      0.73    121737
+weighted avg       0.92      0.88      0.89    121737
 ```
+
+![confusion_matrix_train_lstm_6epochs_20200608-07:34:50.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_train_lstm_6epochs_20200608-07:34:50.png)
+
+![confusion_matrix_val_lstm_6epochs_20200608-07:34:50.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_val_lstm_6epochs_20200608-07:34:50.png)
+
+![confusion_matrix_test_lstm_6epochs_20200608-07:34:50.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_test_lstm_6epochs_20200608-07:34:50.png)
+
+![lstm_6epochs_20200608-07:34:50_loss.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_6epochs_20200608-07:34:50_loss.png)
+
+![lstm_6epochs_20200608-07:34:50_accuracy.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_6epochs_20200608-07:34:50_accuracy.png)
+
 ## Web App
-#### Check out my Airbnb Review Sentiment Classifier: https://tinyurl.com/rating-predictor
+#### Airbnb Review Sentiment Classifier: https://tinyurl.com/rating-predictor
 
 Here is what the home page looks like:
 
