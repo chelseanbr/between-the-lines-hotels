@@ -1,7 +1,6 @@
 # Between the Lines of Tripadvisor Hotel Reviews
 ![Image from https://www.pexels.com/photo/bedroom-door-entrance-guest-room-271639/](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/hotel.jpg?raw=true)
-#### Link to Presentation: 
-* To be added
+#### Link to Presentation: https://docs.google.com/presentation/d/1nZ9morIyqlIuJPOEAuhNwTw9m3lByksouw4KqXlmOfQ/edit?usp=sharing
 _____
 ## Initial Project Proposal
 ### What are you trying to do?
@@ -60,14 +59,23 @@ between-the-lines-hotels
     │       └── predict.html
     ├── keras_lstm.py
     ├── preprocess.py
-    ├── tokenizer*.pickle (multiple)
+    ├── tokenizer*.pickle (3 files)
     └── scrapers
         └── tripadvisor_scraper*.py (10 files)
 ```
 ### File Descriptions and Instructions for Use:
-* The src folder contains all python modules.
-  1. Inside, the scrapers folder contains 10 tripadvisor_scraper*.py modules that can be run to scrape Tripadvisor hotel reviews. Each module contains different links to scrape from and the output of the modules are CSV files, one per hotel/link.
-* The jupyter notebook eda.ipynb contains my EDA and shows how I loaded data from multiple CSV files contained in multiple folders into a pandas dataframe.
+1. README&#46;md is the file you are reading
+2. eda&#46;ipynb is a jupyter notebook that contains my exploratory data analysis (EDA)
+* In it, I loaded data into a pandas dataframe from either multiple CSV files contained in multiple folders or a single CSV file and then created data visualizations after understanding and processing the data
+3. The src folder contains all python modules
+* eda&#46;py contains the helper functions used for plotting in my EDA notebook (eda.ipynb)
+* The flask_app folder contains all code to run my web app
+  * app&#46;py runs the web app
+  * The static folder 
+  * The templates folder contain the layout of the web app home page (jumbotron.html), and prediction page (predict.html)
+4. The scrapers folder contains 10 tripadvisor_scraper*.py modules that can be run to scrape Tripadvisor hotel reviews
+ * Each module contains many links, each corresponding to a different hotel, to scrape from and the output of the modules are CSV files, one per link/hotel
+ * A preview of the fields of the CSV files can be seen in the eda.ipynb notebook (Out[8]): https://github.com/chelseanbr/between-the-lines-hotels/blob/master/eda.ipynb
 
 ## EDA
 * Whole dataset consisted of 1.2 million hotel reviews in English, each with a Tripadvisor “bubble” rating from 1 to 5
@@ -255,10 +263,27 @@ _________________________________________________________________
 
 ```
 ## Web App
+#### Check out my Airbnb Review Sentiment Classifier: https://tinyurl.com/rating-predictor
 
-https://tinyurl.com/rating-predictor
+Here is what the home page looks like:
+
+![site_home.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/site_home.png)
+
+Neutral prediction example:
+
+![site_pred_neutral_default.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/site_pred_neutral_default.png)
+
+Positive prediction example:
+
+![site_pred_pos.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/site_pred_pos.png)
+
+Negative prediction example:
+
+![site_pred_neg.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/site_pred_neg.png)
+
+Just for fun, I tried submitting a fake review I wrote, and it was pretty funny to see the result:
+
+![site_pred_neg_funny.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/site_pred_neg_funny.png)
 
 ## Next Steps
-* Try out model on other data like tweets in the context of hotels/places to stay
-* Explore advanced NLP/ML methods like Word2Vec, LSTM recurrent neural networks
-* Mine more data and build a hotel recommender system
+* 
