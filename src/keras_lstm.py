@@ -35,6 +35,7 @@ from datetime import datetime
 import timeit
 import preprocess as prep
 import re
+import pickle
 
 # Constants
 TARGET = 'sentiment'
@@ -53,6 +54,59 @@ plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
 plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
 plt.rc('figure', titlesize=BIGGEST_SIZE)  # fontsize of the figure title
+
+# Set params
+embedding_dim = 128 #PARAMS
+lstm_cells = 100 #PARAMS
+batch_size = 64 #PARAMS
+
+# Tokenization params
+maxlen = 550
+oov_tok = '<OOV>'
+num_words = 5000
+trunc_type = 'post'
+padding_type = 'post'
+
+# Build model
+def build_model(num_words, embedding_dim, lstm_cells, batch_size, maxlen):
+    """Build model"""
+    # MODEL
+    model = Sequential([
+    # Add an Embedding layer expecting input vocab size, output embedding dimension set at the top
+    layers.Embedding(num_words, embedding_dim, input_length=maxlen),
+
+    layers.Dropout(0.5),
+
+    layers.Conv1D(embedding_dim/2, 5, padding='valid', activation='relu', strides=1),
+    layers.MaxPooling1D(pool_size=4),
+
+        layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True, dropout=0.2, recurrent_dropout=0.2)),
+        layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True, dropout=0.2, recurrent_dropout=0.2)),
+    layers.Bidirectional(layers.LSTM(lstm_cells, dropout=0.2, recurrent_dropout=0.2)),
+
+    # layers.LSTM(lstm_cells,return_sequences=True),
+    # layers.LSTM(lstm_cells),
+
+#         layers.Dropout(0.5),
+        
+    # use ReLU in place of tanh function since they are very good alternatives of each other.
+    layers.Dense(embedding_dim, activation='relu'),
+        
+    layers.Dropout(0.25),
+        
+    # layers.Dense(8),
+    # layers.Dropout(0.2),
+        
+    # Add a Dense layer with 3 units (3 classes) and softmax activation.
+    # When we have multiple outputs, softmax convert outputs layers into a probability distribution.
+    layers.Dense(3, activation='softmax')
+    ])
+
+    # Compile model, show summary
+    model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", 
+        metrics=['accuracy'])
+    
+    return model
 
 # Plotting
 def plot_graphs(history, string, model_name):
@@ -122,11 +176,13 @@ if __name__ == "__main__":
         # Load saved model
         prev_model_path = model_path
         print('\nLoading model: {}\n'.format(prev_model_path))
-        model = load_model(prev_model_path)
+#         model = load_model(prev_model_path)        
+        model = build_model(num_words, embedding_dim, lstm_cells, batch_size, maxlen)
+        model.load_weights(prev_model_path)
 
     # Data preprocessing #############
-    # train_df, test_df, val_df = prep.preprocess_split(path)
-    train_df, test_df, val_df = prep.preprocess_split_undersample(path) # Undersample train
+    train_df, test_df, val_df = prep.preprocess_split(path) # Skip train undersampling
+#     train_df, test_df, val_df = prep.preprocess_split_undersample(path) # Undersample train 
     
     # Optional, to save time ##############
     # Get smaller samples of data
@@ -195,22 +251,21 @@ if __name__ == "__main__":
     X_train_vals = X_train_vals.values
     X_val_vals = X_val_vals.values
     X_test_vals = X_test_vals.values
-
-    # Set tokenization params
-    maxlen = 550
-    oov_tok = '<OOV>'
-    num_words = 5000
-    trunc_type = 'post'
-    padding_type = 'post'
     
-    tokenizer = Tokenizer(num_words=num_words, oov_token=oov_tok)
-    tonkenize = tokenizer.fit_on_texts(X_train_vals)
+#     # FIT ONCE ON TRAIN DATA!
+#     tokenizer = Tokenizer(num_words=num_words, oov_token=oov_tok)
+#     tokenize = tokenizer.fit_on_texts(X_train_vals)
+#     # saving
+#     with open('tokenizer.pickle', 'wb') as handle:
+#         pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    
+    # loading
+    with open('tokenizer.pickle', 'rb') as handle:
+        tokenizer = pickle.load(handle)
     xtrain_tkns = tokenizer.texts_to_sequences(X_train_vals)
     xval_tkns = tokenizer.texts_to_sequences(X_val_vals)
     xtest_tkns = tokenizer.texts_to_sequences(X_test_vals)
 
-    vocab_size=len(tokenizer.word_index)+1
-        
     # Pad with zeros
     xtrain_tkns = pad_sequences(xtrain_tkns,padding=padding_type, truncating=trunc_type, maxlen=maxlen)
     xval_tkns = pad_sequences(xval_tkns,padding=padding_type, truncating=trunc_type, maxlen=maxlen)
@@ -221,9 +276,7 @@ if __name__ == "__main__":
 
     if action == 'load':
         
-        # Compile model, show summary
-        model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", 
-            metrics=['accuracy'])
+        # Show model summary
         print('\n')
         model.summary()
         
@@ -243,51 +296,15 @@ if __name__ == "__main__":
     
     elif action == 'new_model': 
         num_epochs, saved_model_path, model_name = get_epochs_save_path()
-        
-        # Set params
-        embedding_dim = 128 #PARAMS
-        lstm_cells = 100 #PARAMS
-        batch_size = 64 #PARAMS
-        
-        # MODEL
-        model = Sequential([
-        # Add an Embedding layer expecting input vocab of size 5000, and output embedding dimension of size 128 we set at the top
-        layers.Embedding(vocab_size, embedding_dim, input_length=maxlen),
-        # layers.Embedding(vocab_size, embedding_dim),
 
-        layers.Dropout(0.5),
-
-        layers.Conv1D(embedding_dim/2, 5, padding='valid', activation='relu', strides=1),
-        layers.MaxPooling1D(pool_size=4),
-
-#         layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True, dropout=0.2, recurrent_dropout=0.2)),
-#         layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True, dropout=0.2, recurrent_dropout=0.2)),
-        layers.Bidirectional(layers.LSTM(lstm_cells, dropout=0.2, recurrent_dropout=0.2)),
-
-        # layers.LSTM(lstm_cells,return_sequences=True),
-        # layers.LSTM(lstm_cells),
-
-#         layers.Dropout(0.5),
-        # use ReLU in place of tanh function since they are very good alternatives of each other.
-        layers.Dense(embedding_dim, activation='relu'),
-        layers.Dropout(0.25),
-        # layers.Dense(8),
-        # layers.Dropout(0.2),
-        # Add a Dense layer with 4 units and softmax activation.
-        # When we have multiple outputs, softmax convert outputs layers into a probability distribution.
-        layers.Dense(3, activation='softmax')
-        ])
-        
-        # Compile model, show summary
-        model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", 
-            metrics=['accuracy'])
+        model = build_model(num_words, embedding_dim, lstm_cells, batch_size, maxlen)
         print('\n')
         model.summary()
         
         # Train
         start_time = timeit.default_timer()
 
-        checkpoint = ModelCheckpoint("BEST_saved_models/" + model_name, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=False)
+        checkpoint = ModelCheckpoint("BEST_saved_models/" + model_name + '/', monitor='val_accuracy', verbose=1, save_best_only=True, mode='max',save_weights_only=True)
         callbacks_list = [checkpoint]
         
         history = model.fit(xtrain_tkns, training_label_seq, epochs=num_epochs, batch_size=batch_size,
@@ -312,7 +329,7 @@ if __name__ == "__main__":
         show_results(xtest_tkns, test_label_seq, label_encoder.classes_, 'test', model_name)
 
         # Save entire model
-        model.save(saved_model_path, include_optimizer=True)
+        model.save_weights(saved_model_path + '/')
         
     else:
         print('Unknown action:', action)
