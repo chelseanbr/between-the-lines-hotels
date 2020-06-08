@@ -59,7 +59,7 @@ between-the-lines-hotels
   * The static folder contains css, fonts, and javascript files that style my website 
   * The templates folder contain the layout of the web app home page (jumbotron.html), and prediction page (predict.html)
 * keras_lstm&#46;py runs either training a new model for a specified number or epochs on specified data or loading a previously saved model from a specified path to evaluate on specified data
-* preprocess&#46;py includes all data preprocessing functions and runs 5-fold cross validation on 
+* preprocess&#46;py includes all data preprocessing functions and runs 5-fold cross validation 
 * tokenizer&#46;pickle files contain tokenizers used on data before input to neural network-based models
 4. The scrapers folder contains 10 tripadvisor_scraper*.py modules that can be run to scrape Tripadvisor hotel reviews
  * Each module contains many links, each corresponding to a different hotel, to scrape from and the output of the modules are CSV files, one per link/hotel
