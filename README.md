@@ -153,7 +153,7 @@ The Logistic Regression model ended up outperforming the rest.
 ![wordcloud_neutral.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/wordcloud_neutral.png)
 
 #### Top Negative Words
-![wordcloud_negative.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/confusion_matrix_final_lr_val.png)
+![wordcloud_negative.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/wordcloud_negative.png)
 * It is interesting to note that the model was able to pick up on words like "cockroach" and "mold" as being negative in the context of hotels or places to stay.
 
 ### Example of Logitics Regression model use on Airbnb review:
