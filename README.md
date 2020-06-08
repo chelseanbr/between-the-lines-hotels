@@ -11,9 +11,9 @@ ___
 On Airbnb, unlike Tripadvisor, there is no rating per user review, so you cannot know the exact rating each user gives you. Now, let's say you have tons of reviews and cannot read every single one to determine whether they had positive (4-5 stars), neutral (3 stars), or negative (1-2 stars) sentiment.
 > Problem: How can you automatically know how your customers feel in order to reach out to them promptly and properly based on their sentiments? 
 #### Solution: Mine Tripadvisor hotel reviews “labeled” with ratings and use them to train a sentiment classifier.
- * Tripadvisor hotel reviews suit our needs because they are labeled data (have user rating per review) and may be similar to Airbnb reviews since they are both in written in the context of a person's experience staying of at a place.
+ * Tripadvisor hotel reviews suit our needs because they are labeled data (have user rating per review) and may be similar to Airbnb reviews since they are both in written in the context of a person's experience of staying at a place.
 
-In this project, I collected my own data through web scraping, used natural language processing, and built and evaluated different machine learning models, including logistic regressions and neural networks, in order to create a minumum viable product that solves this business problem.
+In this project, I collected my own data through web scraping, used natural language processing, and built and evaluated over 6 different types of machine learning models, including logistic regressions and neural networks, in order to create a minumum viable product that solves this business problem.
 
 ![Tripadvisor_Logo_horizontal-lockup_registered_RGB.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/Tripadvisor_Logo_horizontal-lockup_registered_RGB.png) 
 
@@ -22,11 +22,8 @@ In this project, I collected my own data through web scraping, used natural lang
 ## Summary of the Process
 1. First, I web-scraped TripAdvisor hotel reviews. I used 2-3 AWS EC2 Linux instances (t2.micro) that ran in parallel over 4 days. While scraping, I set up my data cleaning, EDA, and modeling pipelines in python modules. The data was automatically saved into CSV files, one per link/hotel scraped.
 2. Next, I cleaned the data and split it into 80:20 train/test, then split the train data into 80:20 train/validation. This resulted in an overall 64/16/20 train/val/test split.
-3. After, I experimented with natural language processing techniques (removing stop words, stemming/lemmatizing) on the review text data and built different machine learning models (logistic regressions, multinomial Naive Bayes, random forests, LSTM neural networks). I evaluated models on both accuracy and confusion matrices. Due to class imbalance, I undersampled the training data for non-neural network models and used class weights without undersampling for neural networks.
+3. After, I experimented with natural language processing techniques (removing stop words, stemming/lemmatizing) on the review text data and built different machine learning models (including logistic regressions, multinomial Naive Bayes, random forests, LSTM neural networks). I evaluated models on both accuracy and confusion matrices. Due to class imbalance, I undersampled the training data for non-neural network-based models and used class weights without undersampling for neural networks.
 4. Finally, I deployed my sentiment classifier, a CNN-LSTM neural network model, as Flask web app running in a Tensorflow docker container on an AWS EC2 Linux instance (t3.large). The web app is now live for people to try out on unseen, real-world data - Airbnb reviews (or other similar reviews on places to stay).
-
-![Tripadvisor_Logo_horizontal-lockup_registered_RGB.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/Tripadvisor_Logo_horizontal-lockup_registered_RGB.png) 
-![bs.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/bs.png)
 
 ## Directory Structure
 ```bash
@@ -59,11 +56,11 @@ between-the-lines-hotels
 * eda&#46;py contains the helper functions used for plotting in my EDA notebook (eda.ipynb)
 * The flask_app folder contains all code to run my web app
   * app&#46;py runs the web app
-  * The static folder 
+  * The static folder contains css, fonts, and javascript files that style my website 
   * The templates folder contain the layout of the web app home page (jumbotron.html), and prediction page (predict.html)
-* keras_lstm&#46;py runs either training a new model for a specified number or epochs on specified data or loading a previously saved model from a specified path to evaluate on specified data.
+* keras_lstm&#46;py runs either training a new model for a specified number or epochs on specified data or loading a previously saved model from a specified path to evaluate on specified data
 * preprocess&#46;py includes all data preprocessing functions and runs 5-fold cross validation on 
-* tokenizer&#46;pickle files contain the tokenizers used on data before input to neural network-based models.
+* tokenizer&#46;pickle files contain tokenizers used on data before input to neural network-based models
 4. The scrapers folder contains 10 tripadvisor_scraper*.py modules that can be run to scrape Tripadvisor hotel reviews
  * Each module contains many links, each corresponding to a different hotel, to scrape from and the output of the modules are CSV files, one per link/hotel
  * A preview of the fields of the CSV files can be seen in the eda.ipynb notebook (Out[8]): https://github.com/chelseanbr/between-the-lines-hotels/blob/master/eda.ipynb
@@ -88,6 +85,30 @@ My final dataset consisted of 1.2 million hotel reviews in English, each with a 
 ![sample1000_review_len_dist.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/sample1000_review_len_dist.png)
 
 ## Modeling
+First, let's establish what a dumb, baseline model would look like. 
+#### Such a model can just always predict the majority class ("positive") and achieve 85% accuracy. 
+That is why we cannot rely on accuracy alone. 
+
+#### Dumb/Baseline Model Classification Report
+```bash
+              precision    recall  f1-score   support
+
+    negative       0.00      0.00      0.00       771
+     neutral       0.00      0.00      0.00      1064
+    positive       0.85      1.00      0.92     10338
+
+    accuracy                           0.85     12173
+   macro avg       0.28      0.33      0.31     12173
+weighted avg       0.72      0.85      0.78     12173
+```
+
+
+**For evaluation metrics, we need to use both weighted accuracy and confusion matrices.**
+ * The ideal confusion matrix would be one that is maximized along the diagonal.
+
+#### Dumb/Baseline Model Confusion Matrix
+![confusion_matrix_dumb_model.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/confusion_matrix_dumb_model.png)
+
 ## Part 1: Non-Neural Network-Based Models
 Initially, I tried non-neural network-based Models with TF-IDF (term frequency–inverse document frequency) fetaures.
 ### Handling Imbalanced Classes
@@ -105,143 +126,51 @@ stop words. For stop words, I used a custom list seen in my python modules.
 
 #### I decided to proceed with using the WordNetLemmatizer and 50k+ TF-IDF features. After further experimentation, I found I could reduce the TF-IDF features to 5,000 since it did not really impact scores. 
 
+#### I built 5 different type of models as shown below, tried to improve them with hyperparameter-tuning through GridSearch, and compared them based on accuracy and confusion matrices.
+
 ![model_val_comparisions.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/model_val_comparisions.png)
 
 ## Results
+The Logistic Regression model ended up outperforming the rest.
+
 ![confusion_matrix_final_lr_val.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/confusion_matrix_final_lr_val.png)
 
+#### Best Non-Neural Network-Based Model Summary:
 * Logistic Regression (multinomial)
 * Achieved after tuning C to 0.1 with GridSearch
 * Solver = "newton-cg"
 * 81% accuracy on validation data
-* Did best with WordNet Lemmatized TF-TDF on 5,000 features
+* Did best with 5,000 WordNet-Lemmatized TF-TDF features
 
+### Below are the top words per class found with the logistic regression coefficients.
+
+#### Top Positive Words
 ![wordcloud_positive.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/wordcloud_positive.png)
 
+#### Top Neutral Words
 ![wordcloud_neutral.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/wordcloud_neutral.png)
 
+#### Top Negative Words
 ![wordcloud_negative.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/confusion_matrix_final_lr_val.png)
+* It is interesting to note that the model was able to pick up on words like "cockroach" and "mold" as being negative in the context of hotels or places to stay.
 
-### Example of use on Airbnb review:
+### Example of Logitics Regression model use on Airbnb review:
 > "Street noise is noticeable at the higher floors"
 * Predicted **neutral.**
 32% negative, **47% neutral,** 21% positive
 
 ## Part 2: Neural Network-Based Models
+Next, I tried to build LSTM (long short-term memory) neural networks to further improve upon accuracy and confusion matrices. LSTM-based neural networks are widely known to be able to achieve high performance in tasks involving natural language processing.
 
-![confusion_matrix_dumb_model.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/confusion_matrix_dumb_model.png)
+#### Due to the significant amount of time it takes to train neural networks, I used only 50% of my data.
+* Intitally, I had tried to use all of my data (1.2 million reviews), but it crashed my AWS EC2 Linux instance (c5.9xlarge, CPU only), so for this project I stuck to 50% of the data to make sure to get results by the project deadline.
 
+#### Train/test/val data sizes: Train: 779120, Test: 243475, Val: 194780
+* Took 50pct of data - Train: 389560, Val: 97390, Test: 121737
 
-```bash
-              precision    recall  f1-score   support
-
-    negative       0.00      0.00      0.00       771
-     neutral       0.00      0.00      0.00      1064
-    positive       0.85      1.00      0.92     10338
-
-    accuracy                           0.85     12173
-   macro avg       0.28      0.33      0.31     12173
-weighted avg       0.72      0.85      0.78     12173
-
-
-
-Splitting data into train/test/val...
-        Train: 779120, Test: 243475, Val: 194780
-Taking 10pct of data - Train: 77912, Val: 19478, Test: 24347
-Model: "sequential"
-_________________________________________________________________
-Layer (type)                 Output Shape              Param #
-=================================================================
-embedding (Embedding)        (None, 550, 128)          640000
-_________________________________________________________________
-dropout (Dropout)            (None, 550, 128)          0
-_________________________________________________________________
-conv1d (Conv1D)              (None, 546, 64)           41024
-_________________________________________________________________
-max_pooling1d (MaxPooling1D) (None, 136, 64)           0
-_________________________________________________________________
-bidirectional (Bidirectional (None, 136, 200)          132000
-_________________________________________________________________
-bidirectional_1 (Bidirection (None, 136, 200)          240800
-_________________________________________________________________
-bidirectional_2 (Bidirection (None, 200)               240800
-_________________________________________________________________
-dense (Dense)                (None, 128)               25728
-_________________________________________________________________
-dropout_1 (Dropout)          (None, 128)               0
-_________________________________________________________________
-dense_1 (Dense)              (None, 3)                 387
-=================================================================
-Total params: 1,320,739
-Trainable params: 1,320,739
-Non-trainable params: 0
-_________________________________________________________________
-...
-Epoch 10/10
-1218/1218 [==============================] - ETA: 0s - loss: 0.2892 - accuracy: 0.8887
-Epoch 00010: val_accuracy improved from 0.86380 to 0.86451, saving model to BEST_saved_models/lstm_10epochs_20200608-04:29:46/
-1218/1218 [==============================] - 639s 525ms/step - loss: 0.2892 - 
-accuracy: 0.8887 - val_loss: 0.3776 - val_accuracy: 0.8645
-
-Took 6415.16s to train
-        Predict train
-              precision    recall  f1-score   support
-
-    negative       0.93      0.94      0.93      4935
-     neutral       0.56      0.94      0.70      6807
-    positive       1.00      0.92      0.96     66170
-
-    accuracy                           0.93     77912
-   macro avg       0.83      0.94      0.86     77912
-weighted avg       0.95      0.93      0.93     77912
-
-
-        Predict val
-              precision    recall  f1-score   support
-
-    negative       0.68      0.58      0.63      1233
-     neutral       0.37      0.66      0.47      1702
-    positive       0.98      0.91      0.94     16543
-
-    accuracy                           0.86     19478
-   macro avg       0.67      0.71      0.68     19478
-weighted avg       0.90      0.86      0.88     19478
-
-
-        Predict test
-              precision    recall  f1-score   support
-
-    negative       0.67      0.62      0.64      1542
-     neutral       0.38      0.66      0.48      2127
-    positive       0.98      0.91      0.94     20678
-
-    accuracy                           0.87     24347
-   macro avg       0.67      0.73      0.69     24347
-weighted avg       0.91      0.87      0.88     24347
+Below is the summary of my best model to show its architecture:
+#### Final CNN-LSTM Model
 ```
-![confusion_matrix_train_lstm_10epochs_20200608-04:29:46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_train_lstm_10epochs_20200608-04:29:46.png)
-
-![confusion_matrix_val_lstm_10epochs_20200608-04:29:46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_val_lstm_10epochs_20200608-04:29:46.png)
-
-![lstm_10epochs_20200608-04:29:46_loss.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_10epochs_20200608-04:29:46_loss.png)
-
-![lstm_10epochs_20200608-04:29:46_accuracy.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_10epochs_20200608-04:29:46_accuracy.png)
-```bash
-Reading data/tripadvisor_reviews_1p2m.csv...
-Cleaning data...
-
-Splitting data into train/test/val...
-        Train: 779120, Test: 243475, Val: 194780
-Taking 50pct of data - Train: 389560, Val: 97390, Test: 121737
-
-Removing punctuation, digits, and stop words from X_train/val/test data...
-
-Tokenizing X_train/val/test data...
-
-Starting modeling...
-
-Will save model to: saved_models/lstm_6epochs_20200608-07:34:50
-
 Model: "sequential"
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #
@@ -269,55 +198,15 @@ dense_1 (Dense)              (None, 3)                 387
 Total params: 1,320,739
 Trainable params: 1,320,739
 Non-trainable params: 0
-_________________________________________________________________
-Epoch 1/6
-6087/6087 [==============================] - ETA: 0s - loss: 0.5901 - accuracy
-: 0.8166
-Epoch 00001: val_accuracy improved from -inf to 0.86511, saving model to BEST_
-saved_models/lstm_6epochs_20200608-07:34:50/
-6087/6087 [==============================] - 3186s 523ms/step - loss: 0.5901 -
- accuracy: 0.8166 - val_loss: 0.3307 - val_accuracy: 0.8651
-Epoch 2/6
-6087/6087 [==============================] - ETA: 0s - loss: 0.5084 - accuracy
-: 0.8421
-Epoch 00002: val_accuracy improved from 0.86511 to 0.87598, saving mo[35/2291]
-ST_saved_models/lstm_6epochs_20200608-07:34:50/
-6087/6087 [==============================] - 3184s 523ms/step - loss: 0.5084 $
- accuracy: 0.8421 - val_loss: 0.2904 - val_accuracy: 0.8760
-Epoch 3/6
-6087/6087 [==============================] - ETA: 0s - loss: 0.4790 - accurac$
-: 0.8503
-Epoch 00003: val_accuracy did not improve from 0.87598
-6087/6087 [==============================] - 3183s 523ms/step - loss: 0.4790 $
- accuracy: 0.8503 - val_loss: 0.2989 - val_accuracy: 0.8741
-Epoch 4/6
-6087/6087 [==============================] - ETA: 0s - loss: 0.4599 - accurac$
-: 0.8547
-Epoch 00004: val_accuracy did not improve from 0.87598
-6087/6087 [==============================] - 3181s 523ms/step - loss: 0.4599 $
- accuracy: 0.8547 - val_loss: 0.3054 - val_accuracy: 0.8668
-Epoch 5/6
-6087/6087 [==============================] - ETA: 0s - loss: 0.4451 - accurac$
-: 0.8563
-Epoch 00005: val_accuracy did not improve from 0.87598
-6087/6087 [==============================] - 3187s 524ms/step - loss: 0.4451 $
- accuracy: 0.8563 - val_loss: 0.3043 - val_accuracy: 0.8694
-Epoch 6/6
-6087/6087 [==============================] - ETA: 0s - loss: 0.4308 - accurac$
-: 0.8600
-Epoch 00006: val_accuracy improved from 0.87598 to 0.87695, saving model to B$
-ST_saved_models/lstm_6epochs_20200608-07:34:50/
-6087/6087 [==============================] - 3181s 523ms/step - loss: 0.4308 $
- accuracy: 0.8600 - val_loss: 0.2901 - val_accuracy: 0.8769
+```
+#### After much experimentation, I started with a simple architecture that included only the embedding layer, and ended up adding the following layers for the following purposes:
 
-Took 19116.94s to train
-12174/12174 [==============================] - 823s 68ms/step - loss: 0.2432 $
- accuracy: 0.8971
+#### The model took 19116.94s or about 5.3 hours to train.
+
+#### Final Model Results
+```bash
 Training Accuracy:  0.8971455097198486
-3044/3044 [==============================] - 204s 67ms/step - loss: 0.5526 - $
-ccuracy: 0.8769
 Val Accuracy:  0.876948356628418
-3805/3805 [==============================] - 255s 67ms/step - loss: 0.5434 - $ccuracy: 0.8782
 Test Accuracy:  0.8781553506851196
 
         Predict train
@@ -355,16 +244,24 @@ weighted avg       0.92      0.88      0.89     97390
    macro avg       0.70      0.78      0.73    121737
 weighted avg       0.92      0.88      0.89    121737
 ```
-
+#### Train Confusion Matrix
 ![confusion_matrix_train_lstm_6epochs_20200608-07:34:50.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_train_lstm_6epochs_20200608-07:34:50.png)
 
+#### Validation Confusion Matrix
 ![confusion_matrix_val_lstm_6epochs_20200608-07:34:50.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_val_lstm_6epochs_20200608-07:34:50.png)
 
+#### Test Confusion Matrix
 ![confusion_matrix_test_lstm_6epochs_20200608-07:34:50.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_test_lstm_6epochs_20200608-07:34:50.png)
+
+#### Loss (Sparse Categorical Crossentropy) Over Number of Epochs
 
 ![lstm_6epochs_20200608-07:34:50_loss.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_6epochs_20200608-07:34:50_loss.png)
 
+#### Accuracy (Sparse Categorical Crossentropy) Over Number of Epochs
+
 ![lstm_6epochs_20200608-07:34:50_accuracy.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_6epochs_20200608-07:34:50_accuracy.png)
+
+#### The plots above show that the model could possibly improve with additional epochs.
 
 ## Web App
 #### Airbnb Review Sentiment Classifier: https://tinyurl.com/rating-predictor
@@ -390,10 +287,12 @@ Just for fun, I tried submitting a fake review I wrote, and it was pretty funny 
 ![site_pred_neg_funny.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/site_pred_neg_funny.png)
 
 ## Conclusion
-* 
+* Neural networks take a lot of time and resources to train, but can reach impressive results
+* Logistic Regression with TF-IDF still performed quite well also
 
 ## Next Steps
-* 
+* Learn more about how to better build and train neural network to save time and resources
+  * Possibly try training with a GPU
 
 _____ 
 ## Initial Project Proposal
@@ -408,14 +307,14 @@ https://towardsdatascience.com/multi-class-text-classification-with-lstm-using-t
 Text Classification Example with Keras LSTM in Python:
 https://www.datatechnotes.com/2019/06/text-classification-example-with-keras.html
 ### What is new about your approach, why do you think it will be successful?
-What is new about my approach is that I would try to use more advanced NLP techniques like Word2Vec in order to prove my sentiment classifier accuracy from 81% (capstone 2) to closer to or above 90% and then separately incorporate sentiment into recommendation. Also, I will try to scrape my own data to make sure to get a large enough data size for balancing classes and if needed, I will address the “cold start” problem for recommendation.
+What is new about my approach is that I would try to use more advanced NLP techniques like LSTM neural networks to prove my sentiment classifier accuracy from 81% (capstone 2) to closer to 90%.
 ### Who cares? If you're successful, what will the impact be?
-If I am successful, the impact will be that with my own dataset, I would have built a sentiment classifier and hotel recommender using my own combination of techniques.
+If I am successful, the impact will be that with my own dataset, I would have built a sentiment classifier  that people can try out.
 ### How will you present your work?
-I would like people to be able to interact with my work through a flask dashboard. I want them to be able to try uploading their own hotel review text to try out my finished hotel rating predictor and see if the rating my classifier predicts matches with what rating they would give based on the review. In addition, I would provide hotel recommendations 
+I would like people to be able to interact with my work through a Flask web app. I want them to be able to try uploading their own hotel review text to try out my finished hotel rating predictor and see if the rating my classifier predicts matches with what rating they would give based on the review.
 ### What are your data sources? What is the size of your dataset, and what is your storage format?
 My data sources for the Tripadvisor hotel reviews is my own scraped data in csv files stored in multiple folders. From my previous capstone, I had 500k reviews, so I will work on doubling the size.
 ### What are potential problems with your capstone?
 The potential problems with my capstone are not achieving as high accuracy due to the amount of time it takes to train neural networks.
 ### What is the next thing you need to work on?
-The next thing I need to work on is scraping more data and making sure it will meet my new needs for a recommender system.
+The next thing I need to work on is learning more about how to better build and train neural network to save time and resources and possibly try training with a GPU.
