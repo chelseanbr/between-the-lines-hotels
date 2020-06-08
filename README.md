@@ -84,6 +84,8 @@ My final dataset consisted of 1.2 million hotel reviews in English, each with a 
 
 ![sample1000_review_len_dist.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/sample1000_review_len_dist.png)
 
+#### The final plot above shows the distributions of review length (word count) per class from a sample of 1000 reviews. The yellow dotted line is at 550, which is the max length I chose to truncate or pad reviews before using them as input to my neural network models.
+
 ## Modeling
 First, let's establish what a dumb, baseline model would look like. 
 #### Such a model can just always predict the majority class ("positive") and achieve 85% accuracy. 
@@ -199,7 +201,10 @@ Total params: 1,320,739
 Trainable params: 1,320,739
 Non-trainable params: 0
 ```
-#### After much experimentation, I started with a simple architecture that included only the embedding layer, and ended up adding the following layers for the following purposes:
+#### I started with a simple architecture that included only the embedding layer, a single non-birectional LSTM layer, and the last dense layer with "softmax" activation to output class probabilities. After much experimentation, I ended up adding the following layers for the following purposes:
+1. Dropout layers - Added multiple for regularization to prevent the model from quickly overfitting the training data, which it tended to do
+2. Convolutional and pooling layers - Dramatically sped up the training time by added a filtering effect to reduce features
+3. Added 3 stacked bidirectional LSTM layers with dropout (0.2) and recurrent dropout (0.2) because I saw adding more layers and dropout improved my evaluation metrics and prevented too much overfitting
 
 #### The model took 19116.94s or about 5.3 hours to train.
 
