@@ -1,6 +1,6 @@
 # Between the Lines of Tripadvisor Hotel Reviews
 ![Image from https://www.pexels.com/photo/bedroom-door-entrance-guest-room-271639/](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/hotel.jpg)
-#### Check out my Airbnb Review Sentiment Classifier (Web App): https://tinyurl.com/rating-predictor
+## Check out my Airbnb Review Sentiment Classifier (Web App): https://tinyurl.com/rating-predictor
 #### Link to Presentation: https://docs.google.com/presentation/d/1nZ9morIyqlIuJPOEAuhNwTw9m3lByksouw4KqXlmOfQ/edit?usp=sharing
 _____
 ## Initial Project Proposal
@@ -33,7 +33,8 @@ ___
 #### Solution: Mine hotel reviews “labeled” with ratings and use them to predict sentiment.
 
 ## Summary of Process
-![Tripadvisor_Logo_horizontal-lockup_registered_RGB.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/Tripadvisor_Logo_horizontal-lockup_registered_RGB.png) ![bs.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/bs.png)
+![Tripadvisor_Logo_horizontal-lockup_registered_RGB.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/Tripadvisor_Logo_horizontal-lockup_registered_RGB.png) 
+![bs.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/bs.png)
 1. Web-scraped TripAdvisor hotel reviews
   * 2 EC2 instances ran in parallel over 2 days
   * Set up data cleaning, EDA, and modeling pipeline while scraping
@@ -87,7 +88,7 @@ between-the-lines-hotels
 
 * Added sentiment label based on hotel rating per review
 
-![countplot_ratings_full.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/countplot_ratings_full.png)
+![countplot_ratings_full.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/countplot_ratings_full.png)
 
 ![pie_sentiments_initial.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/pie_sentiments_initial.png)
 
@@ -98,7 +99,7 @@ between-the-lines-hotels
 ### Handling Imbalanced Classes
 * Under-sampled train data to balance classes
 * Train data qty reduced from ~300k to 94k observations
-![pie_sentiments_initial.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/pie_sentiments_train_undersample.png)
+![pie_sentiments_initial.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/pie_sentiments_train_undersample.png)
 * Validation set had 77k observations, test set had 96k
 
 ### NLP
@@ -227,15 +228,15 @@ weighted avg       0.90      0.86      0.88     19478
    macro avg       0.67      0.73      0.69     24347
 weighted avg       0.91      0.87      0.88     24347
 ```
-![confusion_matrix_train_lstm_10epochs_20200608-04/29/46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/neural_net_cm/confusion_matrix_train_lstm_10epochs_20200608-04/29/46.png)
+![confusion_matrix_train_lstm_10epochs_20200608-04/29/46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_train_lstm_10epochs_20200608-04/29/46.png)
 
-![confusion_matrix_val_lstm_10epochs_20200608-04/29/46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/neural_net_cm/confusion_matrix_val_lstm_10epochs_20200608-04/29/46.png)
+![confusion_matrix_val_lstm_10epochs_20200608-04/29/46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_val_lstm_10epochs_20200608-04/29/46.png)
 
-![confusion_matrix_test_lstm_10epochs_20200608-04/29/46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/neural_net_cm/confusion_matrix_test_lstm_10epochs_20200608-04/29/46.png)
+![confusion_matrix_test_lstm_10epochs_20200608-04/29/46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_test_lstm_10epochs_20200608-04/29/46.png)
 
-![lstm_10epochs_20200608-04/29/46_loss.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/neural_net_history/lstm_10epochs_20200608-04/29/46_loss.png)
+![lstm_10epochs_20200608-04/29/46_loss.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_10epochs_20200608-04/29/46_loss.png)
 
-![lstm_10epochs_20200608-04/29/46_accuracy.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/neural_net_history/lstm_10epochs_20200608-04/29/46_accuracy.png)
+![lstm_10epochs_20200608-04/29/46_accuracy.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_10epochs_20200608-04/29/46_accuracy.png)
 
 ```bash
 Reading data/tripadvisor_reviews_1p2m.csv...
