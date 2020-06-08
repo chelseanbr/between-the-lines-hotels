@@ -80,9 +80,9 @@ between-the-lines-hotels
 ## EDA
 * Whole dataset consisted of 1.2 million hotel reviews in English, each with a Tripadvisor “bubble” rating from 1 to 5
 
-![countplot_reviews_byCity_full.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/countplot_reviews_byCity_full.png)
+![countplot_reviews_byLocation_full.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/countplot_reviews_byLocation_full.png)
 
-![boxplt_ratings_byCity_full.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/boxplt_ratings_byCity_full.png)
+![boxplt_ratings_byLocation_full.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/boxplt_ratings_byLocation_full.png)
 
 * Added sentiment label based on hotel rating per review
 
@@ -90,12 +90,14 @@ between-the-lines-hotels
 
 ![pie_sentiments_initial.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/pie_sentiments_initial.png)
 
+![sample1000_review_len_dist.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/sample1000_review_len_dist.png)
+
 ## Predictive Modeling
 
 ### Handling Imbalanced Classes
 * Under-sampled train data to balance classes
 * Train data qty reduced from ~300k to 94k observations
-![pie_sentiments_train_undersample.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/pie_sentiments_train_undersample.png)
+![pie_sentiments_initial.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/pie_sentiments_train_undersample.png)
 * Validation set had 77k observations, test set had 96k
 
 ### NLP
@@ -134,7 +136,7 @@ and 5,000 features
 * Predicted **neutral.**
 32% negative, **47% neutral,** 21% positive
 
-
+![confusion_matrix_dumb_model.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/confusion_matrix_dumb_model.png)
 
 
 ```bash
@@ -224,7 +226,15 @@ weighted avg       0.90      0.86      0.88     19478
    macro avg       0.67      0.73      0.69     24347
 weighted avg       0.91      0.87      0.88     24347
 ```
+![confusion_matrix_train_lstm_10epochs_20200608-04/29/46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/neural_net_cm/confusion_matrix_train_lstm_10epochs_20200608-04/29/46.png)
 
+![confusion_matrix_val_lstm_10epochs_20200608-04/29/46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/neural_net_cm/confusion_matrix_val_lstm_10epochs_20200608-04/29/46.png)
+
+![confusion_matrix_test_lstm_10epochs_20200608-04/29/46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/neural_net_cm/confusion_matrix_test_lstm_10epochs_20200608-04/29/46.png)
+
+![lstm_10epochs_20200608-04/29/46_loss.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/neural_net_history/lstm_10epochs_20200608-04/29/46_loss.png)
+
+![lstm_10epochs_20200608-04/29/46_accuracy.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/neural_net_history/lstm_10epochs_20200608-04/29/46_accuracy.png)
 
 ```bash
 Will save model to: saved_models/lstm_6epochs_20200608-07:34:50
