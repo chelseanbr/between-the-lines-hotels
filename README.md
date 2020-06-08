@@ -128,6 +128,97 @@ and 5,000 features
 * Predicted **neutral.**
 32% negative, **47% neutral,** 21% positive
 
+
+
+
+```bash
+              precision    recall  f1-score   support
+
+    negative       0.00      0.00      0.00       771
+     neutral       0.00      0.00      0.00      1064
+    positive       0.85      1.00      0.92     10338
+
+    accuracy                           0.85     12173
+   macro avg       0.28      0.33      0.31     12173
+weighted avg       0.72      0.85      0.78     12173
+
+
+
+Splitting data into train/test/val...
+        Train: 779120, Test: 243475, Val: 194780
+Taking 10pct of data - Train: 77912, Val: 19478, Test: 24347
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+embedding (Embedding)        (None, 550, 128)          640000
+_________________________________________________________________
+dropout (Dropout)            (None, 550, 128)          0
+_________________________________________________________________
+conv1d (Conv1D)              (None, 546, 64)           41024
+_________________________________________________________________
+max_pooling1d (MaxPooling1D) (None, 136, 64)           0
+_________________________________________________________________
+bidirectional (Bidirectional (None, 136, 200)          132000
+_________________________________________________________________
+bidirectional_1 (Bidirection (None, 136, 200)          240800
+_________________________________________________________________
+bidirectional_2 (Bidirection (None, 200)               240800
+_________________________________________________________________
+dense (Dense)                (None, 128)               25728
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 128)               0
+_________________________________________________________________
+dense_1 (Dense)              (None, 3)                 387
+=================================================================
+Total params: 1,320,739
+Trainable params: 1,320,739
+Non-trainable params: 0
+_________________________________________________________________
+...
+Epoch 10/10
+1218/1218 [==============================] - ETA: 0s - loss: 0.2892 - accuracy: 0.8887
+Epoch 00010: val_accuracy improved from 0.86380 to 0.86451, saving model to BEST_saved_models/lstm_10epochs_20200608-04:29:46/
+1218/1218 [==============================] - 639s 525ms/step - loss: 0.2892 - 
+accuracy: 0.8887 - val_loss: 0.3776 - val_accuracy: 0.8645
+
+Took 6415.16s to train
+        Predict train
+              precision    recall  f1-score   support
+
+    negative       0.93      0.94      0.93      4935
+     neutral       0.56      0.94      0.70      6807
+    positive       1.00      0.92      0.96     66170
+
+    accuracy                           0.93     77912
+   macro avg       0.83      0.94      0.86     77912
+weighted avg       0.95      0.93      0.93     77912
+
+
+        Predict val
+              precision    recall  f1-score   support
+
+    negative       0.68      0.58      0.63      1233
+     neutral       0.37      0.66      0.47      1702
+    positive       0.98      0.91      0.94     16543
+
+    accuracy                           0.86     19478
+   macro avg       0.67      0.71      0.68     19478
+weighted avg       0.90      0.86      0.88     19478
+
+
+        Predict test
+              precision    recall  f1-score   support
+
+    negative       0.67      0.62      0.64      1542
+     neutral       0.38      0.66      0.48      2127
+    positive       0.98      0.91      0.94     20678
+
+    accuracy                           0.87     24347
+   macro avg       0.67      0.73      0.69     24347
+weighted avg       0.91      0.87      0.88     24347
+```
+
 ## Web App
 
 ## Next Steps
