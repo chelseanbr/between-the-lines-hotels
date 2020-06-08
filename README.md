@@ -105,10 +105,10 @@ stop words. For stop words, I used a custom list seen in my python modules.
 
 #### I decided to proceed with using the WordNetLemmatizer and 50k+ TF-IDF features. After further experimentation, I found I could reduce the TF-IDF features to 5,000 since it did not really impact scores. 
 
-![model_val_comparisions.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/model_val_comparisions.png)
+![model_val_comparisions.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/model_val_comparisions.png)
 
 ## Results
-![confusion_matrix_final_lr_val.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/images/confusion_matrix_final_lr_val.png)
+![confusion_matrix_final_lr_val.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/confusion_matrix_final_lr_val.png)
 
 * Logistic Regression (multinomial)
 * Achieved after tuning C to 0.1 with GridSearch
@@ -389,6 +389,9 @@ Just for fun, I tried submitting a fake review I wrote, and it was pretty funny 
 
 ![site_pred_neg_funny.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/site_pred_neg_funny.png)
 
+## Conclusion
+* 
+
 ## Next Steps
 * 
 
@@ -397,7 +400,7 @@ _____
 ### What are you trying to do?
 What I will try to do for my project is use TripAdvisor hotel reviews with ratings per review to classify sentiments as positive, neutral, or negative. Being able to automatically classify sentiment from review content is important to get a sense of how customers feel and what they would like.
 ### How has this problem been solved before?
-This problem has been solved before with techniques in natural language processing such as TF-IDF or with LSTM neural networks.
+This problem has been solved before with techniques in natural language processing such as TF-IDF or with LSTM neural networks. 
 
 Multi Class Text Classification with LSTM using TensorFlow 2.0:
 https://towardsdatascience.com/multi-class-text-classification-with-lstm-using-tensorflow-2-0-d88627c10a35
@@ -411,8 +414,8 @@ If I am successful, the impact will be that with my own dataset, I would have bu
 ### How will you present your work?
 I would like people to be able to interact with my work through a flask dashboard. I want them to be able to try uploading their own hotel review text to try out my finished hotel rating predictor and see if the rating my classifier predicts matches with what rating they would give based on the review. In addition, I would provide hotel recommendations 
 ### What are your data sources? What is the size of your dataset, and what is your storage format?
-My data sources for the Tripadvisor hotel reviews would be my scraped data in csv files stored in multiple folders. From my previous capstone, I had 500k reviews, so I will work on possibly doubling the size.
+My data sources for the Tripadvisor hotel reviews is my own scraped data in csv files stored in multiple folders. From my previous capstone, I had 500k reviews, so I will work on doubling the size.
 ### What are potential problems with your capstone?
-The potential problems with my capstone are the “cold start” problem for recommenders, because I will likely have only one or very few reviews for the majority of users in my data.
+The potential problems with my capstone are not achieving as high accuracy due to the amount of time it takes to train neural networks.
 ### What is the next thing you need to work on?
 The next thing I need to work on is scraping more data and making sure it will meet my new needs for a recommender system.
