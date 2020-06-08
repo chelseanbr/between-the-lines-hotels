@@ -119,7 +119,7 @@ WordNetLemmatizer,
 and 5,000 features
 
 ## Results
-![confusion_matrix_final_lr_test.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/confusion_matrix_final_lr_test.png)
+![confusion_matrix_final_lr_val.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/images/confusion_matrix_final_lr_val.png)
 
 * Logistic Regression (multinomial)
 * Achieved after tuning C to 0.1 with GridSearch
@@ -131,7 +131,7 @@ and 5,000 features
 
 ![wordcloud_neutral.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/wordcloud_neutral.png)
 
-![wordcloud_negative.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/wordcloud_negative.png)
+![wordcloud_negative.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/confusion_matrix_final_lr_val.png)
 
 ### Example of final model use on Airbnb review:
 > "Street noise is noticeable at the higher floors"
