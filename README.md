@@ -2,30 +2,6 @@
 ![Image from https://www.pexels.com/photo/bedroom-door-entrance-guest-room-271639/](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/hotel.jpg)
 ## Check out my Airbnb Review Sentiment Classifier (Web App): https://tinyurl.com/rating-predictor
 #### Link to Project Presentation: https://docs.google.com/presentation/d/1nZ9morIyqlIuJPOEAuhNwTw9m3lByksouw4KqXlmOfQ/edit?usp=sharing
-_____
-## Initial Project Proposal
-### What are you trying to do?
-What I will try to do for my project is use TripAdvisor hotel reviews with ratings per review to classify sentiment and recommend hotels to users. Being able to automatically classify sentiment from review content is important to get a sense of how customers feel and what they would like.
-### How has this problem been solved before?
-This problem has been solved before with techniques in natural language processing such as TF-IDF to train recommenders through matrix factorization, as described in the following links:
-
-Multi Class Text Classification with LSTM using TensorFlow 2.0:
-https://towardsdatascience.com/multi-class-text-classification-with-lstm-using-tensorflow-2-0-d88627c10a35
-
-Text Classification Example with Keras LSTM in Python:
-https://www.datatechnotes.com/2019/06/text-classification-example-with-keras.html
-### What is new about your approach, why do you think it will be successful?
-What is new about my approach is that I would try to use more advanced NLP techniques like Word2Vec in order to prove my sentiment classifier accuracy from 81% (capstone 2) to closer to or above 90% and then separately incorporate sentiment into recommendation. Also, I will try to scrape my own data to make sure to get a large enough data size for balancing classes and if needed, I will address the “cold start” problem for recommendation.
-### Who cares? If you're successful, what will the impact be?
-If I am successful, the impact will be that with my own dataset, I would have built a sentiment classifier and hotel recommender using my own combination of techniques.
-### How will you present your work?
-I would like people to be able to interact with my work through a flask dashboard. I want them to be able to try uploading their own hotel review text to try out my finished hotel rating predictor and see if the rating my classifier predicts matches with what rating they would give based on the review. In addition, I would provide hotel recommendations 
-### What are your data sources? What is the size of your dataset, and what is your storage format?
-My data sources for the Tripadvisor hotel reviews would be my scraped data in csv files stored in multiple folders. From my previous capstone, I had 500k reviews, so I will work on possibly doubling the size.
-### What are potential problems with your capstone?
-The potential problems with my capstone are the “cold start” problem for recommenders, because I will likely have only one or very few reviews for the majority of users in my data.
-### What is the next thing you need to work on?
-The next thing I need to work on is scraping more data and making sure it will meet my new needs for a recommender system.
 ___
 ## Business Context
 ### Imagine you rent out places to stay like on Airbnb.
@@ -83,42 +59,40 @@ between-the-lines-hotels
 
 ## EDA
 My final dataset consisted of 1.2 million hotel reviews in English, each with a Tripadvisor “bubble” rating from 1 to 5.
+* There were 11 columns in my data: review_id, url, hotel_name, review_date, review_body, user_location, user_name, helpful_vote, rating, csv, and folder.
 
 ![countplot_reviews_byLocation_full.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/countplot_reviews_byLocation_full.png)
 
 ![boxplt_ratings_byLocation_full.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/boxplt_ratings_byLocation_full.png)
 
-#### I added sentiment labels based on hotel rating per review: 1-2 = negative, 3 = neutral, 4-5 = positive.
+#### I added sentiment labels based on hotel rating per review. 1-2 = negative, 3 = neutral, 4-5 = positive.
+* After cleaning/preprocessing the data, there were 14 columns total, 3 were added: city, loc, and sentiment (the labels/target values).
 
 ![countplot_ratings_full.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/countplot_ratings_full.png)
 
 ![pie_sentiments_initial.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/pie_sentiments_initial.png)
 
+#### The plots above show the class imbalance.
+
 ![sample1000_review_len_dist.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/sample1000_review_len_dist.png)
 
-## Predictive Modeling
-
+## Modeling
+## Part 1: Non-Neural Network-Based Models
+Initially, I tried non-neural network-based Models with TF-IDF (term frequency–inverse document frequency) fetaures.
 ### Handling Imbalanced Classes
-* Under-sampled train data to balance classes
-* Train data qty reduced from ~300k to 94k observations
+I undersampled only the training data to balance classes. This was done to prevent my classifier from becoming biased and tend to mostly predict the majority class, which was 'positive' class. The 'negative' class was the minority, so I undersampled the bigger 'positive' and 'neutral' classes to have them match the minority class in size.
+
 ![pie_sentiments_initial.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/pie_sentiments_train_undersample.png)
-* Validation set had 77k observations, test set had 96k
+* The validation set and test set remained untouched.
 
-### NLP
-* Removed English 
-stop words, digits, and 
-punctuation
-
-* Tried different stemmers/
-lemmatizers and TF-IDF
-max features
+### Natural Language Processing
+1. First, I removed digits, punctuation, and English 
+stop words. For stop words, I used a custom list seen in my python modules.
+2. Then, I tried various stemmers/lemmatizers and different numbers of TF-IDF max features.
 
 ![mnb_accuracy_over_feature_size.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/mnb_accuracy_over_feature_size.png)
 
-* Decided to proceed with 
-TF-IDF, 
-WordNetLemmatizer,
-and 5,000 features
+#### I decided to proceed with using the WordNetLemmatizer and 50k+ TF-IDF features. After further experimentation, I found I could reduce the TF-IDF features to 5,000 since it did not really impact scores. 
 
 ## Results
 ![confusion_matrix_final_lr_val.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/images/confusion_matrix_final_lr_val.png)
@@ -126,7 +100,7 @@ and 5,000 features
 * Logistic Regression (multinomial)
 * Achieved after tuning C to 0.1 with GridSearch
 * Solver = "newton-cg"
-* 81% accuracy on validation and test data
+* 81% accuracy on validation data
 * Did best with WordNet Lemmatized TF-TDF on 5,000 features
 
 ![wordcloud_positive.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/wordcloud_positive.png)
@@ -135,10 +109,12 @@ and 5,000 features
 
 ![wordcloud_negative.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/confusion_matrix_final_lr_val.png)
 
-### Example of final model use on Airbnb review:
+### Example of use on Airbnb review:
 > "Street noise is noticeable at the higher floors"
 * Predicted **neutral.**
 32% negative, **47% neutral,** 21% positive
+
+## Part 2: Neural Network-Based Models
 
 ![confusion_matrix_dumb_model.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/confusion_matrix_dumb_model.png)
 
@@ -402,3 +378,28 @@ Just for fun, I tried submitting a fake review I wrote, and it was pretty funny 
 
 ## Next Steps
 * 
+
+_____ 
+## Initial Project Proposal
+### What are you trying to do?
+What I will try to do for my project is use TripAdvisor hotel reviews with ratings per review to classify sentiments as positive, neutral, or negative. Being able to automatically classify sentiment from review content is important to get a sense of how customers feel and what they would like.
+### How has this problem been solved before?
+This problem has been solved before with techniques in natural language processing such as TF-IDF or with LSTM neural networks.
+
+Multi Class Text Classification with LSTM using TensorFlow 2.0:
+https://towardsdatascience.com/multi-class-text-classification-with-lstm-using-tensorflow-2-0-d88627c10a35
+
+Text Classification Example with Keras LSTM in Python:
+https://www.datatechnotes.com/2019/06/text-classification-example-with-keras.html
+### What is new about your approach, why do you think it will be successful?
+What is new about my approach is that I would try to use more advanced NLP techniques like Word2Vec in order to prove my sentiment classifier accuracy from 81% (capstone 2) to closer to or above 90% and then separately incorporate sentiment into recommendation. Also, I will try to scrape my own data to make sure to get a large enough data size for balancing classes and if needed, I will address the “cold start” problem for recommendation.
+### Who cares? If you're successful, what will the impact be?
+If I am successful, the impact will be that with my own dataset, I would have built a sentiment classifier and hotel recommender using my own combination of techniques.
+### How will you present your work?
+I would like people to be able to interact with my work through a flask dashboard. I want them to be able to try uploading their own hotel review text to try out my finished hotel rating predictor and see if the rating my classifier predicts matches with what rating they would give based on the review. In addition, I would provide hotel recommendations 
+### What are your data sources? What is the size of your dataset, and what is your storage format?
+My data sources for the Tripadvisor hotel reviews would be my scraped data in csv files stored in multiple folders. From my previous capstone, I had 500k reviews, so I will work on possibly doubling the size.
+### What are potential problems with your capstone?
+The potential problems with my capstone are the “cold start” problem for recommenders, because I will likely have only one or very few reviews for the majority of users in my data.
+### What is the next thing you need to work on?
+The next thing I need to work on is scraping more data and making sure it will meet my new needs for a recommender system.
