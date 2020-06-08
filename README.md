@@ -47,22 +47,20 @@ between-the-lines-hotels
 ├── README.md
 ├── eda.ipynb
 ├── imgs
-│   └── (__ images)
+│   └── (Images for README)
 └── src
     ├── eda.py
     ├── flask_app
     │   ├── app.py
-    │   ├── boostrap
-    │   │   └── (Folders: css, fonts, js)
     │   ├── static
     │   │   ├── (Folders: css, fonts, js)
-    │   │   └── (4 images)
+    │   │   └── (Images for site)
     │   └── templates
     │       ├── jumbotron.html
-    │       ├── predict.html
-    ├── gridsearch.py
+    │       └── predict.html
     ├── keras_lstm.py
     ├── preprocess.py
+    ├── tokenizer*.pickle (multiple)
     └── scrapers
         └── tripadvisor_scraper*.py (10 files)
 ```
