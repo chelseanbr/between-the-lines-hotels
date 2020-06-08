@@ -9,6 +9,7 @@ from nltk.stem import SnowballStemmer
 import re
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.models import load_model
 import numpy as np
 
 # Home page
@@ -22,7 +23,15 @@ def show_pred():
     text = str(request.form['user_input'])
     tokenized_text = process_input(text)
     # PREDICT
-    return render_template('predict.html', review=text, tokenized_review=str(tokenized_text))
+    model_path = 'BEST_saved_models/lstm_10epochs_20200607-23:09:47'
+    model = load_model(model_path)
+    y_pred_proba = model.predict(tokenized_text)
+    neg_prob, neut_prob, pos_prob = tuple(y_pred_proba)
+    y_pred = np.argmax(y_pred_proba)
+    labels = ['negative', 'neutral', 'positive']
+    sentiment_pred = labels[y_pred]
+    return render_template('predict.html', review=text, tokenized_review=str(tokenized_text),
+                            neg_prob, neut_prob, pos_prob, sentiment_pred)
 
 def set_stopwords():
     """Snowball-Stem English stopwords, 
@@ -59,7 +68,7 @@ def process_input(text):
     # # Tokenize data ######################
 
     # # Set tokenization params
-    maxlen = 300
+    maxlen = 550
     oov_tok = '<OOV>'
     num_words = 5000
     trunc_type = 'post'
@@ -77,6 +86,24 @@ def process_input(text):
     # print('Tokenized text shape:', tokenized_text.shape) #DEBUG
     return tokenized_text
 
+
+def recall(y_true, y_pred):
+    """Calculate multiclass recall"""
+    y_true = K.ones_like(y_true) 
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    all_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+    
+    recall = true_positives / (all_positives + K.epsilon())
+    return recall
+
+def precision(y_true, y_pred):
+    """Calculate multiclass precision"""
+    y_true = K.ones_like(y_true) 
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+
+    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+    precision = true_positives / (predicted_positives + K.epsilon())
+    return precision
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
