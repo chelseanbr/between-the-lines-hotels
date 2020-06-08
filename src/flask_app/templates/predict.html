@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Starter Template for Bootstrap</title>
+    <title>Airbnb Review Sentiment Classifier - Prediction</title>
 
     <!-- Bootstrap core CSS -->
     <link href="../static/css/bootstrap.min.css" rel="stylesheet">
@@ -39,11 +39,11 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Airbnb Review Sentiment Classifier</a>
+          <a class="navbar-brand" href="/#">Airbnb Review Sentiment Classifier</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
+            <li class="active"><a href="/#">Home</a></li>
             <!-- <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li> -->
           </ul>
@@ -55,7 +55,8 @@
 
       <div class="starter-template">
         <h1>Airbnb Rating Prediction</h1>
-        <p class="lead">{{review}}<br><br>{{tokenized_review}}</p>
+        <br>
+        <p class="lead"><b>Review:</b> "{{review}}"<br><br><b><u></u>Prediction:</u> {{sentiment_pred}}<br><i>{{rating}}</i></b><br><br><img src="../static/{{reaction_gif}}"><br><br>{{neg_prob}}% Negative, {{neut_prob}}% Neutral, {{pos_prob}}% Positive</p>
       </div>
 
     </div><!-- /.container -->

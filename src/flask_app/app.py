@@ -9,7 +9,22 @@ from nltk.stem import SnowballStemmer
 import re
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.models import Sequential
+from tensorflow.keras import layers
 import numpy as np
+import pickle
+
+# Set params
+embedding_dim = 128 #PARAMS
+lstm_cells = 100 #PARAMS
+batch_size = 64 #PARAMS
+
+# Tokenization params
+maxlen = 550
+num_words = 5000
+
+# Path to model
+model_path = 'BEST_saved_models/lstm_10epochs_20200608-04:29:46/'
 
 # Home page
 @app.route('/')
@@ -18,11 +33,65 @@ def index():
 
 # My sentiment predictor app
 @app.route('/prediction', methods=['POST'])
-def show_pred():
+def show_pred(maxlen=maxlen, num_words=num_words, model_path=model_path):
     text = str(request.form['user_input'])
-    tokenized_text = process_input(text)
+    tokenized_text = process_input(text, maxlen, num_words)
     # PREDICT
-    return render_template('predict.html', review=text, tokenized_review=str(tokenized_text))
+    model = build_model()
+    model.load_weights(model_path)
+
+    y_pred_proba = model.predict(tokenized_text)
+    neg_prob, neut_prob, pos_prob = tuple(100*y_pred_proba[0])
+    y_pred = np.argmax(y_pred_proba)
+    labels = ['Negative', 'Neutral', 'Positive']
+    sentiment_pred = labels[y_pred]
+    rating_dict = {'Negative':'(1-2 Stars)', 'Neutral':'(3 Stars)', 'Positive':'(4-5 Stars)'}
+    reaction_gifs_dict = {'Negative': 'negative.gif', 'Neutral': 'neutral.gif', 'Positive': 'positive.gif'}
+    return render_template('predict.html', sentiment_pred=sentiment_pred, y_pred=y_pred,
+                            neg_prob="{:.2f}".format(neg_prob), neut_prob="{:.2f}".format(neut_prob), pos_prob="{:.2f}".format(pos_prob),
+                            rating=rating_dict[sentiment_pred], reaction_gif=reaction_gifs_dict[sentiment_pred], review=text, 
+                            tokenized_review=str(tokenized_text))
+
+# Build model
+def build_model(num_words=num_words, embedding_dim=embedding_dim, lstm_cells=lstm_cells, batch_size=batch_size, maxlen=maxlen):
+    """Build model"""
+    # MODEL
+    model = Sequential([
+    # Add an Embedding layer expecting input vocab size, output embedding dimension set at the top
+    layers.Embedding(num_words, embedding_dim, input_length=maxlen),
+
+    layers.Dropout(0.5),
+
+    layers.Conv1D(embedding_dim/2, 5, padding='valid', activation='relu', strides=1),
+    layers.MaxPooling1D(pool_size=4),
+
+        layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True, dropout=0.2, recurrent_dropout=0.2)),
+        layers.Bidirectional(layers.LSTM(lstm_cells, return_sequences=True, dropout=0.2, recurrent_dropout=0.2)),
+    layers.Bidirectional(layers.LSTM(lstm_cells, dropout=0.2, recurrent_dropout=0.2)),
+
+    # layers.LSTM(lstm_cells,return_sequences=True),
+    # layers.LSTM(lstm_cells),
+
+#         layers.Dropout(0.5),
+        
+    # use ReLU in place of tanh function since they are very good alternatives of each other.
+    layers.Dense(embedding_dim, activation='relu'),
+        
+    layers.Dropout(0.25),
+        
+    # layers.Dense(8),
+    # layers.Dropout(0.2),
+        
+    # Add a Dense layer with 3 units (3 classes) and softmax activation.
+    # When we have multiple outputs, softmax convert outputs layers into a probability distribution.
+    layers.Dense(3, activation='softmax')
+    ])
+
+    # Compile model, show summary
+    model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", 
+        metrics=['accuracy'])
+    
+    return model
 
 def set_stopwords():
     """Snowball-Stem English stopwords, 
@@ -40,7 +109,7 @@ def set_stopwords():
     stemmed_stopwords = set([stemmer.stem(word) for word in STOPWORDS])
     return stemmed_stopwords
 
-def process_input(text):
+def process_input(text, maxlen, num_words):
 # Lower case, remove punctuation and stop words from X data
     text = text.lower()
     # Get stopwords
@@ -59,17 +128,14 @@ def process_input(text):
     # # Tokenize data ######################
 
     # # Set tokenization params
-    maxlen = 300
     oov_tok = '<OOV>'
-    num_words = 5000
     trunc_type = 'post'
     padding_type = 'post'
     
-    tokenizer = Tokenizer(num_words=num_words, oov_token=oov_tok)
-    tokenize = tokenizer.fit_on_texts(tokenized_text)
+    # Load tokenizer from pickle
+    with open('src/tokenizer.pickle', 'rb') as handle:
+        tokenizer = pickle.load(handle)
     tokenized_text = tokenizer.texts_to_sequences(tokenized_text)
-
-    vocab_size=len(tokenizer.word_index)+1
         
     # Pad with zeros
     tokenized_text = pad_sequences(tokenized_text,padding=padding_type, truncating=trunc_type, maxlen=maxlen)
@@ -77,6 +143,5 @@ def process_input(text):
     # print('Tokenized text shape:', tokenized_text.shape) #DEBUG
     return tokenized_text
 
-
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=8000, debug=False)
