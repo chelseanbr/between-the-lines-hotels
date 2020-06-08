@@ -256,6 +256,8 @@ _________________________________________________________________
 ```
 ## Web App
 
+https://tinyurl.com/rating-predictor
+
 ## Next Steps
 * Try out model on other data like tweets in the context of hotels/places to stay
 * Explore advanced NLP/ML methods like Word2Vec, LSTM recurrent neural networks
