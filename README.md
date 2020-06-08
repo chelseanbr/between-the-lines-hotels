@@ -237,10 +237,20 @@ weighted avg       0.91      0.87      0.88     24347
 ![lstm_10epochs_20200608-04/29/46_accuracy.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/neural_net_history/lstm_10epochs_20200608-04/29/46_accuracy.png)
 
 ```bash
+Reading data/tripadvisor_reviews_1p2m.csv...
+Cleaning data...
+
+Splitting data into train/test/val...
+        Train: 779120, Test: 243475, Val: 194780
+Taking 50pct of data - Train: 389560, Val: 97390, Test: 121737
+
+Removing punctuation, digits, and stop words from X_train/val/test data...
+
+Tokenizing X_train/val/test data...
+
+Starting modeling...
+
 Will save model to: saved_models/lstm_6epochs_20200608-07:34:50
-
-2020-06-08 07:34:50.551559: E tensorflow/stream_executor/cuda/cuda_driver.cc:313] failed call to cuInit: UNKNOWN ERROR (303)
-
 
 Model: "sequential"
 _________________________________________________________________
@@ -270,8 +280,92 @@ Total params: 1,320,739
 Trainable params: 1,320,739
 Non-trainable params: 0
 _________________________________________________________________
+Epoch 1/6
+6087/6087 [==============================] - ETA: 0s - loss: 0.5901 - accuracy
+: 0.8166
+Epoch 00001: val_accuracy improved from -inf to 0.86511, saving model to BEST_
+saved_models/lstm_6epochs_20200608-07:34:50/
+6087/6087 [==============================] - 3186s 523ms/step - loss: 0.5901 -
+ accuracy: 0.8166 - val_loss: 0.3307 - val_accuracy: 0.8651
+Epoch 2/6
+6087/6087 [==============================] - ETA: 0s - loss: 0.5084 - accuracy
+: 0.8421
+Epoch 00002: val_accuracy improved from 0.86511 to 0.87598, saving mo[35/2291]
+ST_saved_models/lstm_6epochs_20200608-07:34:50/
+6087/6087 [==============================] - 3184s 523ms/step - loss: 0.5084 $
+ accuracy: 0.8421 - val_loss: 0.2904 - val_accuracy: 0.8760
+Epoch 3/6
+6087/6087 [==============================] - ETA: 0s - loss: 0.4790 - accurac$
+: 0.8503
+Epoch 00003: val_accuracy did not improve from 0.87598
+6087/6087 [==============================] - 3183s 523ms/step - loss: 0.4790 $
+ accuracy: 0.8503 - val_loss: 0.2989 - val_accuracy: 0.8741
+Epoch 4/6
+6087/6087 [==============================] - ETA: 0s - loss: 0.4599 - accurac$
+: 0.8547
+Epoch 00004: val_accuracy did not improve from 0.87598
+6087/6087 [==============================] - 3181s 523ms/step - loss: 0.4599 $
+ accuracy: 0.8547 - val_loss: 0.3054 - val_accuracy: 0.8668
+Epoch 5/6
+6087/6087 [==============================] - ETA: 0s - loss: 0.4451 - accurac$
+: 0.8563
+Epoch 00005: val_accuracy did not improve from 0.87598
+6087/6087 [==============================] - 3187s 524ms/step - loss: 0.4451 $
+ accuracy: 0.8563 - val_loss: 0.3043 - val_accuracy: 0.8694
+Epoch 6/6
+6087/6087 [==============================] - ETA: 0s - loss: 0.4308 - accurac$
+: 0.8600
+Epoch 00006: val_accuracy improved from 0.87598 to 0.87695, saving model to B$
+ST_saved_models/lstm_6epochs_20200608-07:34:50/
+6087/6087 [==============================] - 3181s 523ms/step - loss: 0.4308 $
+ accuracy: 0.8600 - val_loss: 0.2901 - val_accuracy: 0.8769
 
+Took 19116.94s to train
+12174/12174 [==============================] - 823s 68ms/step - loss: 0.2432 $
+ accuracy: 0.8971
+Training Accuracy:  0.8971455097198486
+3044/3044 [==============================] - 204s 67ms/step - loss: 0.5526 - $
+ccuracy: 0.8769
+Val Accuracy:  0.876948356628418
+3805/3805 [==============================] - 255s 67ms/step - loss: 0.5434 - $ccuracy: 0.8782
+Test Accuracy:  0.8781553506851196
+
+        Predict train
+              precision    recall  f1-score   support
+
+    negative       0.82      0.83      0.83     24673
+     neutral       0.46      0.80      0.58     34034
+    positive       0.99      0.91      0.95    330853
+
+    accuracy                           0.90    389560
+   macro avg       0.76      0.85      0.79    389560
+weighted avg       0.93      0.90      0.91    389560
+
+
+        Predict val
+              precision    recall  f1-score   support
+
+    negative       0.72      0.71      0.72      6168
+     neutral       0.40      0.70      0.51      8508
+    positive       0.98      0.91      0.94     82714
+
+    accuracy                           0.88     97390
+   macro avg       0.70      0.77      0.72     97390
+weighted avg       0.92      0.88      0.89     97390
+
+
+        Predict test
+              precision    recall  f1-score   support
+
+    negative       0.72      0.74      0.73      7710
+     neutral       0.40      0.70      0.51     10636
+    positive       0.98      0.91      0.94    103391
+
+    accuracy                           0.88    121737
+   macro avg       0.70      0.78      0.73    121737
+weighted avg       0.92      0.88      0.89    121737
 ```
+
 ## Web App
 #### Check out my Airbnb Review Sentiment Classifier: https://tinyurl.com/rating-predictor
 
