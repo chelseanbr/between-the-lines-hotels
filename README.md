@@ -261,15 +261,11 @@ weighted avg       0.92      0.88      0.89    121737
 #### Test Confusion Matrix
 ![confusion_matrix_test_lstm_6epochs_20200608-07:34:50.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_test_lstm_6epochs_20200608-07:34:50.png)
 
-### Loss (Sparse Categorical Crossentropy) Over Number of Epochs
+#### The plots below show that the model could still possibly improve with additional epochs.
 
 ![lstm_6epochs_20200608-07:34:50_loss.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_6epochs_20200608-07:34:50_loss.png)
 
-### Accuracy (Sparse Categorical Crossentropy) Over Number of Epochs
-
 ![lstm_6epochs_20200608-07:34:50_accuracy.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_6epochs_20200608-07:34:50_accuracy.png)
-
-#### The plots above show that the model could still possibly improve with additional epochs.
 
 ## Web App
 Finally, I built a Flask web app to deploy my final CNN-LSTM neural network model.
