@@ -256,11 +256,11 @@ if __name__ == "__main__":
 #     tokenizer = Tokenizer(num_words=num_words, oov_token=oov_tok)
 #     tokenize = tokenizer.fit_on_texts(X_train_vals)
 #     # saving
-#     with open('tokenizer.pickle', 'wb') as handle:
+#     with open('src/tokenizer.pickle', 'wb') as handle:
 #         pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
     
     # loading
-    with open('tokenizer.pickle', 'rb') as handle:
+    with open('src/tokenizer.pickle', 'rb') as handle:
         tokenizer = pickle.load(handle)
     xtrain_tkns = tokenizer.texts_to_sequences(X_train_vals)
     xval_tkns = tokenizer.texts_to_sequences(X_val_vals)
