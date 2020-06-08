@@ -1,7 +1,7 @@
 # Between the Lines of Tripadvisor Hotel Reviews
 ![Image from https://www.pexels.com/photo/bedroom-door-entrance-guest-room-271639/](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/hotel.jpg)
 ## Check out my Airbnb Review Sentiment Classifier (Web App): https://tinyurl.com/rating-predictor
-#### Link to Presentation: https://docs.google.com/presentation/d/1nZ9morIyqlIuJPOEAuhNwTw9m3lByksouw4KqXlmOfQ/edit?usp=sharing
+#### Link to Project Presentation: https://docs.google.com/presentation/d/1nZ9morIyqlIuJPOEAuhNwTw9m3lByksouw4KqXlmOfQ/edit?usp=sharing
 _____
 ## Initial Project Proposal
 ### What are you trying to do?
@@ -27,20 +27,22 @@ The potential problems with my capstone are the “cold start” problem for rec
 ### What is the next thing you need to work on?
 The next thing I need to work on is scraping more data and making sure it will meet my new needs for a recommender system.
 ___
-## Context
+## Business Context
 ### Imagine you rent out places to stay like on Airbnb.
-> How can you easily know how customers feel to reach out and improve reputation?
-#### Solution: Mine hotel reviews “labeled” with ratings and use them to predict sentiment.
+On Airbnb, unlike Tripadvisor, there is no rating per user review, so you cannot know the exact rating each user gives you. Now, let's say you have tons of reviews and cannot read every single one to determine whether they had positive (4-5 stars), neutral (3 stars), or negative (1-2 stars) sentiment.
+> Problem: How can you automatically know how your customers feel in order to reach out to them promptly and properly based on their sentiment? 
+#### Solution: Mine Tripadvisor hotel reviews “labeled” with ratings and use them for supervised learning to train a classifier that will predict sentiment.
+ * Tripadvisor hotel reviews suit our needs because they are labeled data (have user rating per review) and will be similar to Airbnb reviews since they are both in written in the context of a person's experience staying at a place.
 
-## Summary of Process
+In this project, I collected my own data through web scraping, used natural language processing, and built and evaluated different machine learning models in order to achieve creating a minumum viable product to solve this business problem.
+
+## Summary of the Process
 ![Tripadvisor_Logo_horizontal-lockup_registered_RGB.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/Tripadvisor_Logo_horizontal-lockup_registered_RGB.png) 
 ![bs.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/bs.png)
-1. Web-scraped TripAdvisor hotel reviews
-  * 2 EC2 instances ran in parallel over 2 days
-  * Set up data cleaning, EDA, and modeling pipeline while scraping
-2. Split data into 80:20 train/test, then split train into 80:20 train/validation
-3. Balanced training data with undersampling
-4. Evaluated models on accuracy and confusion matrix
+1. First, I web-scraped TripAdvisor hotel reviews. I used 2-3 AWS EC2 Linux instances (t2.micro) that ran in parallel over 4 days. While scraping, I set up my data cleaning, EDA, and modeling pipelines in python modules. The data was automatically saved into CSV files, one per link/hotel scraped.
+2. Next, I cleaned the data and split it into 80:20 train/test, then split the train data into 80:20 train/validation. This resulted in an overall 64/16/20 train/val/test split.
+3. After, I experimented with natural language processing techniques (removing stop words, stemming/lemmatizing) on the review text data and built different machine learning models (logistic regressions, multinomial Naive Bayes, random forests, LSTM neural networks). I evaluated models on both accuracy and confusion matrices. Due to class imbalance, I undersampled the training data for non-neural network models and used class weights without undersampling for neural networks.
+4. Finally, I deployed my sentiment classifier, a CNN-LSTM neural network model, as Flask web app running in a Tensorflow docker container on an AWS EC2 Linux instance (t3.large). The web app is now live for people to try out on unseen, real-world data - Airbnb reviews (or other similar reviews on places to stay).
 
 ## Directory Structure
 ```bash
@@ -80,13 +82,13 @@ between-the-lines-hotels
  * A preview of the fields of the CSV files can be seen in the eda.ipynb notebook (Out[8]): https://github.com/chelseanbr/between-the-lines-hotels/blob/master/eda.ipynb
 
 ## EDA
-* Whole dataset consisted of 1.2 million hotel reviews in English, each with a Tripadvisor “bubble” rating from 1 to 5
+My final dataset consisted of 1.2 million hotel reviews in English, each with a Tripadvisor “bubble” rating from 1 to 5.
 
 ![countplot_reviews_byLocation_full.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/countplot_reviews_byLocation_full.png)
 
 ![boxplt_ratings_byLocation_full.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/boxplt_ratings_byLocation_full.png)
 
-* Added sentiment label based on hotel rating per review
+#### I added sentiment labels based on hotel rating per review: 1-2 = negative, 3 = neutral, 4-5 = positive.
 
 ![countplot_ratings_full.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/countplot_ratings_full.png)
 
