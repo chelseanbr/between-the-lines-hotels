@@ -271,19 +271,19 @@ Here is what the home page looks like:
 
 Neutral prediction example:
 
-![site_pred_neutral_default.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/site_pred_neutral_default.png)
+![site_pred_neutral_default.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/site_pred_neutral_default.png)
 
 Positive prediction example:
 
-![site_pred_pos.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/site_pred_pos.png)
+![site_pred_pos.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/site_pred_pos.png)
 
 Negative prediction example:
 
-![site_pred_neg.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/site_pred_neg.png)
+![site_pred_neg.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/site_pred_neg.png)
 
 Just for fun, I tried submitting a fake review I wrote, and it was pretty funny to see the result:
 
-![site_pred_neg_funny.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/site_pred_neg_funny.png)
+![site_pred_neg_funny.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/site_pred_neg_funny.png)
 
 ## Next Steps
 * 
