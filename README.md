@@ -228,16 +228,13 @@ weighted avg       0.90      0.86      0.88     19478
    macro avg       0.67      0.73      0.69     24347
 weighted avg       0.91      0.87      0.88     24347
 ```
-![confusion_matrix_train_lstm_10epochs_20200608-04/29/46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_train_lstm_10epochs_20200608-04/29/46.png)
+![confusion_matrix_train_lstm_10epochs_20200608-04:29:46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_train_lstm_10epochs_20200608-04:29:46.png)
 
-![confusion_matrix_val_lstm_10epochs_20200608-04/29/46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_val_lstm_10epochs_20200608-04/29/46.png)
+![confusion_matrix_val_lstm_10epochs_20200608-04:29:46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_val_lstm_10epochs_20200608-04:29:46.png)
 
-![confusion_matrix_test_lstm_10epochs_20200608-04/29/46.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_test_lstm_10epochs_20200608-04/29/46.png)
+![lstm_10epochs_20200608-04:29:46_loss.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_10epochs_20200608-04:29:46_loss.png)
 
-![lstm_10epochs_20200608-04/29/46_loss.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_10epochs_20200608-04/29/46_loss.png)
-
-![lstm_10epochs_20200608-04/29/46_accuracy.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_10epochs_20200608-04/29/46_accuracy.png)
-
+![lstm_10epochs_20200608-04:29:46_accuracy.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_10epochs_20200608-04:29:46_accuracy.png)
 ```bash
 Reading data/tripadvisor_reviews_1p2m.csv...
 Cleaning data...
@@ -367,6 +364,16 @@ weighted avg       0.92      0.88      0.89     97390
    macro avg       0.70      0.78      0.73    121737
 weighted avg       0.92      0.88      0.89    121737
 ```
+
+![confusion_matrix_train_lstm_6epochs_20200608-07:34:50.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_train_lstm_6epochs_20200608-07:34:50.png)
+
+![confusion_matrix_val_lstm_6epochs_20200608-07:34:50.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_val_lstm_6epochs_20200608-07:34:50.png)
+
+![confusion_matrix_test_lstm_6epochs_20200608-07:34:50.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_test_lstm_6epochs_20200608-07:34:50.png)
+
+![lstm_6epochs_20200608-07:34:50_loss.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_6epochs_20200608-07:34:50_loss.png)
+
+![lstm_6epochs_20200608-07:34:50_accuracy.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_6epochs_20200608-07:34:50_accuracy.png)
 
 ## Web App
 #### Airbnb Review Sentiment Classifier: https://tinyurl.com/rating-predictor
