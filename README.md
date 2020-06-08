@@ -1,24 +1,32 @@
 # Between the Lines of Tripadvisor Hotel Reviews
+
 ![Image from https://www.pexels.com/photo/bedroom-door-entrance-guest-room-271639/](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/hotel.jpg)
-## Check out my Airbnb Review Sentiment Classifier (Web App): https://tinyurl.com/rating-predictor
+
+## Check out my Flask web app - Airbnb Review Sentiment Classifier: https://tinyurl.com/rating-predictor
+
 #### Link to Project Presentation: https://docs.google.com/presentation/d/1nZ9morIyqlIuJPOEAuhNwTw9m3lByksouw4KqXlmOfQ/edit?usp=sharing
 ___
 ## Business Context
 ### Imagine you rent out places to stay like on Airbnb.
 On Airbnb, unlike Tripadvisor, there is no rating per user review, so you cannot know the exact rating each user gives you. Now, let's say you have tons of reviews and cannot read every single one to determine whether they had positive (4-5 stars), neutral (3 stars), or negative (1-2 stars) sentiment.
-> Problem: How can you automatically know how your customers feel in order to reach out to them promptly and properly based on their sentiment? 
-#### Solution: Mine Tripadvisor hotel reviews “labeled” with ratings and use them for supervised learning to train a classifier that will predict sentiment.
- * Tripadvisor hotel reviews suit our needs because they are labeled data (have user rating per review) and will be similar to Airbnb reviews since they are both in written in the context of a person's experience staying at a place.
+> Problem: How can you automatically know how your customers feel in order to reach out to them promptly and properly based on their sentiments? 
+#### Solution: Mine Tripadvisor hotel reviews “labeled” with ratings and use them to train a sentiment classifier.
+ * Tripadvisor hotel reviews suit our needs because they are labeled data (have user rating per review) and may be similar to Airbnb reviews since they are both in written in the context of a person's experience staying of at a place.
 
-In this project, I collected my own data through web scraping, used natural language processing, and built and evaluated different machine learning models in order to achieve creating a minumum viable product to solve this business problem.
+In this project, I collected my own data through web scraping, used natural language processing, and built and evaluated different machine learning models, including logistic regressions and neural networks, in order to create a minumum viable product that solves this business problem.
+
+![Tripadvisor_Logo_horizontal-lockup_registered_RGB.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/Tripadvisor_Logo_horizontal-lockup_registered_RGB.png) 
+
+![bs.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/bs.png)
 
 ## Summary of the Process
-![Tripadvisor_Logo_horizontal-lockup_registered_RGB.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/Tripadvisor_Logo_horizontal-lockup_registered_RGB.png) 
-![bs.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/bs.png)
 1. First, I web-scraped TripAdvisor hotel reviews. I used 2-3 AWS EC2 Linux instances (t2.micro) that ran in parallel over 4 days. While scraping, I set up my data cleaning, EDA, and modeling pipelines in python modules. The data was automatically saved into CSV files, one per link/hotel scraped.
 2. Next, I cleaned the data and split it into 80:20 train/test, then split the train data into 80:20 train/validation. This resulted in an overall 64/16/20 train/val/test split.
 3. After, I experimented with natural language processing techniques (removing stop words, stemming/lemmatizing) on the review text data and built different machine learning models (logistic regressions, multinomial Naive Bayes, random forests, LSTM neural networks). I evaluated models on both accuracy and confusion matrices. Due to class imbalance, I undersampled the training data for non-neural network models and used class weights without undersampling for neural networks.
 4. Finally, I deployed my sentiment classifier, a CNN-LSTM neural network model, as Flask web app running in a Tensorflow docker container on an AWS EC2 Linux instance (t3.large). The web app is now live for people to try out on unseen, real-world data - Airbnb reviews (or other similar reviews on places to stay).
+
+![Tripadvisor_Logo_horizontal-lockup_registered_RGB.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/Tripadvisor_Logo_horizontal-lockup_registered_RGB.png) 
+![bs.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/bs.png)
 
 ## Directory Structure
 ```bash
@@ -53,6 +61,9 @@ between-the-lines-hotels
   * app&#46;py runs the web app
   * The static folder 
   * The templates folder contain the layout of the web app home page (jumbotron.html), and prediction page (predict.html)
+* keras_lstm&#46;py runs either training a new model for a specified number or epochs on specified data or loading a previously saved model from a specified path to evaluate on specified data.
+* preprocess&#46;py includes all data preprocessing functions and runs 5-fold cross validation on 
+* tokenizer&#46;pickle files contain the tokenizers used on data before input to neural network-based models.
 4. The scrapers folder contains 10 tripadvisor_scraper*.py modules that can be run to scrape Tripadvisor hotel reviews
  * Each module contains many links, each corresponding to a different hotel, to scrape from and the output of the modules are CSV files, one per link/hotel
  * A preview of the fields of the CSV files can be seen in the eda.ipynb notebook (Out[8]): https://github.com/chelseanbr/between-the-lines-hotels/blob/master/eda.ipynb
@@ -93,6 +104,8 @@ stop words. For stop words, I used a custom list seen in my python modules.
 ![mnb_accuracy_over_feature_size.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/mnb_accuracy_over_feature_size.png)
 
 #### I decided to proceed with using the WordNetLemmatizer and 50k+ TF-IDF features. After further experimentation, I found I could reduce the TF-IDF features to 5,000 since it did not really impact scores. 
+
+![model_val_comparisions.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/model_val_comparisions.png)
 
 ## Results
 ![confusion_matrix_final_lr_val.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/images/confusion_matrix_final_lr_val.png)
