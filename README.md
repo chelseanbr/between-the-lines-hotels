@@ -68,13 +68,15 @@ between-the-lines-hotels
 ## EDA
 My final dataset consisted of 1.2 million hotel reviews in English, each with a Tripadvisor “bubble” rating from 1 to 5.
 * There were 11 columns in my data: review_id, url, hotel_name, review_date, review_body, user_location, user_name, helpful_vote, rating, csv, and folder.
+* After cleaning/preprocessing the data, there were 14 columns total, 3 were added: city, loc, and sentiment (the labels/target values).
+
+#### The plots below show the number or ratings and distributions of ratings per location in the data.
 
 ![countplot_reviews_byLocation_full.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/countplot_reviews_byLocation_full.png)
 
 ![boxplt_ratings_byLocation_full.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/boxplt_ratings_byLocation_full.png)
 
 #### I added sentiment labels based on hotel rating per review. 1-2 = negative, 3 = neutral, 4-5 = positive.
-* After cleaning/preprocessing the data, there were 14 columns total, 3 were added: city, loc, and sentiment (the labels/target values).
 
 ![countplot_ratings_full.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/countplot_ratings_full.png)
 
@@ -84,14 +86,14 @@ My final dataset consisted of 1.2 million hotel reviews in English, each with a 
 
 ![sample1000_review_len_dist.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/sample1000_review_len_dist.png)
 
-#### The final plot above shows the distributions of review length (word count) per class from a sample of 1000 reviews. The yellow dotted line is at 550, which is the max length I chose to truncate or pad reviews before using them as input to my neural network models.
+#### The final plot above shows the distributions of review length (word count) per class from a sample of 1000 reviews. There is a yellow dotted line at 550, which indicates the max length I chose to truncate or pad reviews with zeros before using them as input to my neural network models.
 
 ## Modeling
 First, let's establish what a dumb, baseline model would look like. 
 #### Such a model can just always predict the majority class ("positive") and achieve 85% accuracy. 
 That is why we cannot rely on accuracy alone. 
 
-#### Dumb/Baseline Model Classification Report
+### Dumb/Baseline Model Classification Report
 ```bash
               precision    recall  f1-score   support
 
@@ -108,20 +110,20 @@ weighted avg       0.72      0.85      0.78     12173
 **For evaluation metrics, we need to use both weighted accuracy and confusion matrices.**
  * The ideal confusion matrix would be one that is maximized along the diagonal.
 
-#### Dumb/Baseline Model Confusion Matrix
+### Dumb/Baseline Model Confusion Matrix
 ![confusion_matrix_dumb_model.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/confusion_matrix_dumb_model.png)
 
 ## Part 1: Non-Neural Network-Based Models
-Initially, I tried non-neural network-based Models with TF-IDF (term frequency–inverse document frequency) fetaures.
+Initially, I tried non-neural network-based Models with TF-IDF (term frequency–inverse document frequency) features.
 ### Handling Imbalanced Classes
-I undersampled only the training data to balance classes. This was done to prevent my classifier from becoming biased and tend to mostly predict the majority class, which was 'positive' class. The 'negative' class was the minority, so I undersampled the bigger 'positive' and 'neutral' classes to have them match the minority class in size.
+I undersampled only the training data to balance classes. This was done to prevent my classifier from becoming biased and tend to mostly predict the majority class, which was  the "positive" class. The "negative" class was the minority, so I undersampled the bigger "positive" and "neutral" classes to have them match the minority class in size.
+* The validation set and test set remained untouched.
 
 ![pie_sentiments_initial.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/pie_sentiments_train_undersample.png)
-* The validation set and test set remained untouched.
 
 ### Natural Language Processing
 1. First, I removed digits, punctuation, and English 
-stop words. For stop words, I used a custom list seen in my python modules.
+stop words. For stop words, I used a custom list set in my python modules.
 2. Then, I tried various stemmers/lemmatizers and different numbers of TF-IDF max features.
 
 ![mnb_accuracy_over_feature_size.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/mnb_accuracy_over_feature_size.png)
@@ -165,7 +167,7 @@ The Logistic Regression model ended up outperforming the rest.
 Next, I tried to build LSTM (long short-term memory) neural networks to further improve upon accuracy and confusion matrices. LSTM-based neural networks are widely known to be able to achieve high performance in tasks involving natural language processing.
 
 #### Due to the significant amount of time it takes to train neural networks, I used only 50% of my data.
-* Intitally, I had tried to use all of my data (1.2 million reviews), but it crashed my AWS EC2 Linux instance (c5.9xlarge, CPU only), so for this project I stuck to 50% of the data to make sure to get results by the project deadline.
+* Intitally, I had tried to use all of my data (1.2 million reviews), but it crashed my AWS EC2 Linux instance (c5.9xlarge, CPU only, no GPU), so for this project I stuck to 50% of the data to make sure to get results by the project deadline.
 
 #### Train/test/val data sizes: Train: 779120, Test: 243475, Val: 194780
 * Took 50pct of data - Train: 389560, Val: 97390, Test: 121737
@@ -203,18 +205,19 @@ Non-trainable params: 0
 ```
 #### I started with a simple architecture that included only the embedding layer, a single non-birectional LSTM layer, and the last dense layer with "softmax" activation to output class probabilities. After much experimentation, I ended up adding the following layers for the following purposes:
 1. Dropout layers - Added multiple for regularization to prevent the model from quickly overfitting the training data, which it tended to do
-2. Convolutional and pooling layers - Dramatically sped up the training time by added a filtering effect to reduce features
-3. Added 3 stacked bidirectional LSTM layers with dropout (0.2) and recurrent dropout (0.2) because I saw adding more layers and dropout improved my evaluation metrics and prevented too much overfitting
+2. Convolutional and pooling layers - Dramatically sped up the training time by adding a filtering effect to reduce features
+3. Added 3 stacked bidirectional LSTM layers with dropout (0.2) and recurrent dropout (0.2) because I observed that adding more of these layers and dropout improved my evaluation metrics and prevented too much overfitting
+ * Bidirectional LSTM layers worked much better than non-birectional LSTM layers for my data
 
 #### The model took 19116.94s or about 5.3 hours to train.
 
-#### Final Model Results
+### Final Model Results
 ```bash
 Training Accuracy:  0.8971455097198486
 Val Accuracy:  0.876948356628418
 Test Accuracy:  0.8781553506851196
 
-        Predict train
+        Train Classification Report
               precision    recall  f1-score   support
 
     negative       0.82      0.83      0.83     24673
@@ -226,7 +229,7 @@ Test Accuracy:  0.8781553506851196
 weighted avg       0.93      0.90      0.91    389560
 
 
-        Predict val
+        Validation Classification Report
               precision    recall  f1-score   support
 
     negative       0.72      0.71      0.72      6168
@@ -238,7 +241,7 @@ weighted avg       0.93      0.90      0.91    389560
 weighted avg       0.92      0.88      0.89     97390
 
 
-        Predict test
+        Test Classification Report
               precision    recall  f1-score   support
 
     negative       0.72      0.74      0.73      7710
@@ -258,46 +261,50 @@ weighted avg       0.92      0.88      0.89    121737
 #### Test Confusion Matrix
 ![confusion_matrix_test_lstm_6epochs_20200608-07:34:50.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_cm/confusion_matrix_test_lstm_6epochs_20200608-07:34:50.png)
 
-#### Loss (Sparse Categorical Crossentropy) Over Number of Epochs
+### Loss (Sparse Categorical Crossentropy) Over Number of Epochs
 
 ![lstm_6epochs_20200608-07:34:50_loss.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_6epochs_20200608-07:34:50_loss.png)
 
-#### Accuracy (Sparse Categorical Crossentropy) Over Number of Epochs
+### Accuracy (Sparse Categorical Crossentropy) Over Number of Epochs
 
 ![lstm_6epochs_20200608-07:34:50_accuracy.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/neural_net_history/lstm_6epochs_20200608-07:34:50_accuracy.png)
 
-#### The plots above show that the model could possibly improve with additional epochs.
+#### The plots above show that the model could still possibly improve with additional epochs.
 
 ## Web App
+Finally, I built a Flask web app to deploy my final CNN-LSTM neural network model.
+
 #### Airbnb Review Sentiment Classifier: https://tinyurl.com/rating-predictor
 
 Here is what the home page looks like:
 
 ![site_home.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/site_home.png)
 
-Neutral prediction example:
+#### Neutral prediction example:
 
 ![site_pred_neutral_default.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/site_pred_neutral_default.png)
 
-Positive prediction example:
+#### Positive prediction example:
 
 ![site_pred_pos.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/site_pred_pos.png)
 
-Negative prediction example:
+#### Negative prediction example:
 
 ![site_pred_neg.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/site_pred_neg.png)
 
-Just for fun, I tried submitting a fake review I wrote, and it was pretty funny to see the result:
+#### Just for fun, I tried submitting a fake review I wrote, and it was pretty funny to see the result:
 
 ![site_pred_neg_funny.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/setup/imgs/site_pred_neg_funny.png)
 
 ## Conclusion
-* Neural networks take a lot of time and resources to train, but can reach impressive results
-* Logistic Regression with TF-IDF still performed quite well also
+* Neural networks take a lot of time and resources to train, but can reach impressive results and definitely be trained to perform better that non-neural network-based models with TF-IDF features
+* Logistic Regression with TF-IDF still performed quite well and has additional benefits of interpretability by allowing us to generate wordclouds
 
 ## Next Steps
-* Learn more about how to better build and train neural network to save time and resources
+* Learn more about how to better build and train neural networks to save time and resources
   * Possibly try training with a GPU
+* Experiment more with NLP, see if stemming/lemmatizing or doing neither impacts performance combined with neural networks
+* Improve upon web app to take an Airbnb link or select ones to scrape reviews from and predict ratings of multiple reviews for displaying on a dashboard
 
 _____ 
 ## Initial Project Proposal
