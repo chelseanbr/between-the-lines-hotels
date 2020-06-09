@@ -89,11 +89,11 @@ My final dataset consisted of 1.2 million hotel reviews in English, each with a 
 #### The final plot above shows the distributions of review length (word count) per class from a sample of 1000 reviews. There is a yellow dotted line at 550, which indicates the max length I chose to truncate or pad reviews with zeros before using them as input to my neural network models.
 
 ## Modeling
-First, let's establish what a dumb, baseline model would look like. 
+First, let's establish what a "dumb" model would look like. 
 #### Such a model can just always predict the majority class ("positive") and achieve 85% accuracy. 
 That is why we cannot rely on accuracy alone. 
 
-### Dumb/Baseline Model Classification Report
+### Dumb Model Classification Report
 ```bash
               precision    recall  f1-score   support
 
@@ -110,7 +110,7 @@ weighted avg       0.72      0.85      0.78     12173
 **For evaluation metrics, we need to use both weighted accuracy and confusion matrices.**
  * The ideal confusion matrix would be one that is maximized along the diagonal.
 
-### Dumb/Baseline Model Confusion Matrix
+### Dumb Model Confusion Matrix
 ![confusion_matrix_dumb_model.png](https://github.com/chelseanbr/between-the-lines-hotels/blob/master/imgs/confusion_matrix_dumb_model.png)
 
 ## Part 1: Non-Neural Network-Based Models
@@ -125,6 +125,8 @@ I undersampled only the training data to balance classes. This was done to preve
 1. First, I removed digits, punctuation, and English 
 stop words. For stop words, I used a custom list set in my python modules.
 2. Then, I tried various stemmers/lemmatizers and different numbers of TF-IDF max features.
+
+#### I built a baseline model first with multinomial Naive Bayes, using initially few TF-IDF features (200) and no stemming/lemmatization to see the impact of adding more features and different NLP techniques.
 
 ![mnb_accuracy_over_feature_size.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/mnb_accuracy_over_feature_size.png)
 
