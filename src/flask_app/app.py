@@ -31,6 +31,11 @@ model_path = 'BEST_saved_models/lstm_6epochs_20200608-07:34:50/'
 def index():
     return render_template('jumbotron.html', title='Predict an Airbnb Rating')
 
+# About page
+@app.route('/about')
+def about():
+    return render_template('about.html', title='About')
+
 # My sentiment predictor app
 @app.route('/prediction', methods=['POST'])
 def show_pred(maxlen=maxlen, num_words=num_words, model_path=model_path):
@@ -144,4 +149,4 @@ def process_input(text, maxlen, num_words):
     return tokenized_text
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=False)
+    app.run(host='0.0.0.0', port=8000, debug=True)
