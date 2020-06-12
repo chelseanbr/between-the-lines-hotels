@@ -40,6 +40,7 @@ def about():
 @app.route('/prediction', methods=['POST'])
 def show_pred(maxlen=maxlen, num_words=num_words, model_path=model_path):
     text = str(request.form['user_input'])
+    
     tokenized_text = process_input(text, maxlen, num_words)
     # PREDICT
     model = build_model()
