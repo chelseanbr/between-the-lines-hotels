@@ -36,6 +36,11 @@ def index():
 def about():
     return render_template('about.html', title='About')
 
+# Feedback page
+@app.route('/feedback')
+def feedback():
+    return render_template('feedback.html', title='Feedback')
+
 # My sentiment predictor app
 @app.route('/prediction', methods=['POST'])
 def show_pred(maxlen=maxlen, num_words=num_words, model_path=model_path):

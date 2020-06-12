@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G2ZVYSB9BR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-G2ZVYSB9BR');
+    </script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -46,7 +55,7 @@
           <ul class="nav navbar-nav">
             <li class="active"><a href="/">Home</a></li>
             <li class="active"><a href="/about">About</a></li>
-            <!-- <li class="active"><a href="/contact">Contact</a></li> -->
+            <li class="active"><a href="/feedback">Feedback</a></li>
           </ul>
 
           <!-- <form class="navbar-form navbar-right">
@@ -78,23 +87,27 @@
         <form action="/prediction" method='POST' >
             <label for="review">Airbnb Review:</label>
             <div>
-            <textarea id="review" name="user_input" rows="5" cols="105">
-We just finished our stay at this location and overall it was an easy stay. Location is great and view from balcony was 
+            <textarea id="review" name="user_input" rows="5" cols="105"></textarea></div>
+            <!-- <input type="text" name="user_input" /> -->
+            <button type="reset" value="Reset">Reset</button>
+            <!-- <button onclick= 
+            "document.getElementByName( 
+             'user_input').value = 'We just finished our stay at this location and overall it was an easy stay. Location is great and view from balcony was 
 nice. Our main issues were the major lack of basic utensils, cleaning/big supplies, stained carpet and broken tiles 
 between kitchen and bathroom. The place has much potential and I wouldn't necessarily say “no” to this place. Just 
-be prepared to need your own basic airBnb essentials like cleaning, eating supplies and be warned about the ant issue.
-            </textarea></div>
-            <!-- <input type="text" name="user_input" /> -->
-            <button onclick= 
-            "document.getElementById( 
-             'review').value = ''"> 
-            Clear 
-            </button> 
+be prepared to need your own basic airBnb essentials like cleaning, eating supplies and be warned about the ant issue.'"> 
+            Try an Example 
+            </button>  -->
             <input type="submit">
         </form>
         </p>
         <div>
         <img src="../static/hotel.jpg" alt="hotel" width="755" height="400">
+        <br><br><h5>
+        Behind the scenes: The predictions are made by a neural network. 
+        <br>Additionally, the negative/neutral/positive word clouds above 
+        were generated using coefficients of a logistic regression.<br>
+        Both models were trained with Tripadvisor hotel reviews and ratings.</h5>
         </div>
         <!-- <p><a class="btn btn-primary btn-lg" href="/submit" role="button">Learn more &raquo;</a></p> -->
       </div>

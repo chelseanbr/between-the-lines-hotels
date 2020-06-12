@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G2ZVYSB9BR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-G2ZVYSB9BR');
+    </script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -45,7 +54,7 @@
           <ul class="nav navbar-nav">
             <li class="active"><a href="/">Home</a></li>
             <li class="active"><a href="/about">About</a></li>
-            <!-- <li class="active"><a href="/contact">Contact</a></li> -->
+            <li class="active"><a href="/feedback">Feedback</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -59,7 +68,7 @@
         <p class="lead"><b>Review:</b> "{{review}}"<br><br><b><u></u>
           Prediction:</u> {{sentiment_pred}}<br><i>{{rating}}</i></b>
           <br><br><img src="../static/{{reaction_gif}}">
-          <br><br>{{neg_prob}}% Negative, {{neut_prob}}% Neutral, {{pos_prob}}% Positive</p>      
+          <br><br>{{neg_prob}}% Negative, {{neut_prob}}% Neutral, {{pos_prob}}% Positive</p>  
         </div>
       <hr>
       <footer>
