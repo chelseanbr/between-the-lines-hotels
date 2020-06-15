@@ -14,8 +14,8 @@ ___
     *  [File Descriptions and Instructions for Use](#File-Descriptions-and-Instructions-for-Use)
 4. [EDA](#EDA)
 5. [Modeling](#Modeling)
-    * [Part 1: Non-Neural Network-Based Models](#Part-1:-Non-Neural-Network-Based-Models)
-    * [Part 2: Neural Network-Based Models](#Part-2:-Neural-Network-Based-Models)
+    * [Part 1: Non-Neural Network-Based Models](#Part-1-Non-Neural-Network-Based-Models)
+    * [Part 2: Neural Network-Based Models](#Part-2-Neural-Network-Based-Models)
 6. [Web App](#Web-App)
 7. [Conclusion](#Conclusion)
 8. [Next Steps](#Next-Steps)
@@ -23,12 +23,14 @@ ___
 ___
 ## Business Context
 ### Imagine you rent out or are looking for places to stay on Airbnb.
-Sites like Yelp, *Tripadvisor*, and Amazon have customer reviews with ratings. **Airbnb does not.** Having ratings per review make negative reviews or positive reviews easily identifiable, filterable, and quantifiable. *On Airbnb, unlike Tripadvisor,* there is no rating per user review, so you cannot know the exact rating each user gives. If there are tons of reviews, it is time-consuming to read every single one to determine whether they had positive (4-5 stars), neutral (3 stars), or negative (1-2 stars) sentiment.
-> Problem: As a host, how can you automatically know how your customers feel in order to reach out to them promptly and properly based on their sentiments? As a guest, how can you quickly determine which reviews are negative or positive?
-#### Solution: Use Tripadvisor hotel reviews “labeled” with ratings to train a sentiment classifier.
+Sites like Yelp, *Tripadvisor*, and Amazon have customer reviews with ratings. **Airbnb does not.** 
+
+Having ratings per review make negative reviews or positive reviews easily identifiable, filterable, and quantifiable. *On Airbnb, unlike Tripadvisor,* there is no rating per user review, so you cannot know the exact rating each user gives. If there are tons of reviews, it is time-consuming to read every single one to determine whether they had positive (4-5 stars), neutral (3 stars), or negative (1-2 stars) sentiment.
+> Problem: As a host, how can you automatically know how your customers feel in order to reach out to them promptly based on their sentiments? As a customer, how can you quickly determine which reviews are negative or positive without reading them one-by-one?
+#### Solution: Use Tripadvisor hotel reviews “labeled” with ratings to train a sentiment classifier. Classify Airbnb reviews automatically.
  * Tripadvisor hotel reviews suit our needs because they are labeled data (have user rating per review) and may be similar to Airbnb reviews since they are both in written in the context of a person's experience staying at a place.
 
-In this project, I collected my own data through web scraping, used natural language processing, and built and evaluated over 6 different types of machine learning models, including logistic regressions and neural networks, in order to create a minumum viable product that solves this business problem.
+In this project, I collected data through web scraping, used natural language processing, and built and evaluated over 6 different types of machine learning models, including logistic regressions and neural networks, in order to create a minumum viable product that tries to solve the business problem.
 
 ![Tripadvisor_Logo_horizontal-lockup_registered_RGB.png](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/Tripadvisor_Logo_horizontal-lockup_registered_RGB.png) 
 
@@ -222,7 +224,7 @@ Total params: 1,320,739
 Trainable params: 1,320,739
 Non-trainable params: 0
 ```
-#### I started with a simple architecture that included only the embedding layer, a single non-birectional LSTM layer, and the last dense layer with "softmax" activation to output class probabilities. After much experimentation, I ended up adding the following layers for the following purposes:
+#### I started with a simple architecture that included only the embedding layer, two unidirectional LSTM layers, and the last dense layer with "softmax" activation to output class probabilities. After much experimentation, I ended up adding the following layers for the following purposes:
 1. Dropout layers - Added multiple for regularization to prevent the model from quickly overfitting the training data, which it tended to do
 2. Convolutional and pooling layers - Dramatically sped up the training time by adding a filtering effect to reduce features
 3. Added 3 stacked bidirectional LSTM layers with dropout (0.2) and recurrent dropout (0.2) because I observed that adding more of these layers and dropout improved my evaluation metrics and prevented too much overfitting
@@ -323,3 +325,6 @@ Here is what the home page looks like:
 
 ## Credits
 Special thanks to my instructors and classmates at Galvanize for all the advice and memories.
+
+___
+[[Back to Top]](#Between-the-Lines-of-Tripadvisor-Hotel-Reviews)
