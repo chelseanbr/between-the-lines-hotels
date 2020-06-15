@@ -1,17 +1,32 @@
 # Between the Lines of Tripadvisor Hotel Reviews
+*Sentiment Classification by Chelsea Ramos*
 
 ![Image from https://www.pexels.com/photo/bedroom-door-entrance-guest-room-271639/](https://github.com/chelseanbr/between-the-lines/blob/final_eda_modeling/images/hotel.jpg)
 
 ## Check out my Flask web app - Airbnb Review Sentiment Classifier: https://tinyurl.com/rating-predictor
 
-#### Link to Project Presentation: https://docs.google.com/presentation/d/1nZ9morIyqlIuJPOEAuhNwTw9m3lByksouw4KqXlmOfQ/edit?usp=sharing
+### You can also view my slide deck [here](https://docs.google.com/presentation/d/1nZ9morIyqlIuJPOEAuhNwTw9m3lByksouw4KqXlmOfQ/edit?usp=sharing).
+___
+## Table of Contents
+1. [Business Context](#Business-Context)
+2. [Summary of the Process](#Summary-of-the-Process)
+3. [Directory Structure](#Directory-Structure)
+    *  [File Descriptions and Instructions for Use](#File-Descriptions-and-Instructions-for-Use)
+4. [EDA](#EDA)
+5. [Modeling](#Modeling)
+    * [Part 1: Non-Neural Network-Based Models](#Part-1:-Non-Neural-Network-Based-Models)
+    * [Part 2: Neural Network-Based Models](#Part-2:-Neural-Network-Based-Models)
+6. [Web App](#Web-App)
+7. [Conclusion](#Conclusion)
+8. [Next Steps](#Next-Steps)
+9. [Credits](#Credits)
 ___
 ## Business Context
-### Imagine you rent out places to stay like on Airbnb.
-On Airbnb, unlike Tripadvisor, there is no rating per user review, so you cannot know the exact rating each user gives you. Now, let's say you have tons of reviews and cannot read every single one to determine whether they had positive (4-5 stars), neutral (3 stars), or negative (1-2 stars) sentiment.
-> Problem: How can you automatically know how your customers feel in order to reach out to them promptly and properly based on their sentiments? 
-#### Solution: Mine Tripadvisor hotel reviews “labeled” with ratings and use them to train a sentiment classifier.
- * Tripadvisor hotel reviews suit our needs because they are labeled data (have user rating per review) and may be similar to Airbnb reviews since they are both in written in the context of a person's experience of staying at a place.
+### Imagine you rent out or are looking for places to stay on Airbnb.
+Sites like Yelp, *Tripadvisor*, and Amazon have customer reviews with ratings. **Airbnb does not.** Having ratings per review make negative reviews or positive reviews easily identifiable, filterable, and quantifiable. *On Airbnb, unlike Tripadvisor,* there is no rating per user review, so you cannot know the exact rating each user gives. If there are tons of reviews, it is time-consuming to read every single one to determine whether they had positive (4-5 stars), neutral (3 stars), or negative (1-2 stars) sentiment.
+> Problem: As a host, how can you automatically know how your customers feel in order to reach out to them promptly and properly based on their sentiments? As a guest, how can you quickly determine which reviews are negative or positive?
+#### Solution: Use Tripadvisor hotel reviews “labeled” with ratings to train a sentiment classifier.
+ * Tripadvisor hotel reviews suit our needs because they are labeled data (have user rating per review) and may be similar to Airbnb reviews since they are both in written in the context of a person's experience staying at a place.
 
 In this project, I collected my own data through web scraping, used natural language processing, and built and evaluated over 6 different types of machine learning models, including logistic regressions and neural networks, in order to create a minumum viable product that solves this business problem.
 
@@ -40,6 +55,8 @@ between-the-lines-hotels
     │   │   ├── (Folders: css, fonts, js)
     │   │   └── (Images for site)
     │   └── templates
+    │       ├── about.html
+    │       ├── feedback.html
     │       ├── jumbotron.html
     │       └── predict.html
     ├── keras_lstm.py
@@ -57,7 +74,7 @@ between-the-lines-hotels
 * The flask_app folder contains all code to run my web app
   * app&#46;py runs the web app
   * The static folder contains css, fonts, and javascript files that style my website 
-  * The templates folder contain the layout of the web app home page (jumbotron.html), and prediction page (predict.html)
+  * The templates folder contains the layouts of the web app's about page (about.html), feedback page (feedback.html), home page (jumbotron.html), and prediction page (predict.html).
 * keras_lstm&#46;py runs either training a new model for a specified number or epochs on specified data or loading a previously saved model from a specified path to evaluate on specified data
 * preprocess&#46;py includes all data preprocessing functions and runs 5-fold cross validation 
 * tokenizer&#46;pickle files contain tokenizers used on data before input to neural network-based models
@@ -304,27 +321,5 @@ Here is what the home page looks like:
 * Experiment more with NLP, see if stemming/lemmatizing or doing neither impacts performance combined with neural networks
 * Improve upon web app to take an Airbnb link or select ones to scrape reviews from and predict ratings of multiple reviews for displaying on a dashboard
 
-_____ 
-## Initial Project Proposal
-### What are you trying to do?
-What I will try to do for my project is use TripAdvisor hotel reviews with ratings per review to classify sentiments as positive, neutral, or negative. Being able to automatically classify sentiment from review content is important to get a sense of how customers feel and what they would like.
-### How has this problem been solved before?
-This problem has been solved before with techniques in natural language processing such as TF-IDF or with LSTM neural networks. 
-
-Multi Class Text Classification with LSTM using TensorFlow 2.0:
-https://towardsdatascience.com/multi-class-text-classification-with-lstm-using-tensorflow-2-0-d88627c10a35
-
-Text Classification Example with Keras LSTM in Python:
-https://www.datatechnotes.com/2019/06/text-classification-example-with-keras.html
-### What is new about your approach, why do you think it will be successful?
-What is new about my approach is that I would try to use more advanced NLP techniques like LSTM neural networks to prove my sentiment classifier accuracy from 81% (capstone 2) to closer to 90%.
-### Who cares? If you're successful, what will the impact be?
-If I am successful, the impact will be that with my own dataset, I would have built a sentiment classifier  that people can try out.
-### How will you present your work?
-I would like people to be able to interact with my work through a Flask web app. I want them to be able to try uploading their own hotel review text to try out my finished hotel rating predictor and see if the rating my classifier predicts matches with what rating they would give based on the review.
-### What are your data sources? What is the size of your dataset, and what is your storage format?
-My data sources for the Tripadvisor hotel reviews is my own scraped data in csv files stored in multiple folders. From my previous capstone, I had 500k reviews, so I will work on doubling the size.
-### What are potential problems with your capstone?
-The potential problems with my capstone are not achieving as high accuracy due to the amount of time it takes to train neural networks.
-### What is the next thing you need to work on?
-The next thing I need to work on is learning more about how to better build and train neural network to save time and resources and possibly try training with a GPU.
+## Credits
+Special thanks to my instructors and classmates at Galvanize for all the advice and memories.
