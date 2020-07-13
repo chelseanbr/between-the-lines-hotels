@@ -87,7 +87,7 @@
         <form action="/prediction" method='POST' >
             <label for="review">Airbnb Review:</label>
             <div>
-            <textarea id="review" name="user_input" rows="5" cols="105"></textarea></div>
+            <textarea id="review" name="user_input" rows="5" cols="50"></textarea></div>
             <!-- <input type="text" name="user_input" /> -->
             <button type="reset" value="Reset">Reset</button>
             <!-- <button onclick= 
@@ -131,6 +131,11 @@ be prepared to need your own basic airBnb essentials like cleaning, eating suppl
             width: 100% !important;
             height: 100% !important;
           }
+
+          .responsive {
+            width: 100% ;
+            height: auto ;  
+          }
         </style>
         
         <div class="responsive-google-slides">
@@ -144,7 +149,7 @@ be prepared to need your own basic airBnb essentials like cleaning, eating suppl
         <button onclick="location.href='/feedback'" type="button">
           Leave Some Feedback! :)</button>
         <br><br>  
-        <img src="../static/hotel.jpg" alt="hotel" width="755" height="400">
+        <img src="../static/hotel.jpg" alt="hotel" class="responsive">
         </div>
         <!-- <p><a class="btn btn-primary btn-lg" href="/submit" role="button">Learn more &raquo;</a></p> -->
       </div>
