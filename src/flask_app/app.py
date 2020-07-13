@@ -1,4 +1,5 @@
 # Docker: docker exec -it quizzical_taussig /bin/bash
+# docker run -it -p 8000:8000 --rm -v $PWD:/tmp -w /tmp tensorflow/tensorflow
 
 from flask import Flask, render_template, request
 app = Flask(__name__)

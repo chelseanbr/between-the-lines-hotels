@@ -102,12 +102,29 @@ be prepared to need your own basic airBnb essentials like cleaning, eating suppl
         </form>
         </p>
         <div>
+        
+        <hr>
+        
+        <h3>About This Project</h3> 
+        <p>
+        The duration of this project was about 2 weeks and it was managed through agile scrum meetings.
+        I scraped 1.2 million Tripadvisor hotel reviews in 4 days to build a sentiment classifier. 
+        Then, after data preprocessing and EDA, I built and evaluated over 6 different models on their confusion matrices 
+        and improved accuracy from <70% to 88%. Finally, I deployed a long short-term memory neural network to this web app 
+        running in a TensorFlow Docker container on an AWS EC2 instance. 
+        For more details, please check out the <a href="https://github.com/chelseanbr/between-the-lines-hotels">GitHub Repo</a> and 
+        <a href="https://docs.google.com/presentation/d/1nZ9morIyqlIuJPOEAuhNwTw9m3lByksouw4KqXlmOfQ/edit?usp=sharing">Google Slides.</a>
+        <br><br>
+        <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQFJKpAtyG1DyWcIr2IuS7U5TQpnbagtCrRjk8eB05t7L7xkPNmUgTRIFEmAih0ylVdqw7MwNkSDw1P/embed?start=true&loop=true&delayms=5000" frameborder="0" width="480" height="299" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+        <br>
+        <h3>Technologies</h3> 
+        <b>AWS EC2, Docker, Flask,</b> Jupyter Notebook, Python and libraries: <b>TensorFlow/Keras, NLTK, Scikit-Learn, BeautifulSoup4,</b> Pandas, NumPy, Matplotlib, Seaborn
+        <br><br>  
+        </p>
+        <button onclick="location.href='/feedback'" type="button">
+          Leave some feedback! :)</button>
+        <br><br>  
         <img src="../static/hotel.jpg" alt="hotel" width="755" height="400">
-        <br><br><h5>
-        Behind the scenes: The predictions are made by a neural network. 
-        <br>Additionally, the negative/neutral/positive word clouds above 
-        were generated using coefficients of a logistic regression.<br>
-        Both models were trained with Tripadvisor hotel reviews and ratings.</h5>
         </div>
         <!-- <p><a class="btn btn-primary btn-lg" href="/submit" role="button">Learn more &raquo;</a></p> -->
       </div>
